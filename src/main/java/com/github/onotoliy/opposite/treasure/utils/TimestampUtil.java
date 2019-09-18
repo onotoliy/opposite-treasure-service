@@ -1,0 +1,53 @@
+package com.github.onotoliy.opposite.treasure.utils;
+
+import org.jetbrains.annotations.NotNull;
+import org.jooq.Field;
+import org.jooq.Record;
+
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+
+import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
+
+public class TimestampUtil {
+
+    public static final TimestampUtil TIMESTAMP = new TimestampUtil();
+
+    public Timestamp now() {
+        return toTimestamp(Instant.now());
+    }
+
+    public Timestamp parse(String value) {
+        if (STRING.isEmpty(value)) {
+            return null;
+        }
+
+        try {
+            return toTimestamp(new SimpleDateFormat("yyyy-MM-dd").parse(value));
+        } catch (ParseException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @NotNull
+    public String format(Timestamp value) {
+        return value == null
+            ? "—"
+            : new SimpleDateFormat("dd.MM.yyyy").format(value);
+    }
+
+    private Timestamp toTimestamp(Instant value) {
+        return value == null ? null : new Timestamp(value.toEpochMilli());
+    }
+
+    private Timestamp toTimestamp(Date value) {
+        return value == null ? null : toTimestamp(value.toInstant());
+    }
+
+    public String format(Record record, Field<Timestamp> field) {
+        return format(record.getValue(field, Timestamp.class));
+    }
+}

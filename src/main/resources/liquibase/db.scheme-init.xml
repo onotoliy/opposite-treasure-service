@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <changeSet id="2019-07-02-1-treasure-init" author="onotoliy">
+    <createTable tableName="treasure_deposit" remarks="Депозиты">
+      <column name="user_uuid" type="uuid" remarks="Пользователь">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="deposit" type="numeric" remarks="Депозит" defaultValueNumeric="0"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="2019-07-02-2-treasure-init" author="onotoliy">
+    <createTable tableName="treasure_event" remarks="События">
+      <column name="guid" type="uuid" remarks="Уникальный идентификатор">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar(255)" remarks="Название"/>
+      <column name="contribution" type="numeric" remarks="Взнос с одного человека"/>
+      <column name="total" type="numeric" remarks="Общая сумма"/>
+      <column name="deadline" type="datetime" remarks="Конечный срок сдачи"/>
+      <column name="author" type="uuid" remarks="Автор"/>
+      <column name="creation_date" type="datetime" remarks="Дата создания записи"/>
+      <column name="deletion_date" type="datetime" remarks="Дата удаления записи"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="2019-07-07-1-treasure-init" author="onotoliy">
+    <createTable tableName="treasure_transaction" remarks="Транзакции">
+      <column name="guid" type="uuid" remarks="">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar(255)" remarks="Название"/>
+      <column name="cash" type="numeric" remarks="Денежные средсва"/>
+      <column name="user_guid" type="uuid" remarks="Пользователь"/>
+      <column name="event_guid" type="uuid" remarks="Событие">
+        <constraints foreignKeyName="fk_tt_event"
+                     referencedTableName="treasure_event"
+                     referencedColumnNames="guid"/>
+      </column>
+      <column name="type" type="varchar(255)" remarks="Тип"/>
+      <column name="author" type="uuid" remarks="Автор"/>
+      <column name="creation_date" type="datetime" remarks="Дата создания записи"/>
+      <column name="deletion_date" type="datetime" remarks="Дата удаления записи"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="2019-07-07-2-treasure-init" author="onotoliy">
+    <createTable tableName="treasure_cashbox" remarks="Касса">
+      <column name="last_update_date" type="datetime" remarks="Дата последненго изменения"/>
+      <column name="deposit" type="number" remarks="Сумма в кассе"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="2019-07-07-3-treasure-init" author="onotoliy">
+    <insert tableName="treasure_cashbox">
+      <column name="last_update_date" type="datetime" value="now()"/>
+      <column name="deposit" type="number" valueNumeric="0"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="2019-08-04-1-treasure-init" author="onotoliy">
+    <createTable tableName="treasure_debt" remarks="Долги">
+      <column name="user_uuid" type="uuid" remarks="Пользователь"/>
+      <column name="event_guid" type="uuid" remarks="Событие">
+        <constraints foreignKeyName="fk_tt_event"
+                     referencedTableName="treasure_event"
+                     referencedColumnNames="guid"/>
+      </column>
+    </createTable>
+
+    <addUniqueConstraint tableName="treasure_debt" columnNames="user_uuid,event_guid"/>
+  </changeSet>
+</databaseChangeLog>

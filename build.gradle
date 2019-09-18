@@ -1,0 +1,91 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE'
+        classpath 'com.bmuschko:gradle-docker-plugin:4.10.0'
+    }
+}
+
+plugins {
+    id 'com.bmuschko.docker-remote-api' version '4.10.0'
+}
+
+//import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+//import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'com.bmuschko.docker-remote-api'
+apply plugin: 'io.spring.dependency-management'
+
+group 'com.github.onotoliy.opposite'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url "https://dl.bintray.com/kotlin/kotlinx/"
+    }
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
+dependencies {
+
+    implementation 'com.github.onotoliy.opposite:treasure-data-jvm:1.0.0'
+
+    /**
+     * Spring Boot
+     */
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+
+    /**
+     * Kotlin
+     */
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.11.0'
+
+    /**
+     * JOOQ.
+     */
+    implementation 'org.jooq:jooq:3.11.11'
+    implementation 'org.jooq:jooq-meta:3.11.11'
+    implementation 'org.jooq:jooq-codegen:3.11.11'
+    implementation 'org.liquibase:liquibase-core'
+    implementation 'org.testcontainers:postgresql:1.11.3'
+
+    /**
+     * JDBC Driver PosgreSQL
+     */
+    runtimeOnly 'org.postgresql:postgresql'
+
+    /**
+     * Тестирование.
+     */
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task jooqGen(dependsOn: 'classes', type: JavaExec) {
+    main = 'com.github.onotoliy.opposite.treasure.JooqGenerator'
+    classpath = sourceSets.main.runtimeClasspath
+    args '/liquibase/db.changelog-master.xml', 'src/main/java'
+}
+
+import com.bmuschko.gradle.docker.tasks.image.*
+
+task buildImage(type: DockerBuildImage) {
+//    dependsOn createDockerfile
+    inputDir = file('docker')
+    tags.add('bmuschko/myimage:latest')
+}
