@@ -43,7 +43,7 @@ public class TransactionSearchParameter extends SearchParameter {
     }
 
     public boolean hasEvent() {
-        return GUID.nonEmpty(user);
+        return GUID.nonEmpty(event);
     }
 
     public UUID getEvent() {
@@ -51,7 +51,7 @@ public class TransactionSearchParameter extends SearchParameter {
     }
 
     public boolean hasType() {
-        return OBJECT.nonEmpty(type);
+        return OBJECT.nonEmpty(type) && OBJECT.nonEqually(type, TransactionType.NONE);
     }
 
     public TransactionType getType() {

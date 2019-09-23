@@ -1,20 +1,14 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
-import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
-import com.github.onotoliy.opposite.treasure.jooq.Tables;
+import java.util.UUID;
+
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.UUID;
-
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEBT;
-import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_EVENT;
 
 @Repository
 public class DebtRepository {

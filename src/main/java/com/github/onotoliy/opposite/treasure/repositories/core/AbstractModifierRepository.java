@@ -1,16 +1,18 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
-import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.core.HasAuthor;
 import com.github.onotoliy.opposite.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.data.core.HasName;
 import com.github.onotoliy.opposite.data.core.HasUUID;
-import com.github.onotoliy.opposite.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
-import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
 import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+
+import java.sql.Timestamp;
+import java.util.UUID;
+import java.util.function.Consumer;
+
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
@@ -22,13 +24,6 @@ import org.jooq.UpdateConditionStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Consumer;
-
-import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEBT;
-import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_EVENT;
 import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
 import static com.github.onotoliy.opposite.treasure.utils.TimestampUtil.TIMESTAMP;
 import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
@@ -69,12 +64,12 @@ implements ModifierRepository<E, P> {
 
     @Override
     public E update(E dto) {
-        return execute(dto, updateQuery(dto));
+        return execute(dto, updateQuery(dto).where(UUID.eq(GUID.parse(dto))));
     }
 
     @Override
     public E update(Configuration configuration, E dto) {
-        return execute(dto, updateQuery(configuration, dto));
+        return execute(dto, updateQuery(configuration, dto).where(UUID.eq(GUID.parse(dto))));
     }
 
     @Override

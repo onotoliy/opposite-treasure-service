@@ -25,8 +25,16 @@ public class TimestampUtil {
             return null;
         }
 
+        String v = value.endsWith("Z")
+            ? value.substring(0, value.length() - 1)
+            : value;
+
         try {
-            return toTimestamp(new SimpleDateFormat("yyyy-MM-dd").parse(value));
+            if (value.endsWith("Z")) {
+                return toTimestamp(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(v));
+            } else {
+                return toTimestamp(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(v));
+            }
         } catch (ParseException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -36,7 +44,7 @@ public class TimestampUtil {
     public String format(Timestamp value) {
         return value == null
             ? "—"
-            : new SimpleDateFormat("dd.MM.yyyy").format(value);
+            : new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(value);
     }
 
     private Timestamp toTimestamp(Instant value) {

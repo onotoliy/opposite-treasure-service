@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  treasure-db:
+    image: "postgres:10.4"
+    restart: always
+    ports:
+      - "127.0.0.1:8432:5432"
+    container_name: "treasure-db"
+    environment:
+      POSTGRES_USER: "treasure"
+      POSTGRES_PASSWORD: "treasure"
+      POSTGRES_DB: "treasure"

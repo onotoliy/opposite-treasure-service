@@ -2,9 +2,9 @@ package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.Paging;
 import com.github.onotoliy.opposite.data.page.Meta;
 import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureEventRecord;
@@ -65,7 +65,7 @@ extends AbstractModifierRepository<
         List<Condition> conditions = super.where(parameter);
 
         if (parameter.hasName()) {
-            conditions.add(TREASURE_EVENT.NAME.eq(parameter.getName()));
+            conditions.add(TREASURE_EVENT.NAME.likeIgnoreCase("%" + parameter.getName() + "%"));
         }
 
         return conditions;

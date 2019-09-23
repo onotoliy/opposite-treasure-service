@@ -1,33 +1,36 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
 import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.Paging;
 import com.github.onotoliy.opposite.data.core.HasAuthor;
 import com.github.onotoliy.opposite.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.data.core.HasName;
 import com.github.onotoliy.opposite.data.core.HasUUID;
 import com.github.onotoliy.opposite.data.page.Meta;
 import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
-import org.jooq.SelectJoinStep;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.impl.DSL;
 
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.OrderField;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.impl.DSL;
+
+import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
+import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
 
 public abstract class AbstractReaderRepository<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor,
@@ -89,10 +92,7 @@ implements ReaderRepository<E, P> {
 
     @Override
     public List<Option> getAll() {
-        return findQuery().fetch(record -> {
-            E dto = toDTO(record);
-            return new Option(dto.getUuid(), dto.getName());
-        });
+        return findQuery().fetch(record -> new Option(GUID.format(record, UUID), STRING.format(record, NAME)));
     }
 
     @Override
@@ -104,11 +104,16 @@ implements ReaderRepository<E, P> {
                    .where(where(parameter))
                    .fetchOptional(0, int.class)
                    .orElse(0),
-                new Paging(parameter.offset(), parameter.offset())),
+                new Paging(parameter.offset(), parameter.numberOfRows())),
             findQuery().where(where(parameter))
+                       .orderBy(orderBy())
                        .offset(parameter.offset())
                        .limit(parameter.numberOfRows())
                        .fetch(this::toDTO));
+    }
+
+    protected List<? extends OrderField<?>> orderBy() {
+        return new LinkedList<>(Collections.singleton(CREATION_DATE.desc()));
     }
 
     protected List<Condition> where(P parameter) {

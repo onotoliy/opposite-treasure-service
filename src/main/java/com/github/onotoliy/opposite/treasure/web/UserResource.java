@@ -2,12 +2,15 @@ package com.github.onotoliy.opposite.treasure.web;
 
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -22,7 +25,7 @@ public class UserResource {
 
     @GetMapping(value = "/current")
     public Option getCurrentUser() {
-        return user.getAll().get(0);
+        return user.find(GUID.parse("8098207c-6fbb-45ec-ae10-184607262a1a"));
     }
 
     @GetMapping(value = "/list")

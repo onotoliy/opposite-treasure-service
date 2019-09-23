@@ -8,7 +8,7 @@ public class StringUtil {
 
     public static final StringUtil STRING = new StringUtil();
 
-    public static final String EMPTY = "—";
+    private static final String EMPTY = "—";
 
     public boolean nonEmpty(String value) {
         return !isEmpty(value);

@@ -1,23 +1,24 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.data.Deposit;
-import com.github.onotoliy.opposite.data.Paging;
 import com.github.onotoliy.opposite.data.page.Meta;
 import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
 import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+
+import java.math.BigDecimal;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
-
-import java.math.BigDecimal;
-import java.util.Optional;
-import java.util.UUID;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEPOSIT;
 import static com.github.onotoliy.opposite.treasure.utils.BigDecimalUtil.MONEY;

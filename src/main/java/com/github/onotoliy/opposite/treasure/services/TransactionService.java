@@ -6,6 +6,7 @@ import com.github.onotoliy.opposite.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.repositories.CashboxRepository;
+import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
 import com.github.onotoliy.opposite.treasure.repositories.DepositRepository;
 import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
 import com.github.onotoliy.opposite.treasure.repositories.TransactionRepository;
@@ -35,15 +36,19 @@ extends AbstractModifierService<
 
     private final EventRepository event;
 
+    private final DebtRepository debt;
+
     @Autowired
     public TransactionService(TransactionRepository repository,
                               CashboxRepository cashbox,
                               DepositRepository deposit,
-                              EventRepository event) {
+                              EventRepository event,
+                              DebtRepository debt) {
         super(repository);
         this.cashbox = cashbox;
         this.deposit = deposit;
         this.event = event;
+        this.debt = debt;
     }
 
     @Override
@@ -55,9 +60,14 @@ extends AbstractModifierService<
         if (dto.getType() == TransactionType.CONTRIBUTION) {
             cashbox.contribution(configuration, money);
 
-            if (Objects.nonNull(dto.getPerson())) {
+            if (Objects.nonNull(dto.getPerson()) && Objects.isNull(dto.getEvent())) {
                 deposit.contribution(
                     configuration, GUID.parse(dto.getPerson()), money);
+            }
+
+            if (Objects.nonNull(dto.getPerson()) && Objects.nonNull(dto.getEvent())) {
+                debt.contribution(
+                    configuration, GUID.parse(dto.getPerson()), GUID.parse(dto.getEvent()));
             }
         } else {
             cashbox.cost(configuration, money);
