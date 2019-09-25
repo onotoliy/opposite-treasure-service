@@ -85,13 +85,13 @@ implements ModifierRepository<E, P> {
 
     @Override
     public E update(final E dto) {
-        return execute(dto, updateQuery(dto).where(guid.eq(GUIDs.parse(dto))));
+        return execute(dto, updateQuery(dto).where(uuid.eq(GUIDs.parse(dto))));
     }
 
     @Override
     public E update(final Configuration configuration, final E dto) {
         return execute(dto, updateQuery(configuration, dto).where(
-        guid.eq(GUIDs.parse(dto))));
+            uuid.eq(GUIDs.parse(dto))));
     }
 
     @Override
@@ -117,7 +117,7 @@ implements ModifierRepository<E, P> {
         return DSL.using(configuration)
                   .update(table)
                   .set(deletionDate, Dates.now())
-                  .where(this.guid.eq(uuid));
+                  .where(this.uuid.eq(uuid));
     }
 
     /**
@@ -132,7 +132,7 @@ implements ModifierRepository<E, P> {
             final E dto) {
         return DSL.using(configuration)
                   .insertInto(table)
-                  .set(guid, GUIDs.parse(dto))
+                  .set(uuid, GUIDs.parse(dto))
                   .set(name, Strings.parse(dto.getName()))
                   .set(creationDate, Dates.now())
                   .set(author, GUIDs.parse(dto.getAuthor()));

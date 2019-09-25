@@ -120,7 +120,7 @@ extends AbstractModifierRepository<
     @Override
     protected Transaction toDTO(final Record record) {
         return new Transaction(
-            GUIDs.format(record, guid),
+            GUIDs.format(record, uuid),
             Strings.format(record, name),
             Numbers.format(record, table.CASH),
             TransactionType.valueOf(Strings.format(record, table.TYPE)),

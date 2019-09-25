@@ -54,7 +54,7 @@ implements ReaderRepository<E, P> {
     /**
      * Уникальный идентификатор.
      */
-    protected final TableField<R, UUID> guid;
+    protected final TableField<R, UUID> uuid;
 
     /**
      * Название.
@@ -108,7 +108,7 @@ implements ReaderRepository<E, P> {
             final DSLContext dsl,
             final UserRPC user) {
         this.table = table;
-        this.guid = uuid;
+        this.uuid = uuid;
         this.name = name;
         this.author = author;
         this.creationDate = creationDate;
@@ -136,7 +136,7 @@ implements ReaderRepository<E, P> {
 
     @Override
     public Optional<E> getOptional(final UUID uuid) {
-        return findQuery().where(guid.eq(uuid)).fetchOptional(this::toDTO);
+        return findQuery().where(this.uuid.eq(uuid)).fetchOptional(this::toDTO);
     }
 
     @Override
@@ -148,7 +148,7 @@ implements ReaderRepository<E, P> {
     @Override
     public List<Option> getAll() {
         return findQuery().fetch(record ->
-            new Option(GUIDs.format(record, guid),
+            new Option(GUIDs.format(record, uuid),
                        Strings.format(record, name)));
     }
 

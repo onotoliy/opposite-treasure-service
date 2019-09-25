@@ -118,7 +118,7 @@ extends AbstractModifierRepository<
     @Override
     protected Event toDTO(final Record record) {
         return new Event(
-            GUIDs.format(record, guid),
+            GUIDs.format(record, uuid),
             Strings.format(record, name),
             Numbers.format(record, table.CONTRIBUTION),
             Numbers.format(record, table.TOTAL),
