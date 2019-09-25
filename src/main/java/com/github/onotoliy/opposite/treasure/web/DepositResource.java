@@ -57,8 +57,14 @@ public class DepositResource {
      */
     @GetMapping
     public Page<Deposit> getAll(
-            @RequestParam(value = "offset", required = false, defaultValue = "0") final int offset,
-            @RequestParam(value = "numberOfRows", required = false, defaultValue = "10") final int numberOfRows) {
+            @RequestParam(value = "offset",
+                          required = false,
+                          defaultValue = "0")
+            final int offset,
+            @RequestParam(value = "numberOfRows",
+                          required = false,
+                          defaultValue = "10")
+            final int numberOfRows) {
         return service.getAll(new DepositSearchParameter(offset, numberOfRows));
     }
 }

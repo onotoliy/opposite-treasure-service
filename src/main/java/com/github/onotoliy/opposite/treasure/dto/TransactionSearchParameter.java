@@ -44,7 +44,12 @@ public class TransactionSearchParameter extends SearchParameter {
      * @param offset Количество записей которое необходимо пропустить.
      * @param numberOfRows Размер страницы.
      */
-    public TransactionSearchParameter(final String name, final UUID user, final UUID event, final TransactionType type, final int offset, final int numberOfRows) {
+    public TransactionSearchParameter(final String name,
+                                      final UUID user,
+                                      final UUID event,
+                                      final TransactionType type,
+                                      final int offset,
+                                      final int numberOfRows) {
         super(offset, numberOfRows);
         this.name = name;
         this.user = user;
@@ -112,7 +117,8 @@ public class TransactionSearchParameter extends SearchParameter {
      * @return Результат проверки.
      */
     public boolean hasType() {
-        return Objects.nonEmpty(type) && Objects.nonEqually(type, TransactionType.NONE);
+        return Objects.nonEmpty(type)
+            && Objects.nonEqually(type, TransactionType.NONE);
     }
 
     /**

@@ -50,12 +50,27 @@ extends AbstractModifierResource<
      */
     @GetMapping
     public Page<Transaction> getAll(
-            @RequestParam(value = "name", required = false) final String name,
-            @RequestParam(value = "user", required = false) final UUID user,
-            @RequestParam(value = "event", required = false) final UUID event,
-            @RequestParam(value = "type", required = false) final TransactionType type,
-            @RequestParam(value = "offset", required = false, defaultValue = "0") final int offset,
-            @RequestParam(value = "numberOfRows", required = false, defaultValue = "10") final int numberOfRows) {
-        return service.getAll(new TransactionSearchParameter(name, user, event, type, offset, numberOfRows));
+            @RequestParam(value = "name", required = false)
+            final String name,
+            @RequestParam(value = "user", required = false)
+            final UUID user,
+            @RequestParam(value = "event", required = false)
+            final UUID event,
+            @RequestParam(value = "type", required = false)
+            final TransactionType type,
+            @RequestParam(value = "offset",
+                          required = false,
+                          defaultValue = "0")
+            final int offset,
+            @RequestParam(value = "numberOfRows",
+                          required = false,
+                          defaultValue = "10")
+            final int numberOfRows) {
+        return service.getAll(new TransactionSearchParameter(name,
+                                                             user,
+                                                             event,
+                                                             type,
+                                                             offset,
+                                                             numberOfRows));
     }
 }

@@ -22,6 +22,8 @@ import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.github.onotoliy.opposite.treasure.utils.Objects.nonEmpty;
+
 /**
  * Сервис управления транзакциями.
  *
@@ -64,11 +66,11 @@ extends AbstractModifierService<
      * @param debt Репозиторий долгов.
      */
     @Autowired
-    public TransactionService(TransactionRepository repository,
-                              CashboxRepository cashbox,
-                              DepositRepository deposit,
-                              EventRepository event,
-                              DebtRepository debt) {
+    public TransactionService(final TransactionRepository repository,
+                              final CashboxRepository cashbox,
+                              final DepositRepository deposit,
+                              final EventRepository event,
+                              final DebtRepository debt) {
         super(repository);
         this.cashbox = cashbox;
         this.deposit = deposit;
@@ -77,7 +79,8 @@ extends AbstractModifierService<
     }
 
     @Override
-    protected void create(Configuration configuration, Transaction dto) {
+    protected void create(final Configuration configuration,
+                          final Transaction dto) {
         BigDecimal money = Numbers.parse(dto.getCash());
 
         validation(dto);
@@ -85,14 +88,15 @@ extends AbstractModifierService<
         if (dto.getType() == TransactionType.CONTRIBUTION) {
             cashbox.contribution(configuration, money);
 
-            if (Objects.nonEmpty(dto.getPerson()) && Objects.isEmpty(dto.getEvent())) {
+            if (nonEmpty(dto.getPerson()) && Objects.isEmpty(dto.getEvent())) {
                 deposit.contribution(
                     configuration, GUIDs.parse(dto.getPerson()), money);
             }
 
-            if (Objects.nonEmpty(dto.getPerson()) && Objects.nonEmpty(dto.getEvent())) {
-                debt.contribution(
-                    configuration, GUIDs.parse(dto.getPerson()), GUIDs.parse(dto.getEvent()));
+            if (nonEmpty(dto.getPerson()) && nonEmpty(dto.getEvent())) {
+                debt.contribution(configuration,
+                                  GUIDs.parse(dto.getPerson()),
+                                  GUIDs.parse(dto.getEvent()));
             }
         } else {
             cashbox.cost(configuration, money);
@@ -102,7 +106,8 @@ extends AbstractModifierService<
     }
 
     @Override
-    protected void update(Configuration configuration, Transaction dto) {
+    protected void update(final Configuration configuration,
+                          final Transaction dto) {
         Transaction previous = get(GUIDs.parse(dto));
 
         if (Objects.nonEqually(dto.getType(), previous.getType())) {
@@ -110,7 +115,8 @@ extends AbstractModifierService<
         }
 
         if (Objects.nonEqually(dto.getCash(), previous.getCash())) {
-            throw new ModificationException("Нельзя менять сумму взносов/расходов");
+            throw new ModificationException(
+                "Нельзя менять сумму взносов/расходов");
         }
 
         if (Objects.nonEqually(dto.getPerson(), previous.getPerson())) {
@@ -127,7 +133,7 @@ extends AbstractModifierService<
     }
 
     @Override
-    protected void delete(Configuration configuration, UUID uuid) {
+    protected void delete(final Configuration configuration, final UUID uuid) {
         Transaction dto = get(uuid);
 
         BigDecimal money = Numbers.parse(dto.getCash());
@@ -136,9 +142,13 @@ extends AbstractModifierService<
             cashbox.cost(configuration, money);
 
             if (Objects.isEmpty(dto.getEvent())) {
-                deposit.cost(configuration, GUIDs.parse(dto.getPerson()), money);
+                deposit.cost(configuration,
+                             GUIDs.parse(dto.getPerson()),
+                             money);
             } else {
-                debt.cost(configuration, GUIDs.parse(dto.getPerson()), GUIDs.parse(dto.getEvent()));
+                debt.cost(configuration,
+                          GUIDs.parse(dto.getPerson()),
+                          GUIDs.parse(dto.getEvent()));
             }
         } else {
             cashbox.contribution(configuration, money);
@@ -151,18 +161,19 @@ extends AbstractModifierService<
      * Проверка полноты данных.
      * @param dto Транзакция.
      */
-    private void validation(Transaction dto) {
+    private void validation(final Transaction dto) {
         if (dto.getType() != TransactionType.CONTRIBUTION) {
             return;
         }
 
         if (GUIDs.isEmpty(dto.getPerson())) {
-            throw new ModificationException("У взноса должен быть задан пользователь");
+            throw new ModificationException(
+                "У взноса должен быть задан пользователь");
         }
 
         if (GUIDs.nonEmpty(dto.getEvent())) {
-            Event event = this.event.get(GUIDs.parse(dto.getEvent()));
-            if (Numbers.nonEqually(event.getContribution(), dto.getCash())) {
+            Event e = event.get(GUIDs.parse(dto.getEvent()));
+            if (Numbers.nonEqually(e.getContribution(), dto.getCash())) {
                 throw new ModificationException(
                      "Внесенный взнос не равен взносу с человека");
             }

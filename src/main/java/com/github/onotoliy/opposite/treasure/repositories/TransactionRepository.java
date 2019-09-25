@@ -63,11 +63,12 @@ extends AbstractModifierRepository<
     protected SelectJoinStep<Record> findQuery() {
         return super.findQuery()
                     .leftJoin(Tables.TREASURE_EVENT)
-                    .on(Tables.TREASURE_EVENT.GUID.eq(TABLE.EVENT_GUID));
+                    .on(Tables.TREASURE_EVENT.GUID.eq(table.EVENT_GUID));
     }
 
     @Override
-    protected List<Condition> where(final TransactionSearchParameter parameter) {
+    protected List<Condition> where(
+            final TransactionSearchParameter parameter) {
         List<Condition> conditions = super.where(parameter);
 
         if (parameter.hasEvent()) {
@@ -82,7 +83,8 @@ extends AbstractModifierRepository<
 
         if (parameter.hasName()) {
             conditions.add(
-                TREASURE_TRANSACTION.NAME.likeIgnoreCase("%" + parameter.getName() + "%"));
+                TREASURE_TRANSACTION.NAME.likeIgnoreCase(
+                        "%" + parameter.getName() + "%"));
         }
 
         if (parameter.hasType()) {
@@ -94,36 +96,38 @@ extends AbstractModifierRepository<
     }
 
     @Override
-    public InsertSetMoreStep<TreasureTransactionRecord> insertQuery(final Configuration configuration,
-                                                                    final Transaction dto) {
+    public InsertSetMoreStep<TreasureTransactionRecord> insertQuery(
+            final Configuration configuration,
+            final Transaction dto) {
         return super.insertQuery(configuration, dto)
-                    .set(TABLE.CASH, Numbers.parse(dto.getCash()))
-                    .set(TABLE.USER_GUID, GUIDs.parse(dto.getPerson()))
-                    .set(TABLE.EVENT_GUID, GUIDs.parse(dto.getEvent()))
-                    .set(TABLE.TYPE, Strings.parse(dto.getType().name()));
+                    .set(table.CASH, Numbers.parse(dto.getCash()))
+                    .set(table.USER_GUID, GUIDs.parse(dto.getPerson()))
+                    .set(table.EVENT_GUID, GUIDs.parse(dto.getEvent()))
+                    .set(table.TYPE, Strings.parse(dto.getType().name()));
     }
 
     @Override
-    public UpdateSetMoreStep<TreasureTransactionRecord> updateQuery(final Configuration configuration,
-                                                                    final Transaction dto) {
+    public UpdateSetMoreStep<TreasureTransactionRecord> updateQuery(
+            final Configuration configuration,
+            final Transaction dto) {
         return super.updateQuery(configuration, dto)
-                    .set(TABLE.CASH, Numbers.parse(dto.getCash()))
-                    .set(TABLE.USER_GUID, GUIDs.parse(dto.getPerson()))
-                    .set(TABLE.EVENT_GUID, GUIDs.parse(dto.getEvent()))
-                    .set(TABLE.TYPE, Strings.parse(dto.getType().name()));
+                    .set(table.CASH, Numbers.parse(dto.getCash()))
+                    .set(table.USER_GUID, GUIDs.parse(dto.getPerson()))
+                    .set(table.EVENT_GUID, GUIDs.parse(dto.getEvent()))
+                    .set(table.TYPE, Strings.parse(dto.getType().name()));
     }
 
     @Override
     protected Transaction toDTO(final Record record) {
         return new Transaction(
-            GUIDs.format(record, UUID),
-            Strings.format(record, NAME),
-            Numbers.format(record, TABLE.CASH),
-            TransactionType.valueOf(Strings.format(record, TABLE.TYPE)),
-            formatUser(record, TABLE.USER_GUID),
+            GUIDs.format(record, guid),
+            Strings.format(record, name),
+            Numbers.format(record, table.CASH),
+            TransactionType.valueOf(Strings.format(record, table.TYPE)),
+            formatUser(record, table.USER_GUID),
             EventRepository.toOption(record),
-            Dates.format(record, CREATION_DATE),
-            formatUser(record, AUTHOR)
+            Dates.format(record, creationDate),
+            formatUser(record, author)
         );
     }
 }

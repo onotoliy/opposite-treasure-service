@@ -68,14 +68,17 @@ extends AbstractModifierRepository<
      * @return События.
      */
     public Page<Event> getDebts(final java.util.UUID person) {
-        List<Event> list = dsl.select()
-                              .from(TREASURE_DEBT)
-                              .join(TREASURE_EVENT)
-                              .on(TREASURE_EVENT.GUID.eq(TREASURE_DEBT.EVENT_GUID))
-                              .where(TREASURE_DEBT.USER_UUID.eq(person))
-                              .fetch(this::toDTO);
+        List<Event> list = dsl
+            .select()
+            .from(TREASURE_DEBT)
+            .join(TREASURE_EVENT)
+            .on(TREASURE_EVENT.GUID.eq(TREASURE_DEBT.EVENT_GUID))
+            .where(TREASURE_DEBT.USER_UUID.eq(person))
+            .fetch(this::toDTO);
 
-        return new Page<>(new Meta(list.size(), new Paging(0, list.size())), list);
+        return new Page<>(new Meta(list.size(),
+                                   new Paging(0, list.size())),
+                          list);
     }
 
     @Override
@@ -83,40 +86,46 @@ extends AbstractModifierRepository<
         List<Condition> conditions = super.where(parameter);
 
         if (parameter.hasName()) {
-            conditions.add(TREASURE_EVENT.NAME.likeIgnoreCase("%" + parameter.getName() + "%"));
+            conditions.add(TREASURE_EVENT.NAME.likeIgnoreCase(
+                    "%" + parameter.getName() + "%"));
         }
 
         return conditions;
     }
 
     @Override
-    public InsertSetMoreStep<TreasureEventRecord> insertQuery(final Configuration configuration,
-                                                              final Event dto) {
+    public InsertSetMoreStep<TreasureEventRecord> insertQuery(
+            final Configuration configuration,
+            final Event dto) {
         return super.insertQuery(configuration, dto)
-                    .set(TABLE.CONTRIBUTION, Numbers.parse(dto.getContribution()))
-                    .set(TABLE.TOTAL, Numbers.parse(dto.getTotal()))
-                    .set(TABLE.DEADLINE, Dates.parse(dto.getDeadline()));
+                    .set(table.CONTRIBUTION,
+                         Numbers.parse(dto.getContribution()))
+                    .set(table.TOTAL, Numbers.parse(dto.getTotal()))
+                    .set(table.DEADLINE, Dates.parse(dto.getDeadline()));
     }
 
     @Override
-    public UpdateSetMoreStep<TreasureEventRecord> updateQuery(final Configuration configuration,
-                                                              final Event dto) {
+    public UpdateSetMoreStep<TreasureEventRecord> updateQuery(
+            final Configuration configuration,
+            final Event dto) {
         return super.updateQuery(configuration, dto)
-                    .set(TABLE.CONTRIBUTION, Numbers.parse(dto.getContribution()))
-                    .set(TABLE.TOTAL, Numbers.parse(dto.getTotal()))
-                    .set(TABLE.DEADLINE, Dates.parse(dto.getDeadline()));
+                    .set(table.CONTRIBUTION,
+                         Numbers.parse(dto.getContribution()))
+                    .set(table.TOTAL, Numbers.parse(dto.getTotal()))
+                    .set(table.DEADLINE, Dates.parse(dto.getDeadline()));
     }
 
     @Override
     protected Event toDTO(final Record record) {
         return new Event(
-        GUIDs.format(record, UUID),
-        Strings.format(record, NAME),
-        Numbers.format(record, TABLE.CONTRIBUTION),
-        Numbers.format(record, TABLE.TOTAL),
-        Dates.format(record, TABLE.DEADLINE),
-        Dates.format(record, CREATION_DATE),
-        formatUser(record, AUTHOR));
+            GUIDs.format(record, guid),
+            Strings.format(record, name),
+            Numbers.format(record, table.CONTRIBUTION),
+            Numbers.format(record, table.TOTAL),
+            Dates.format(record, table.DEADLINE),
+            Dates.format(record, creationDate),
+            formatUser(record, author)
+        );
     }
 
     /**
@@ -126,12 +135,10 @@ extends AbstractModifierRepository<
      * @return Объект.
      */
     public static Option toOption(final Record record) {
-        if (record.getValue(TREASURE_EVENT.GUID, java.util.UUID.class) == null) {
-            return null;
-        }
+        String uuid = GUIDs.format(record, TREASURE_EVENT.GUID);
 
-        return new Option(
-            GUIDs.format(record, TREASURE_EVENT.GUID),
-            Strings.format(record, TREASURE_EVENT.NAME));
+        return Strings.isEmpty(uuid)
+            ? null
+            : new Option(uuid, Strings.format(record, TREASURE_EVENT.NAME));
     }
 }

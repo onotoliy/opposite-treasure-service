@@ -64,7 +64,8 @@ public class DepositRepository {
         return dsl.select().from(TREASURE_DEPOSIT)
                   .where(TREASURE_DEPOSIT.USER_UUID.eq(uuid))
                   .fetchOptional(this::toDTO)
-                  .orElseThrow(() -> new NotFoundException(TREASURE_DEPOSIT, uuid));
+                  .orElseThrow(() -> new NotFoundException(TREASURE_DEPOSIT,
+                                                           uuid));
     }
 
     /**
@@ -90,9 +91,12 @@ public class DepositRepository {
      * Уменьшение депозита пользователя на указанную сумму.
      *
      * @param configuration Настройки транзакции.
+     * @param guid Уникальный идентификатор.
      * @param money Денежные средства.
      */
-    public void cost(final Configuration configuration, final UUID guid, final BigDecimal money) {
+    public void cost(final Configuration configuration,
+                     final UUID guid,
+                     final BigDecimal money) {
         setDeposit(configuration, guid, TREASURE_DEPOSIT.DEPOSIT.sub(money));
     }
 
@@ -100,9 +104,12 @@ public class DepositRepository {
      * Увеличение депозита пользователя на указанную сумму.
      *
      * @param configuration Настройки транзакции.
+     * @param guid Уникальный идентификатор.
      * @param money Денежные средства.
      */
-    public void contribution(final Configuration configuration, final UUID guid, final BigDecimal money) {
+    public void contribution(final Configuration configuration,
+                             final UUID guid,
+                             final BigDecimal money) {
         setDeposit(configuration, guid, TREASURE_DEPOSIT.DEPOSIT.add(money));
     }
 
@@ -113,7 +120,9 @@ public class DepositRepository {
      * @param guid Пользователь.
      * @param deposit Операция над депозитом.
      */
-    private void setDeposit(final Configuration configuration, final UUID guid, final Field<BigDecimal> deposit) {
+    private void setDeposit(final Configuration configuration,
+                            final UUID guid,
+                            final Field<BigDecimal> deposit) {
         int count = DSL.using(configuration)
                        .update(TREASURE_DEPOSIT)
                        .set(TREASURE_DEPOSIT.DEPOSIT, deposit)
@@ -137,9 +146,9 @@ public class DepositRepository {
      */
     private Deposit toDTO(final Record record) {
         return new Deposit(
-        Optional.of(record.getValue(TREASURE_DEPOSIT.USER_UUID, UUID.class))
+            Optional.of(record.getValue(TREASURE_DEPOSIT.USER_UUID, UUID.class))
                     .flatMap(user::findOption)
                     .orElse(null),
-        Numbers.format(record, TREASURE_DEPOSIT.DEPOSIT));
+            Numbers.format(record, TREASURE_DEPOSIT.DEPOSIT));
     }
 }

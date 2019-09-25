@@ -17,11 +17,35 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.time.Duration;
 
-public class JooqGenerator {
+/**
+ * Класс использующийся для генерации Jooq схемы.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
+public final class JooqGenerator {
 
-    public static void main(String[] args) throws Exception {
+    /**
+     * Продолжительность 5 мин.
+     */
+    private static final int DURATION = 600;
+
+    /**
+     * Конструктор по умолчанию.
+     */
+    private JooqGenerator() {
+
+    }
+
+    /**
+     * Метод запускающий генерацию Jooq схемы.
+     *
+     * @param args Параметры генерации Jooq схемы.
+     * @throws Exception Ошибка возникшая при генерации Jooq схемы.
+     */
+    public static void main(final String[] args) throws Exception {
         URL changelog = JooqGenerator.class.getResource(args[0]);
         String directory = args[1];
+        String pkg = args[2];
 
         /*
           Удалить файлы из указанной директории.
@@ -35,7 +59,7 @@ public class JooqGenerator {
                 .withDatabaseName("service")
                 .withUsername("service")
                 .withPassword("service")
-                .withStartupTimeout(Duration.ofSeconds(600));
+                .withStartupTimeout(Duration.ofSeconds(DURATION));
 
         container.start();
 
@@ -47,8 +71,9 @@ public class JooqGenerator {
                 changelog.getPath(),
                 new FileSystemResourceAccessor(),
                 DatabaseFactory.getInstance()
-                               .findCorrectDatabaseImplementation(new JdbcConnection(connection))
-            ).update("");
+                               .findCorrectDatabaseImplementation(
+                                   new JdbcConnection(connection)))
+            .update("");
         }
 
         /*
@@ -67,7 +92,7 @@ public class JooqGenerator {
                     .withExcludes("DATABASECHANGELOGLOCK*|DATABASECHANGELOG*")
                     .withSchemata(new Schema().withInputSchema("public")))
                 .withTarget(new Target()
-                    .withPackageName("com.github.onotoliy.opposite.treasure.jooq")
+                    .withPackageName(pkg)
                     .withDirectory(directory)));
 
         GenerationTool.generate(configuration);

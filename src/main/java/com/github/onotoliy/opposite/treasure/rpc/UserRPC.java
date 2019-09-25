@@ -1,20 +1,27 @@
 package com.github.onotoliy.opposite.treasure.rpc;
 
 import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+
+/**
+ * Сервис чтения данных о пользвателях из Keycloak.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
 @Service
 public class UserRPC {
 
-    private static Map<UUID, Option> USERS =
+    /**
+     * Список пользователей.
+     */
+    private static final Map<UUID, Option> USERS =
         Map.of(
             UUID.fromString("8098207c-6fbb-45ec-ae10-184607262a1a"),
             new Option("8098207c-6fbb-45ec-ae10-184607262a1a", "Александр"),
@@ -37,15 +44,32 @@ public class UserRPC {
             UUID.fromString("c3facefb-c626-4505-8a7f-b3f83f308bfc"),
             new Option("c3facefb-c626-4505-8a7f-b3f83f308bfc", "Андрей"));
 
-    public Option find(UUID uuid) {
+    /**
+     * Получение пользователя.
+     *
+     * @param uuid Уникальный идентификатор.
+     * @return Пользователь.
+     */
+    public Option find(final UUID uuid) {
         return findOption(uuid).orElseThrow(
             () -> new RuntimeException());
     }
 
-    public Optional<Option> findOption(UUID uuid) {
+    /**
+     * Получение опционального пользователя.
+     *
+     * @param uuid Уникальный идентификатор.
+     * @return Пользователь.
+     */
+    public Optional<Option> findOption(final UUID uuid) {
         return Optional.of(USERS.get(uuid));
     }
 
+    /**
+     * Получение всех пользователей зарегистрированных в системе.
+     *
+     * @return Пользователи
+     */
     public List<Option> getAll() {
         return new ArrayList<>(USERS.values());
     }

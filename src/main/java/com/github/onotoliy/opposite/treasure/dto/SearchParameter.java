@@ -8,6 +8,16 @@ package com.github.onotoliy.opposite.treasure.dto;
 public abstract class SearchParameter {
 
     /**
+     * Количество записей которое необходимо пропустить по умолчанию.
+     */
+    private static final int OFFSET_DEFAULT = 0;
+
+    /**
+     * Размер страницы по умолчанию.
+     */
+    private static final int NUMBER_OF_ROWS = 10;
+
+    /**
      * Количество записей которое необходимо пропустить.
      */
     private final int offset;
@@ -32,7 +42,7 @@ public abstract class SearchParameter {
      * Конструктор по умолчанию.
      */
     protected SearchParameter() {
-        this(0, 10);
+        this(OFFSET_DEFAULT, NUMBER_OF_ROWS);
     }
 
     /**
@@ -50,6 +60,6 @@ public abstract class SearchParameter {
      * @return Размер страницы.
      */
     public int numberOfRows() {
-        return numberOfRows;
+        return NUMBER_OF_ROWS;
     }
 }

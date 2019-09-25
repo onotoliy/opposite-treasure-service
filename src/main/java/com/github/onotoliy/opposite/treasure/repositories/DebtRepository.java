@@ -23,7 +23,9 @@ public class DebtRepository {
      * @param person Пользователь.
      * @param event Событие
      */
-    public void cost(final Configuration configuration, final UUID person, final UUID event) {
+    public void cost(final Configuration configuration,
+                     final UUID person,
+                     final UUID event) {
         DSL.using(configuration)
            .insertInto(TREASURE_DEBT)
            .set(TREASURE_DEBT.USER_UUID, person)
@@ -38,7 +40,9 @@ public class DebtRepository {
      * @param person Пользователь.
      * @param event Событие
      */
-    public void contribution(final Configuration configuration, final UUID person, final UUID event) {
+    public void contribution(final Configuration configuration,
+                             final UUID person,
+                             final UUID event) {
         DSL.using(configuration)
            .deleteFrom(TREASURE_DEBT)
            .where(

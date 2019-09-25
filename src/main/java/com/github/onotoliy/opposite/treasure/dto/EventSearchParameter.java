@@ -21,7 +21,9 @@ public class EventSearchParameter extends SearchParameter {
      * @param offset Количество записей которое необходимо пропустить.
      * @param numberOfRows Размер страницы.
      */
-    public EventSearchParameter(final String name, final int offset, final int numberOfRows) {
+    public EventSearchParameter(final String name,
+                                final int offset,
+                                final int numberOfRows) {
         super(offset, numberOfRows);
 
         this.name = name;

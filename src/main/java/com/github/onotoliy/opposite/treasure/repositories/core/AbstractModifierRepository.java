@@ -56,14 +56,15 @@ implements ModifierRepository<E, P> {
      * @param dsl Контекст подключения к БД.
      * @param user Сервис чтения пользователей.
      */
-    protected AbstractModifierRepository(final T table,
-                                         final TableField<R, UUID> uuid,
-                                         final TableField<R, String> name,
-                                         final TableField<R, UUID> author,
-                                         final  TableField<R, Timestamp> creationDate,
-                                         final TableField<R, Timestamp> deletionDate,
-                                         final DSLContext dsl,
-                                         final UserRPC user) {
+    protected AbstractModifierRepository(
+            final T table,
+            final TableField<R, UUID> uuid,
+            final TableField<R, String> name,
+            final TableField<R, UUID> author,
+            final  TableField<R, Timestamp> creationDate,
+            final TableField<R, Timestamp> deletionDate,
+            final DSLContext dsl,
+            final UserRPC user) {
         super(table, uuid, name, author, creationDate, deletionDate, dsl, user);
     }
 
@@ -84,12 +85,13 @@ implements ModifierRepository<E, P> {
 
     @Override
     public E update(final E dto) {
-        return execute(dto, updateQuery(dto).where(UUID.eq(GUIDs.parse(dto))));
+        return execute(dto, updateQuery(dto).where(guid.eq(GUIDs.parse(dto))));
     }
 
     @Override
     public E update(final Configuration configuration, final E dto) {
-        return execute(dto, updateQuery(configuration, dto).where(UUID.eq(GUIDs.parse(dto))));
+        return execute(dto, updateQuery(configuration, dto).where(
+        guid.eq(GUIDs.parse(dto))));
     }
 
     @Override
@@ -109,11 +111,13 @@ implements ModifierRepository<E, P> {
      * @param uuid Уникальный идентификатор.
      * @return Запрос.
      */
-    protected UpdateConditionStep<R> deleteQuery(final Configuration configuration, final UUID uuid) {
+    protected UpdateConditionStep<R> deleteQuery(
+            final Configuration configuration,
+            final UUID uuid) {
         return DSL.using(configuration)
-                  .update(TABLE)
-                  .set(DELETION_DATE, Dates.now())
-                  .where(UUID.eq(uuid));
+                  .update(table)
+                  .set(deletionDate, Dates.now())
+                  .where(this.guid.eq(uuid));
     }
 
     /**
@@ -123,13 +127,15 @@ implements ModifierRepository<E, P> {
      * @param dto Объект.
      * @return Запрос.
      */
-    protected InsertSetMoreStep<R> insertQuery(final Configuration configuration, final E dto) {
+    protected InsertSetMoreStep<R> insertQuery(
+            final Configuration configuration,
+            final E dto) {
         return DSL.using(configuration)
-                  .insertInto(TABLE)
-                  .set(UUID, GUIDs.parse(dto))
-                  .set(NAME, Strings.parse(dto.getName()))
-                  .set(CREATION_DATE, Dates.now())
-                  .set(AUTHOR, GUIDs.parse(dto.getAuthor()));
+                  .insertInto(table)
+                  .set(guid, GUIDs.parse(dto))
+                  .set(name, Strings.parse(dto.getName()))
+                  .set(creationDate, Dates.now())
+                  .set(author, GUIDs.parse(dto.getAuthor()));
     }
 
     /**
@@ -139,12 +145,14 @@ implements ModifierRepository<E, P> {
      * @param dto Объект.
      * @return Запрос.
      */
-    protected UpdateSetMoreStep<R> updateQuery(final Configuration configuration, final E dto) {
+    protected UpdateSetMoreStep<R> updateQuery(
+            final Configuration configuration,
+            final E dto) {
         return DSL.using(configuration)
-                  .update(TABLE)
-                  .set(NAME, Strings.parse(dto.getName()))
-                  .set(CREATION_DATE, Dates.now())
-                  .set(AUTHOR, GUIDs.parse(dto.getAuthor()));
+                  .update(table)
+                  .set(name, Strings.parse(dto.getName()))
+                  .set(creationDate, Dates.now())
+                  .set(author, GUIDs.parse(dto.getAuthor()));
     }
 
     /**
@@ -203,11 +211,11 @@ implements ModifierRepository<E, P> {
         int count = query.execute();
 
         if (count == 0) {
-            throw new NotFoundException(TABLE, uuid);
+            throw new NotFoundException(table, uuid);
         }
 
         if (count > 1) {
-            throw new NotUniqueException(TABLE, uuid);
+            throw new NotUniqueException(table, uuid);
         }
     }
 }

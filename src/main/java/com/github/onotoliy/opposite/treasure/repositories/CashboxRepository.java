@@ -54,8 +54,10 @@ public class CashboxRepository {
      * @param configuration Настройки транзакции.
      * @param money Денежные средства.
      */
-    public void cost(final Configuration configuration, final BigDecimal money) {
-        setDeposit(configuration, TREASURE_CASHBOX.DEPOSIT.cast(BigDecimal.class).sub(money));
+    public void cost(final Configuration configuration,
+                     final BigDecimal money) {
+        setDeposit(configuration,
+                   TREASURE_CASHBOX.DEPOSIT.cast(BigDecimal.class).sub(money));
     }
 
     /**
@@ -64,8 +66,10 @@ public class CashboxRepository {
      * @param configuration Настройки транзакции.
      * @param money Денежные средства.
      */
-    public void contribution(final Configuration configuration, final BigDecimal money) {
-        setDeposit(configuration, TREASURE_CASHBOX.DEPOSIT.cast(BigDecimal.class).add(money));
+    public void contribution(final Configuration configuration,
+                             final BigDecimal money) {
+        setDeposit(configuration,
+                   TREASURE_CASHBOX.DEPOSIT.cast(BigDecimal.class).add(money));
     }
 
     /**
@@ -74,7 +78,8 @@ public class CashboxRepository {
      * @param configuration Настройки транзакции.
      * @param deposit Операция над депозитом.
      */
-    private void setDeposit(final Configuration configuration, final Field<BigDecimal> deposit) {
+    private void setDeposit(final Configuration configuration,
+                            final Field<BigDecimal> deposit) {
         DSL.using(configuration)
            .update(TREASURE_CASHBOX)
            .set(TREASURE_CASHBOX.LAST_UPDATE_DATE, Dates.now())

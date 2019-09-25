@@ -27,7 +27,7 @@ public abstract class AbstractReaderService<
 implements ReaderService<E, P> {
 
     /**
-     * Репозиторий
+     * Репозиторий.
      */
     protected final R repository;
 

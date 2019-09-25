@@ -59,10 +59,19 @@ extends AbstractModifierResource<
      */
     @GetMapping
     public Page<Event> getAll(
-            @RequestParam(value = "name", required = false) final String name,
-            @RequestParam(value = "offset", required = false, defaultValue = "0") final int offset,
-            @RequestParam(value = "numberOfRows", required = false, defaultValue = "10") final int numberOfRows) {
-        return service.getAll(new EventSearchParameter(name, offset, numberOfRows));
+            @RequestParam(value = "name", required = false)
+            final String name,
+            @RequestParam(value = "offset",
+                          required = false,
+                          defaultValue = "0")
+            final int offset,
+            @RequestParam(value = "numberOfRows",
+                          required = false,
+                          defaultValue = "10")
+            final int numberOfRows) {
+        return service.getAll(new EventSearchParameter(name,
+                                                       offset,
+                                                       numberOfRows));
     }
 
     /**

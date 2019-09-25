@@ -31,7 +31,7 @@ implements ModifierService<E, P> {
      *
      * @param repository Репозиторий.
      */
-    public AbstractModifierService(R repository) {
+    public AbstractModifierService(final R repository) {
         super(repository);
     }
 

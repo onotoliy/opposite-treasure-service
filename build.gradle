@@ -156,5 +156,5 @@ check.dependsOn jacocoTestCoverageVerification
 task jooqGen(dependsOn: 'classes', type: JavaExec) {
     main = 'com.github.onotoliy.opposite.treasure.JooqGenerator'
     classpath = sourceSets.main.runtimeClasspath
-    args '/liquibase/db.changelog-master.xml', 'src/main/java'
+    args '/liquibase/db.changelog-master.xml', 'src/main/java', 'com.github.onotoliy.opposite.treasure.jooq'
 }

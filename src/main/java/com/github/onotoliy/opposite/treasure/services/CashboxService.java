@@ -16,7 +16,7 @@ public class CashboxService {
     /**
      * Репозиторий.
      */
-    public final CashboxRepository repository;
+    private final CashboxRepository repository;
 
     /**
      * Конструтор.

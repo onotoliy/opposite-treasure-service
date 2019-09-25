@@ -49,32 +49,32 @@ implements ReaderRepository<E, P> {
     /**
      * Таблица.
      */
-    protected final T TABLE;
+    protected final T table;
 
     /**
      * Уникальный идентификатор.
      */
-    protected final TableField<R, UUID> UUID;
+    protected final TableField<R, UUID> guid;
 
     /**
      * Название.
      */
-    protected final TableField<R, String> NAME;
+    protected final TableField<R, String> name;
 
     /**
      * Автор.
      */
-    protected final TableField<R, UUID> AUTHOR;
+    protected final TableField<R, UUID> author;
 
     /**
      * Дата создания.
      */
-    protected final TableField<R, Timestamp> CREATION_DATE;
+    protected final TableField<R, Timestamp> creationDate;
 
     /**
      * Дата удаления.
      */
-    protected final TableField<R, Timestamp> DELETION_DATE;
+    protected final TableField<R, Timestamp> deletionDate;
 
     /**
      * Контекст подключения к БД.
@@ -98,20 +98,21 @@ implements ReaderRepository<E, P> {
      * @param dsl Контекст подключения к БД.
      * @param user Сервис чтения пользователей.
      */
-    protected AbstractReaderRepository(final T table,
-                                       final TableField<R, UUID> uuid,
-                                       final TableField<R, String> name,
-                                       final TableField<R, UUID> author,
-                                       final TableField<R, Timestamp> creationDate,
-                                       final TableField<R, Timestamp> deletionDate,
-                                       final DSLContext dsl,
-                                       final UserRPC user) {
-        this.TABLE = table;
-        this.UUID = uuid;
-        this.NAME = name;
-        this.AUTHOR = author;
-        this.CREATION_DATE = creationDate;
-        this.DELETION_DATE = deletionDate;
+    protected AbstractReaderRepository(
+            final T table,
+            final TableField<R, UUID> uuid,
+            final TableField<R, String> name,
+            final TableField<R, UUID> author,
+            final TableField<R, Timestamp> creationDate,
+            final TableField<R, Timestamp> deletionDate,
+            final DSLContext dsl,
+            final UserRPC user) {
+        this.table = table;
+        this.guid = uuid;
+        this.name = name;
+        this.author = author;
+        this.creationDate = creationDate;
+        this.deletionDate = deletionDate;
         this.dsl = dsl;
         this.user = user;
     }
@@ -122,7 +123,7 @@ implements ReaderRepository<E, P> {
      * @param record Запись из БД.
      * @return Объект.
      */
-    protected abstract E toDTO(final Record record);
+    protected abstract E toDTO(Record record);
 
     /**
      * Получение select запроса из таблицы.
@@ -130,23 +131,25 @@ implements ReaderRepository<E, P> {
      * @return Запрос.
      */
     protected SelectJoinStep<Record> findQuery() {
-        return dsl.select().from(TABLE);
+        return dsl.select().from(table);
     }
 
     @Override
     public Optional<E> getOptional(final UUID uuid) {
-        return findQuery().where(UUID.eq(uuid)).fetchOptional(this::toDTO);
+        return findQuery().where(guid.eq(uuid)).fetchOptional(this::toDTO);
     }
 
     @Override
     public E get(final UUID uuid) {
         return getOptional(uuid).orElseThrow(
-            () -> new NotFoundException(TABLE, uuid));
+            () -> new NotFoundException(table, uuid));
     }
 
     @Override
     public List<Option> getAll() {
-        return findQuery().fetch(record -> new Option(GUIDs.format(record, UUID), Strings.format(record, NAME)));
+        return findQuery().fetch(record ->
+            new Option(GUIDs.format(record, guid),
+                       Strings.format(record, name)));
     }
 
     @Override
@@ -154,7 +157,7 @@ implements ReaderRepository<E, P> {
         return new Page<>(
             new Meta(
                 dsl.selectCount()
-                   .from(TABLE)
+                   .from(table)
                    .where(where(parameter))
                    .fetchOptional(0, int.class)
                    .orElse(0),
@@ -172,7 +175,7 @@ implements ReaderRepository<E, P> {
      * @return Колонки по которым будет производиться сортировка.
      */
     protected List<? extends OrderField<?>> orderBy() {
-        return new LinkedList<>(Collections.singleton(CREATION_DATE.desc()));
+        return new LinkedList<>(Collections.singleton(creationDate.desc()));
     }
 
     /**
@@ -182,14 +185,14 @@ implements ReaderRepository<E, P> {
      * @return Условия выборки данных из БД.
      */
     protected List<Condition> where(final P parameter) {
-        return new LinkedList<>(Collections.singleton(DELETION_DATE.isNull()));
+        return new LinkedList<>(Collections.singleton(deletionDate.isNull()));
     }
 
     /**
      * Преобразование пользователя из уникального идентификатора в объект.
      *
      * @param record Запись из БД.
-     * @param field Колонка в которой содержиться уникальный идентификатор пользователя.
+     * @param field Колонка содержащая уникальный идентификатор пользователя.
      * @return Пользователь.
      */
     protected Option formatUser(final Record record, final Field<UUID> field) {
