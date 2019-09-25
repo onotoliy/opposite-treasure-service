@@ -30,21 +30,21 @@ extends AbstractModifierService<Event, EventSearchParameter, EventRepository> {
     private final UserRPC user;
 
     @Autowired
-    public EventService(EventRepository repository,
-                        DebtRepository debt,
-                        UserRPC user) {
+    public EventService(final EventRepository repository,
+                        final DebtRepository debt,
+                        final UserRPC user) {
         super(repository);
         this.debt = debt;
         this.user = user;
     }
 
     @Override
-    protected void create(Configuration configuration, Event dto) {
+    protected void create(final Configuration configuration, Event dto) {
         repository.create(configuration, dto);
         user.getAll().forEach(e -> debt.cost(configuration, GUID.parse(e), GUID.parse(dto)));
     }
 
-    public Page<Event> getDebts(UUID person) {
+    public Page<Event> getDebts(final UUID person) {
         return repository.getDebts(person);
     }
 }

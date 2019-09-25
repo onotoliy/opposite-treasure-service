@@ -20,12 +20,12 @@ implements ReaderService<E, P> {
 
     protected final R repository;
 
-    public AbstractReaderService(R repository) {
+    public AbstractReaderService(final R repository) {
         this.repository = repository;
     }
 
     @Override
-    public E get(UUID uuid) {
+    public E get(final UUID uuid) {
         return repository.get(uuid);
     }
 
@@ -34,7 +34,7 @@ implements ReaderService<E, P> {
     }
 
     @Override
-    public Page<E> getAll(P parameter) {
+    public Page<E> getAll(final P parameter) {
         return repository.getAll(parameter);
     }
 }

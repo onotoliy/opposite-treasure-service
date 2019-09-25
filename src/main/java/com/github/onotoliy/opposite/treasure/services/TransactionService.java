@@ -88,16 +88,15 @@ extends AbstractModifierService<
             throw new ModificationException("Нельзя менять сумму взносов/расходов");
         }
 
-        validation(dto);
-
-        if (GUID.notEqually(previous.getPerson(), dto.getPerson())) {
-            if (previous.getType() == TransactionType.CONTRIBUTION) {
-                BigDecimal money = MONEY.parse(dto.getCash());
-
-                deposit.contribution(configuration, GUID.parse(dto.getPerson()), money);
-                deposit.cost(configuration, GUID.parse(previous.getPerson()), money);
-            }
+        if (OBJECT.nonEqually(dto.getPerson(), previous.getPerson())) {
+            throw new ModificationException("Нельзя менять члена клуба");
         }
+
+        if (OBJECT.nonEqually(dto.getEvent(), previous.getEvent())) {
+            throw new ModificationException("Нельзя менять мероприятие");
+        }
+
+        validation(dto);
 
         repository.update(configuration, dto);
     }
@@ -111,8 +110,10 @@ extends AbstractModifierService<
         if (dto.getType() == TransactionType.CONTRIBUTION) {
             cashbox.cost(configuration, money);
 
-            if (Objects.nonNull(dto.getPerson())) {
+            if (Objects.isNull(dto.getEvent())) {
                 deposit.cost(configuration, GUID.parse(dto.getPerson()), money);
+            } else {
+                debt.cost(configuration, GUID.parse(dto.getPerson()), GUID.parse(dto.getEvent()));
             }
         } else {
             cashbox.contribution(configuration, money);
@@ -134,7 +135,7 @@ extends AbstractModifierService<
             Event event = this.event.get(GUID.parse(dto.getEvent()));
             if (MONEY.nonEqually(event.getContribution(), dto.getCash())) {
                 throw new ModificationException(
-                    "Внесенный взнос не равен взносу с человека");
+                     "Внесенный взнос не равен взносу с человека");
             }
         }
     }

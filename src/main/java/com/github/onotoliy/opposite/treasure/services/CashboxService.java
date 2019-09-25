@@ -11,7 +11,7 @@ public class CashboxService {
     public final CashboxRepository repository;
 
     @Autowired
-    public CashboxService(CashboxRepository repository) {
+    public CashboxService(final CashboxRepository repository) {
         this.repository = repository;
     }
 

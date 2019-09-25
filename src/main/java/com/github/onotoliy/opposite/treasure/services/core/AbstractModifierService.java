@@ -23,33 +23,33 @@ implements ModifierService<E, P> {
     }
 
     @Override
-    public E create(E dto) {
+    public E create(final E dto) {
         repository.transaction(configuration -> create(configuration, dto));
 
         return get(UUIDUtil.GUID.parse(dto));
     }
 
-    protected void create(Configuration configuration, E dto) {
+    protected void create(final Configuration configuration, final E dto) {
         repository.create(configuration, dto);
     }
 
     @Override
-    public E update(E dto) {
+    public E update(final E dto) {
         repository.transaction(configuration -> update(configuration, dto));
 
         return get(UUIDUtil.GUID.parse(dto));
     }
 
-    protected void update(Configuration configuration, E dto) {
+    protected void update(final Configuration configuration, final E dto) {
         repository.update(configuration, dto);
     }
 
     @Override
-    public void delete(UUID uuid) {
+    public void delete(final UUID uuid) {
         repository.transaction(configuration -> delete(configuration, uuid));
     }
 
-    protected void delete(Configuration configuration, UUID uuid) {
+    protected void delete(final Configuration configuration, final UUID uuid) {
         repository.delete(configuration, uuid);
     }
 }

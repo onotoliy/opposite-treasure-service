@@ -16,21 +16,42 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * WEB сервис управления событиями.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
 @RestController
 @RequestMapping(value = "/event")
 public class EventResource
-extends AbstractModifierResource<Event, EventSearchParameter, EventService> {
+extends AbstractModifierResource<
+    Event,
+    EventSearchParameter,
+    EventService> {
 
     @Autowired
     public EventResource(EventService service) {
         super(service);
     }
 
+    /**
+     * Получение списка всех событий.
+     *
+     * @return События.
+     */
     @GetMapping(value = "/list")
     public List<Option> getAll() {
         return service.getAll();
     }
 
+    /**
+     * Поиск событий.
+     *
+     * @param name Название.
+     * @param offset Количество записей которое необходимо пропустить.
+     * @param numberOfRows Размер страницы.
+     * @return События.
+     */
     @GetMapping
     public Page<Event> getAll(
             @RequestParam(value = "name", required = false) String name,
@@ -39,6 +60,12 @@ extends AbstractModifierResource<Event, EventSearchParameter, EventService> {
         return service.getAll(new EventSearchParameter(name, offset, numberOfRows));
     }
 
+    /**
+     * Получение списка событий по которым пользователь не рассчитался.
+     *
+     * @param person Пользователь
+     * @return Список событий по которым пользователь не рассчитался.
+     */
     @GetMapping("/person/{person}/debts")
     public Page<Event> getDebts(@PathVariable("person") UUID person) {
         return service.getDebts(person);

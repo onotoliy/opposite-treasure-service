@@ -39,7 +39,7 @@ public class UserRPC {
 
     public Option find(UUID uuid) {
         return findOption(uuid).orElseThrow(
-            () -> new NotFoundException(Option.class, uuid));
+            () -> new RuntimeException());
     }
 
     public Optional<Option> findOption(UUID uuid) {

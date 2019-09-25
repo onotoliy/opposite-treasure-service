@@ -18,31 +18,62 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEPOSIT;
 import static com.github.onotoliy.opposite.treasure.utils.BigDecimalUtil.MONEY;
 
+/**
+ * Репозиторий управления депозитами.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
 @Repository
 public class DepositRepository {
 
+    /**
+     * Контекст подключения к БД.
+     */
     private final DSLContext dsl;
 
+    /**
+     * Сервис чтения пользователей.
+     */
     private final UserRPC user;
 
-    public DepositRepository(DSLContext dsl, UserRPC user) {
+    /**
+     * Конструктор.
+     *
+     * @param dsl Контекст подключения к БД.
+     * @param user Сервис чтения пользователей.
+     */
+    @Autowired
+    public DepositRepository(final DSLContext dsl, final UserRPC user) {
         this.dsl = dsl;
         this.user = user;
     }
 
-    public Deposit get(UUID uuid) {
+    /**
+     * Получение депозита.
+     *
+     * @param uuid Уникальный идентификатор.
+     * @return Депозит.
+     */
+    public Deposit get(final UUID uuid) {
         return dsl.select().from(TREASURE_DEPOSIT)
                   .where(TREASURE_DEPOSIT.USER_UUID.eq(uuid))
                   .fetchOptional(this::toDTO)
                   .orElseThrow(() -> new NotFoundException(TREASURE_DEPOSIT, uuid));
     }
 
-    public Page<Deposit> getAll(DepositSearchParameter parameter) {
+    /**
+     * Поиск депозитов.
+     *
+     * @param parameter Поисковые параметры.
+     * @return Депозиты.
+     */
+    public Page<Deposit> getAll(final DepositSearchParameter parameter) {
         return new Page<>(
             new Meta(
                 dsl.selectCount()
@@ -55,15 +86,15 @@ public class DepositRepository {
                .fetch(this::toDTO));
     }
 
-    public void cost(Configuration configuration, UUID guid, BigDecimal money) {
+    public void cost(final Configuration configuration, final UUID guid, final BigDecimal money) {
         setDeposit(configuration, guid, TREASURE_DEPOSIT.DEPOSIT.sub(money));
     }
 
-    public void contribution(Configuration configuration, UUID guid, BigDecimal money) {
+    public void contribution(final Configuration configuration, final UUID guid, final BigDecimal money) {
         setDeposit(configuration, guid, TREASURE_DEPOSIT.DEPOSIT.add(money));
     }
 
-    private void setDeposit(Configuration configuration, UUID guid, Field<BigDecimal> deposit) {
+    private void setDeposit(final Configuration configuration, final UUID guid, final Field<BigDecimal> deposit) {
         int count = DSL.using(configuration)
                        .update(TREASURE_DEPOSIT)
                        .set(TREASURE_DEPOSIT.DEPOSIT, deposit)
@@ -79,7 +110,7 @@ public class DepositRepository {
         }
     }
 
-    private Deposit toDTO(Record record) {
+    private Deposit toDTO(final Record record) {
         return new Deposit(
             Optional.of(record.getValue(TREASURE_DEPOSIT.USER_UUID, UUID.class))
                     .flatMap(user::findOption)

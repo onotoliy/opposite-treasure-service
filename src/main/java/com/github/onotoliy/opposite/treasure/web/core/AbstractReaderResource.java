@@ -9,20 +9,36 @@ import com.github.onotoliy.opposite.treasure.services.core.ReaderService;
 
 import java.util.UUID;
 
-public abstract class AbstractReaderResource <
+/**
+ * Базовый WEB сервис чтения данных.
+ *
+ * @param <E> Объект.
+ * @param <P> Поисковые параметры объекта.
+ * @param <S> Сервис чтения записей.
+ * @author Anatoliy Pokhresnyi
+ */
+public abstract class AbstractReaderResource<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor,
     P extends SearchParameter,
     S extends ReaderService<E, P>>
 implements ReaderResource<E> {
 
+    /**
+     * Сервис чтения записей.
+     */
     protected final S service;
 
-    public AbstractReaderResource(S service) {
+    /**
+     * Конструктор.
+     *
+     * @param service Сервис чтения записей.
+     */
+    public AbstractReaderResource(final S service) {
         this.service = service;
     }
 
     @Override
-    public E get(UUID uuid) {
+    public E get(final UUID uuid) {
         return service.get(uuid);
     }
 }

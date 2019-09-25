@@ -9,29 +9,37 @@ import com.github.onotoliy.opposite.treasure.services.core.ModifierService;
 
 import java.util.UUID;
 
+/**
+ * Базовый WEB сервис управления данными.
+ *
+ * @param <E> Объект.
+ * @param <P> Поисковые параметры объекта.
+ * @param <S> Сервис чтения записей.
+ * @author Anatoliy Pokhresnyi
+ */
 public abstract class AbstractModifierResource<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor,
     P extends SearchParameter,
-    R extends ModifierService<E, P>>
-extends AbstractReaderResource<E, P, R>
+    S extends ModifierService<E, P>>
+extends AbstractReaderResource<E, P, S>
 implements ModifierResource<E> {
 
-    public AbstractModifierResource(R repository) {
+    public AbstractModifierResource(final S repository) {
         super(repository);
     }
 
     @Override
-    public E create(E dto) {
+    public E create(final E dto) {
         return service.create(dto);
     }
 
     @Override
-    public E update(E dto) {
+    public E update(final E dto) {
         return service.update(dto);
     }
 
     @Override
-    public void delete(UUID uuid) {
+    public void delete(final UUID uuid) {
         service.delete(uuid);
     }
 }

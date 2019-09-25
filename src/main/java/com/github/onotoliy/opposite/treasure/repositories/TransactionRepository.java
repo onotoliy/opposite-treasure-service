@@ -35,7 +35,7 @@ extends AbstractModifierRepository<
     TreasureTransaction> {
 
     @Autowired
-    public TransactionRepository(DSLContext dsl, UserRPC user) {
+    public TransactionRepository(final DSLContext dsl, final UserRPC user) {
         super(
             TREASURE_TRANSACTION,
             TREASURE_TRANSACTION.GUID,
@@ -55,7 +55,7 @@ extends AbstractModifierRepository<
     }
 
     @Override
-    protected List<Condition> where(TransactionSearchParameter parameter) {
+    protected List<Condition> where(final TransactionSearchParameter parameter) {
         List<Condition> conditions = super.where(parameter);
 
         if (parameter.hasEvent()) {
@@ -82,8 +82,8 @@ extends AbstractModifierRepository<
     }
 
     @Override
-    public InsertSetMoreStep<TreasureTransactionRecord> insertQuery(Configuration configuration,
-                                                                    Transaction dto) {
+    public InsertSetMoreStep<TreasureTransactionRecord> insertQuery(final Configuration configuration,
+                                                                    final Transaction dto) {
         return super.insertQuery(configuration, dto)
                     .set(TABLE.CASH, MONEY.parse(dto.getCash()))
                     .set(TABLE.USER_GUID, GUID.parse(dto.getPerson()))
@@ -92,8 +92,8 @@ extends AbstractModifierRepository<
     }
 
     @Override
-    public UpdateSetMoreStep<TreasureTransactionRecord> updateQuery(Configuration configuration,
-                                                                    Transaction dto) {
+    public UpdateSetMoreStep<TreasureTransactionRecord> updateQuery(final Configuration configuration,
+                                                                    final Transaction dto) {
         return super.updateQuery(configuration, dto)
                     .set(TABLE.CASH, MONEY.parse(dto.getCash()))
                     .set(TABLE.USER_GUID, GUID.parse(dto.getPerson()))
@@ -102,7 +102,7 @@ extends AbstractModifierRepository<
     }
 
     @Override
-    protected Transaction toDTO(Record record) {
+    protected Transaction toDTO(final Record record) {
         return new Transaction(
             GUID.format(record, UUID),
             STRING.format(record, NAME),

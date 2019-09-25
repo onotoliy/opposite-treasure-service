@@ -9,9 +9,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
+/**
+ * Интерфейс базового WEB сервиса чтения данных.
+ *
+ * @param <E> Объект.
+ * @author Anatoliy Pokhresnyi
+ */
 public interface ReaderResource<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor> {
 
+    /**
+     * Получение объекта.
+     *
+     * @param uuid Уникальный идентификатор объекта.
+     * @return Объект.
+     */
     @GetMapping(value = "/{uuid}")
     E get(@PathVariable("uuid") UUID uuid);
 

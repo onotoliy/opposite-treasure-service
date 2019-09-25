@@ -27,11 +27,19 @@ import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.Table;
 import org.jooq.TableField;
-import org.jooq.impl.DSL;
 
 import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
 import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
 
+/**
+ * Базовый репозиторий чтения записей из БД.
+ *
+ * @param <E> Объект.
+ * @param <P> Поисковые параметры.
+ * @param <R> Запись из БД
+ * @param <T> Таблица в БД
+ * @author Anatoliy Pokhresnyi
+ */
 public abstract class AbstractReaderRepository<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor,
     P extends SearchParameter,
@@ -39,30 +47,66 @@ public abstract class AbstractReaderRepository<
     T extends Table<R>>
 implements ReaderRepository<E, P> {
 
+    /**
+     * Таблица.
+     */
     protected final T TABLE;
 
+    /**
+     * Уникальный идентификатор.
+     */
     protected final TableField<R, UUID> UUID;
 
+    /**
+     * Название.
+     */
     protected final TableField<R, String> NAME;
 
+    /**
+     * Автор.
+     */
     protected final TableField<R, UUID> AUTHOR;
 
+    /**
+     * Дата создания.
+     */
     protected final TableField<R, Timestamp> CREATION_DATE;
 
+    /**
+     * Дата удаления.
+     */
     protected final TableField<R, Timestamp> DELETION_DATE;
 
+    /**
+     * Контекст подключения к БД.
+     */
     protected final DSLContext dsl;
 
+    /**
+     * Сервис чтения пользователей.
+     */
     protected final UserRPC user;
 
-    protected AbstractReaderRepository(T table,
-                                       TableField<R, UUID> uuid,
-                                       TableField<R, String> name,
-                                       TableField<R, UUID> author,
-                                       TableField<R, Timestamp> creationDate,
-                                       TableField<R, Timestamp> deletionDate,
-                                       DSLContext dsl,
-                                       UserRPC user) {
+    /**
+     * Конструктор.
+     *
+     * @param table Таблица.
+     * @param uuid Уникальный идентификатор.
+     * @param name Название.
+     * @param author Автор.
+     * @param creationDate Дата создания.
+     * @param deletionDate Дата удаления.
+     * @param dsl Контекст подключения к БД.
+     * @param user Сервис чтения пользователей.
+     */
+    protected AbstractReaderRepository(final T table,
+                                       final TableField<R, UUID> uuid,
+                                       final TableField<R, String> name,
+                                       final TableField<R, UUID> author,
+                                       final TableField<R, Timestamp> creationDate,
+                                       final TableField<R, Timestamp> deletionDate,
+                                       final DSLContext dsl,
+                                       final UserRPC user) {
         this.TABLE = table;
         this.UUID = uuid;
         this.NAME = name;
@@ -73,19 +117,30 @@ implements ReaderRepository<E, P> {
         this.user = user;
     }
 
-    protected abstract E toDTO(Record record);
+    /**
+     * Преобзазование записи из БД в объект.
+     *
+     * @param record Запись из БД.
+     * @return Объект.
+     */
+    protected abstract E toDTO(final Record record);
 
+    /**
+     * Получение select запроса из таблицы.
+     *
+     * @return Запрос.
+     */
     protected SelectJoinStep<Record> findQuery() {
         return dsl.select().from(TABLE);
     }
 
     @Override
-    public Optional<E> getOptional(UUID uuid) {
+    public Optional<E> getOptional(final UUID uuid) {
         return findQuery().where(UUID.eq(uuid)).fetchOptional(this::toDTO);
     }
 
     @Override
-    public E get(UUID uuid) {
+    public E get(final UUID uuid) {
         return getOptional(uuid).orElseThrow(
             () -> new NotFoundException(TABLE, uuid));
     }
@@ -96,7 +151,7 @@ implements ReaderRepository<E, P> {
     }
 
     @Override
-    public Page<E> getAll(P parameter) {
+    public Page<E> getAll(final P parameter) {
         return new Page<>(
             new Meta(
                 dsl.selectCount()
@@ -112,15 +167,33 @@ implements ReaderRepository<E, P> {
                        .fetch(this::toDTO));
     }
 
+    /**
+     * Получение колонок по которым будет производиться сортировка.
+     *
+     * @return Колонки по которым будет производиться сортировка.
+     */
     protected List<? extends OrderField<?>> orderBy() {
         return new LinkedList<>(Collections.singleton(CREATION_DATE.desc()));
     }
 
-    protected List<Condition> where(P parameter) {
-        return new LinkedList<>(Collections.singleton(DSL.trueCondition()));
+    /**
+     * Получение условий выборки данных из БД.
+     *
+     * @param parameter Поисковы параметры.
+     * @return Условия выборки данных из БД.
+     */
+    protected List<Condition> where(final P parameter) {
+        return new LinkedList<>(Collections.singleton(DELETION_DATE.isNull()));
     }
 
-    protected Option formatUser(Record record, Field<UUID> field) {
+    /**
+     * Преобразование пользователя из уникального идентификатора в объект.
+     *
+     * @param record Запись из БД.
+     * @param field Колонка в которой содержиться уникальный идентификатор пользователя.
+     * @return Пользователь.
+     */
+    protected Option formatUser(final Record record, final Field<UUID> field) {
         return Optional.ofNullable(record.getValue(field, java.util.UUID.class))
                        .map(user::findOption)
                        .filter(Optional::isPresent)

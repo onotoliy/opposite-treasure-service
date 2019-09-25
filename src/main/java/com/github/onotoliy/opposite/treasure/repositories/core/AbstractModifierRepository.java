@@ -28,6 +28,15 @@ import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
 import static com.github.onotoliy.opposite.treasure.utils.TimestampUtil.TIMESTAMP;
 import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
 
+/**
+ * Базовый репозиторий управления записями из БД.
+ *
+ * @param <E> Объект.
+ * @param <P> Поисковые параметры.
+ * @param <R> Запись из БД
+ * @param <T> Таблица в БД
+ * @author Anatoliy Pokhresnyi
+ */
 public abstract class AbstractModifierRepository<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor,
     P extends SearchParameter,
@@ -36,60 +45,86 @@ public abstract class AbstractModifierRepository<
 extends AbstractReaderRepository<E, P, R, T>
 implements ModifierRepository<E, P> {
 
-    protected AbstractModifierRepository(T table,
-                                         TableField<R, UUID> uuid,
-                                         TableField<R, String> name,
-                                         TableField<R, UUID> author,
-                                         TableField<R, Timestamp> creationDate,
-                                         TableField<R, Timestamp> deletionDate,
-                                         DSLContext dsl,
-                                         UserRPC user) {
+    /**
+     * Конструктор.
+     *
+     * @param table Таблица.
+     * @param uuid Уникальный идентификатор.
+     * @param name Название.
+     * @param author Автор.
+     * @param creationDate Дата создания.
+     * @param deletionDate Дата удаления.
+     * @param dsl Контекст подключения к БД.
+     * @param user Сервис чтения пользователей.
+     */
+    protected AbstractModifierRepository(final T table,
+                                         final TableField<R, UUID> uuid,
+                                         final TableField<R, String> name,
+                                         final TableField<R, UUID> author,
+                                         final  TableField<R, Timestamp> creationDate,
+                                         final TableField<R, Timestamp> deletionDate,
+                                         final DSLContext dsl,
+                                         final UserRPC user) {
         super(table, uuid, name, author, creationDate, deletionDate, dsl, user);
     }
 
     @Override
-    public void transaction(Consumer<Configuration> consumer) {
+    public void transaction(final Consumer<Configuration> consumer) {
         dsl.transaction(consumer::accept);
     }
 
     @Override
-    public E create(E dto) {
+    public E create(final E dto) {
         return execute(dto, insertQuery(dto));
     }
 
     @Override
-    public E create(Configuration configuration, E dto) {
+    public E create(final Configuration configuration, final E dto) {
         return execute(dto, insertQuery(configuration, dto));
     }
 
     @Override
-    public E update(E dto) {
+    public E update(final E dto) {
         return execute(dto, updateQuery(dto).where(UUID.eq(GUID.parse(dto))));
     }
 
     @Override
-    public E update(Configuration configuration, E dto) {
+    public E update(final Configuration configuration, final E dto) {
         return execute(dto, updateQuery(configuration, dto).where(UUID.eq(GUID.parse(dto))));
     }
 
     @Override
-    public void delete(UUID uuid) {
+    public void delete(final UUID uuid) {
         execute(uuid, deleteQuery(uuid));
     }
 
     @Override
-    public void delete(Configuration configuration, UUID uuid) {
+    public void delete(final Configuration configuration, final UUID uuid) {
         execute(uuid, deleteQuery(configuration, uuid));
     }
 
-    protected UpdateConditionStep<R> deleteQuery(Configuration configuration, UUID uuid) {
+    /**
+     * Получение delete from запроса из таблицы.
+     *
+     * @param configuration Настройка транзакции.
+     * @param uuid Уникальный идентификатор.
+     * @return Запрос.
+     */
+    protected UpdateConditionStep<R> deleteQuery(final Configuration configuration, final UUID uuid) {
         return DSL.using(configuration)
                   .update(TABLE)
                   .set(DELETION_DATE, TIMESTAMP.now())
                   .where(UUID.eq(uuid));
     }
 
-    protected InsertSetMoreStep<R> insertQuery(Configuration configuration, E dto) {
+    /**
+     * Получение insert into запроса из таблицы.
+     *
+     * @param configuration Настройка транзакции.
+     * @param dto Объект.
+     * @return Запрос.
+     */
+    protected InsertSetMoreStep<R> insertQuery(final Configuration configuration, final E dto) {
         return DSL.using(configuration)
                   .insertInto(TABLE)
                   .set(UUID, GUID.parse(dto))
@@ -98,7 +133,14 @@ implements ModifierRepository<E, P> {
                   .set(AUTHOR, GUID.parse(dto.getAuthor()));
     }
 
-    protected UpdateSetMoreStep<R> updateQuery(Configuration configuration, E dto) {
+    /**
+     * Получение update запроса из таблицы.
+     *
+     * @param configuration Настройка транзакции.
+     * @param dto Объект.
+     * @return Запрос.
+     */
+    protected UpdateSetMoreStep<R> updateQuery(final Configuration configuration, final E dto) {
         return DSL.using(configuration)
                   .update(TABLE)
                   .set(NAME, STRING.parse(dto.getName()))
@@ -106,29 +148,60 @@ implements ModifierRepository<E, P> {
                   .set(AUTHOR, GUID.parse(dto.getAuthor()));
     }
 
-    protected UpdateConditionStep<R> deleteQuery(UUID uuid) {
+    /**
+     * Получение delete from запроса из таблицы.
+     *
+     * @param uuid Уникальный идентификатор.
+     * @return Запрос.
+     */
+    protected UpdateConditionStep<R> deleteQuery(final UUID uuid) {
         return dsl.transactionResult(
             configuration -> deleteQuery(configuration, uuid));
     }
 
-    protected InsertSetMoreStep<R> insertQuery(E dto) {
+    /**
+     * Получение insert into запроса из таблицы.
+     *
+     * @param dto Объект.
+     * @return Запрос.
+     */
+    protected InsertSetMoreStep<R> insertQuery(final E dto) {
         return dsl.transactionResult(
             configuration -> insertQuery(configuration, dto));
     }
 
-    protected UpdateSetMoreStep<R> updateQuery(E dto) {
+    /**
+     * Получение update запроса из таблицы.
+     *
+     * @param dto Объект.
+     * @return Запрос.
+     */
+    protected UpdateSetMoreStep<R> updateQuery(final E dto) {
         return dsl.transactionResult(
             configuration -> updateQuery(configuration, dto));
     }
 
-    private E execute(E dto, Query query) {
+    /**
+     * Исполнение запроса на обновление данных.
+     *
+     * @param dto Объект.
+     * @param query Запрос.
+     * @return Объект.
+     */
+    private E execute(final E dto, final Query query) {
         execute(GUID.parse(dto), query);
 
         return dto;
     }
 
-    private void execute(UUID uuid, Query step) {
-        int count = step.execute();
+    /**
+     * Исполнение запроса на обновление данных.
+     *
+     * @param uuid Уникальный идентификатор объекта.
+     * @param query Запрос.
+     */
+    private void execute(final UUID uuid, final Query query) {
+        int count = query.execute();
 
         if (count == 0) {
             throw new NotFoundException(TABLE, uuid);

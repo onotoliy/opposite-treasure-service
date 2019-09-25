@@ -15,15 +15,15 @@ public class DepositService {
     private final DepositRepository repository;
 
     @Autowired
-    public DepositService(DepositRepository repository) {
+    public DepositService(final DepositRepository repository) {
         this.repository = repository;
     }
 
-    public Deposit get(UUID uuid) {
+    public Deposit get(final UUID uuid) {
         return repository.get(uuid);
     }
 
-    public Page<Deposit> getAll(DepositSearchParameter parameter) {
+    public Page<Deposit> getAll(final DepositSearchParameter parameter) {
         return repository.getAll(parameter);
     }
 }

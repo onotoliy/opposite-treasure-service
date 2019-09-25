@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * WEB сервис чтения данных о кассе.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
 @RestController
 @RequestMapping(value = "/cashbox")
 public class CashboxResource {
@@ -18,6 +23,11 @@ public class CashboxResource {
         this.service = service;
     }
 
+    /**
+     * Получение данных о кассе.
+     *
+     * @return Данные о кассе.
+     */
     @GetMapping
     public Cashbox get() {
         return service.get();

@@ -20,7 +20,7 @@ public class TimestampUtil {
         return toTimestamp(Instant.now());
     }
 
-    public Timestamp parse(String value) {
+    public Timestamp parse(final String value) {
         if (STRING.isEmpty(value)) {
             return null;
         }
@@ -41,21 +41,21 @@ public class TimestampUtil {
     }
 
     @NotNull
-    public String format(Timestamp value) {
+    public String format(final Timestamp value) {
         return value == null
             ? "—"
             : new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(value);
     }
 
-    private Timestamp toTimestamp(Instant value) {
+    private Timestamp toTimestamp(final Instant value) {
         return value == null ? null : new Timestamp(value.toEpochMilli());
     }
 
-    private Timestamp toTimestamp(Date value) {
+    private Timestamp toTimestamp(final Date value) {
         return value == null ? null : toTimestamp(value.toInstant());
     }
 
-    public String format(Record record, Field<Timestamp> field) {
+    public String format(final Record record, final Field<Timestamp> field) {
         return format(record.getValue(field, Timestamp.class));
     }
 }

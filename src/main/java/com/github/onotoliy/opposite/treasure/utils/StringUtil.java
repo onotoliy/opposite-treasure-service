@@ -10,24 +10,24 @@ public class StringUtil {
 
     private static final String EMPTY = "—";
 
-    public boolean nonEmpty(String value) {
+    public boolean nonEmpty(final String value) {
         return !isEmpty(value);
     }
 
-    public boolean isEmpty(String value) {
+    public boolean isEmpty(final String value) {
         return value == null || value.trim().isEmpty() || value.equals(EMPTY);
     }
 
-    public String parse(String value) {
+    public String parse(final String value) {
         return nonEmpty(value) ? value : null;
     }
 
     @NotNull
-    public String format(String value) {
+    public String format(final String value) {
         return nonEmpty(value) ? value : EMPTY;
     }
 
-    public String format(Record record, Field<String> field) {
+    public String format(final Record record, final Field<String> field) {
         return format(record.getValue(field, String.class));
     }
 }

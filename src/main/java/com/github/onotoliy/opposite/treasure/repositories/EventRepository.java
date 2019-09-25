@@ -37,7 +37,7 @@ extends AbstractModifierRepository<
     TreasureEvent> {
 
     @Autowired
-    public EventRepository(DSLContext dsl, UserRPC user) {
+    public EventRepository(final DSLContext dsl, final UserRPC user) {
         super(
             TREASURE_EVENT,
             TREASURE_EVENT.GUID,
@@ -49,7 +49,7 @@ extends AbstractModifierRepository<
             user);
     }
 
-    public Page<Event> getDebts(java.util.UUID person) {
+    public Page<Event> getDebts(final java.util.UUID person) {
         List<Event> list = dsl.select()
                               .from(TREASURE_DEBT)
                               .join(TREASURE_EVENT)
@@ -61,7 +61,7 @@ extends AbstractModifierRepository<
     }
 
     @Override
-    public List<Condition> where(EventSearchParameter parameter) {
+    public List<Condition> where(final EventSearchParameter parameter) {
         List<Condition> conditions = super.where(parameter);
 
         if (parameter.hasName()) {
@@ -72,8 +72,8 @@ extends AbstractModifierRepository<
     }
 
     @Override
-    public InsertSetMoreStep<TreasureEventRecord> insertQuery(Configuration configuration,
-                                                              Event dto) {
+    public InsertSetMoreStep<TreasureEventRecord> insertQuery(final Configuration configuration,
+                                                              final Event dto) {
         return super.insertQuery(configuration, dto)
                     .set(TABLE.CONTRIBUTION, MONEY.parse(dto.getContribution()))
                     .set(TABLE.TOTAL, MONEY.parse(dto.getTotal()))
@@ -81,8 +81,8 @@ extends AbstractModifierRepository<
     }
 
     @Override
-    public UpdateSetMoreStep<TreasureEventRecord> updateQuery(Configuration configuration,
-                                                              Event dto) {
+    public UpdateSetMoreStep<TreasureEventRecord> updateQuery(final Configuration configuration,
+                                                              final Event dto) {
         return super.updateQuery(configuration, dto)
                     .set(TABLE.CONTRIBUTION, MONEY.parse(dto.getContribution()))
                     .set(TABLE.TOTAL, MONEY.parse(dto.getTotal()))
@@ -90,7 +90,7 @@ extends AbstractModifierRepository<
     }
 
     @Override
-    protected Event toDTO(Record record) {
+    protected Event toDTO(final Record record) {
         return new Event(
             GUID.format(record, UUID),
             STRING.format(record, NAME),
@@ -101,7 +101,7 @@ extends AbstractModifierRepository<
             formatUser(record, AUTHOR));
     }
 
-    public static Option toOption(Record record) {
+    public static Option toOption(final Record record) {
         if (record.getValue(TREASURE_EVENT.GUID, java.util.UUID.class) == null) {
             return null;
         }

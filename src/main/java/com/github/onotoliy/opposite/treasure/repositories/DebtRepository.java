@@ -3,24 +3,27 @@ package com.github.onotoliy.opposite.treasure.repositories;
 import java.util.UUID;
 
 import org.jooq.Configuration;
-import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEBT;
 
+/**
+ * Репозиторий управления долгами пользователя.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
 @Repository
 public class DebtRepository {
 
-    private final DSLContext dsl;
-
-    @Autowired
-    public DebtRepository(DSLContext dsl) {
-        this.dsl = dsl;
-    }
-
-    public void cost(Configuration configuration, UUID person, UUID event) {
+    /**
+     * Назначение долга пользователя.
+     *
+     * @param configuration Настройки транзакции.
+     * @param person Пользователь.
+     * @param event Событие
+     */
+    public void cost(final Configuration configuration, final UUID person, final UUID event) {
         DSL.using(configuration)
            .insertInto(TREASURE_DEBT)
            .set(TREASURE_DEBT.USER_UUID, person)
@@ -28,7 +31,14 @@ public class DebtRepository {
            .execute();
     }
 
-    public void contribution(Configuration configuration, UUID person, UUID event) {
+    /**
+     * Списание долга пользователя.
+     *
+     * @param configuration Настройки транзакции.
+     * @param person Пользователь.
+     * @param event Событие
+     */
+    public void contribution(final Configuration configuration, final UUID person, final UUID event) {
         DSL.using(configuration)
            .deleteFrom(TREASURE_DEBT)
            .where(

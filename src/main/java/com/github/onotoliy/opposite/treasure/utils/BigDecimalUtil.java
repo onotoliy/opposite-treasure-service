@@ -14,20 +14,20 @@ public class BigDecimalUtil {
 
     public static final BigDecimalUtil MONEY = new BigDecimalUtil();
 
-    public boolean nonEmpty(BigDecimal value) {
+    public boolean nonEmpty(final BigDecimal value) {
         return !isEmpty(value);
     }
 
-    public boolean isEmpty(BigDecimal value) {
+    public boolean isEmpty(final BigDecimal value) {
         return value == null;
     }
 
-    public BigDecimal parse(String value) {
+    public BigDecimal parse(final String value) {
         return STRING.isEmpty(value) ? null : new BigDecimal(value);
     }
 
     @NotNull
-    public String format(BigDecimal value) {
+    public String format(final BigDecimal value) {
         if (isEmpty(value)) {
             return "0.0";
         }
@@ -40,11 +40,11 @@ public class BigDecimalUtil {
         return df.format(value.setScale(2, RoundingMode.HALF_DOWN));
     }
 
-    public String format(Record record, Field<BigDecimal> field) {
+    public String format(final Record record, final Field<BigDecimal> field) {
         return format(record.getValue(field, BigDecimal.class));
     }
 
-    public boolean nonEqually(String x, String y) {
+    public boolean nonEqually(final String x, final String y) {
         return ObjectUtil.OBJECT.nonEqually(x, y,
             (o1, o2) -> parse(o1).equals(parse(o2)));
     }

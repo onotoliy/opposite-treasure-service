@@ -14,16 +14,35 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+/**
+ * WEB сервис управления транзакциями.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
 @RestController
 @RequestMapping(value = "/transaction")
 public class TransactionResource
-extends AbstractModifierResource<Transaction, TransactionSearchParameter, TransactionService> {
+extends AbstractModifierResource<
+    Transaction,
+    TransactionSearchParameter,
+    TransactionService> {
 
     @Autowired
     public TransactionResource(TransactionService service) {
         super(service);
     }
 
+    /**
+     * Поиск транзакций.
+     *
+     * @param name Название.
+     * @param user Пользователь.
+     * @param event Событие.
+     * @param type Тип.
+     * @param offset Количество записей которое необходимо пропустить.
+     * @param numberOfRows Размер страницы.
+     * @return Транзакции.
+     */
     @GetMapping
     public Page<Transaction> getAll(
             @RequestParam(value = "name", required = false) String name,
