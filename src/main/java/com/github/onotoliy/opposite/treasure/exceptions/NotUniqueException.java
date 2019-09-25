@@ -1,10 +1,10 @@
 package com.github.onotoliy.opposite.treasure.exceptions;
 
-import org.jooq.Table;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
 import java.util.UUID;
 
-import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
+import org.jooq.Table;
 
 /**
  * Объект с указанным уникальным идентификатором уже существует.
@@ -22,6 +22,6 @@ public class NotUniqueException extends RuntimeException {
     public <T extends Table<?>> NotUniqueException(final T table, final UUID uuid) {
         super(String.format(
             "Запись с уникальный идентификатором %s в таблице %s уже существует",
-            table.getName(), GUID.format(uuid)));
+            table.getName(), GUIDs.format(uuid)));
     }
 }

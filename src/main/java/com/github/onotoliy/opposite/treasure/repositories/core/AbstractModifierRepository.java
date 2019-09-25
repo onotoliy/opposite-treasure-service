@@ -8,6 +8,9 @@ import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
 import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.utils.Dates;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
+import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -23,10 +26,6 @@ import org.jooq.TableField;
 import org.jooq.UpdateConditionStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
-
-import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
-import static com.github.onotoliy.opposite.treasure.utils.TimestampUtil.TIMESTAMP;
-import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
 
 /**
  * Базовый репозиторий управления записями из БД.
@@ -85,12 +84,12 @@ implements ModifierRepository<E, P> {
 
     @Override
     public E update(final E dto) {
-        return execute(dto, updateQuery(dto).where(UUID.eq(GUID.parse(dto))));
+        return execute(dto, updateQuery(dto).where(UUID.eq(GUIDs.parse(dto))));
     }
 
     @Override
     public E update(final Configuration configuration, final E dto) {
-        return execute(dto, updateQuery(configuration, dto).where(UUID.eq(GUID.parse(dto))));
+        return execute(dto, updateQuery(configuration, dto).where(UUID.eq(GUIDs.parse(dto))));
     }
 
     @Override
@@ -113,7 +112,7 @@ implements ModifierRepository<E, P> {
     protected UpdateConditionStep<R> deleteQuery(final Configuration configuration, final UUID uuid) {
         return DSL.using(configuration)
                   .update(TABLE)
-                  .set(DELETION_DATE, TIMESTAMP.now())
+                  .set(DELETION_DATE, Dates.now())
                   .where(UUID.eq(uuid));
     }
 
@@ -127,10 +126,10 @@ implements ModifierRepository<E, P> {
     protected InsertSetMoreStep<R> insertQuery(final Configuration configuration, final E dto) {
         return DSL.using(configuration)
                   .insertInto(TABLE)
-                  .set(UUID, GUID.parse(dto))
-                  .set(NAME, STRING.parse(dto.getName()))
-                  .set(CREATION_DATE, TIMESTAMP.now())
-                  .set(AUTHOR, GUID.parse(dto.getAuthor()));
+                  .set(UUID, GUIDs.parse(dto))
+                  .set(NAME, Strings.parse(dto.getName()))
+                  .set(CREATION_DATE, Dates.now())
+                  .set(AUTHOR, GUIDs.parse(dto.getAuthor()));
     }
 
     /**
@@ -143,9 +142,9 @@ implements ModifierRepository<E, P> {
     protected UpdateSetMoreStep<R> updateQuery(final Configuration configuration, final E dto) {
         return DSL.using(configuration)
                   .update(TABLE)
-                  .set(NAME, STRING.parse(dto.getName()))
-                  .set(CREATION_DATE, TIMESTAMP.now())
-                  .set(AUTHOR, GUID.parse(dto.getAuthor()));
+                  .set(NAME, Strings.parse(dto.getName()))
+                  .set(CREATION_DATE, Dates.now())
+                  .set(AUTHOR, GUIDs.parse(dto.getAuthor()));
     }
 
     /**
@@ -189,7 +188,7 @@ implements ModifierRepository<E, P> {
      * @return Объект.
      */
     private E execute(final E dto, final Query query) {
-        execute(GUID.parse(dto), query);
+        execute(GUIDs.parse(dto), query);
 
         return dto;
     }

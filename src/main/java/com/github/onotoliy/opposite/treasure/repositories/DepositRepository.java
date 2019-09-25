@@ -8,6 +8,7 @@ import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
 import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.utils.Numbers;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -22,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEPOSIT;
-import static com.github.onotoliy.opposite.treasure.utils.BigDecimalUtil.MONEY;
 
 /**
  * Репозиторий управления депозитами.
@@ -86,14 +86,33 @@ public class DepositRepository {
                .fetch(this::toDTO));
     }
 
+    /**
+     * Уменьшение депозита пользователя на указанную сумму.
+     *
+     * @param configuration Настройки транзакции.
+     * @param money Денежные средства.
+     */
     public void cost(final Configuration configuration, final UUID guid, final BigDecimal money) {
         setDeposit(configuration, guid, TREASURE_DEPOSIT.DEPOSIT.sub(money));
     }
 
+    /**
+     * Увеличение депозита пользователя на указанную сумму.
+     *
+     * @param configuration Настройки транзакции.
+     * @param money Денежные средства.
+     */
     public void contribution(final Configuration configuration, final UUID guid, final BigDecimal money) {
         setDeposit(configuration, guid, TREASURE_DEPOSIT.DEPOSIT.add(money));
     }
 
+    /**
+     * Произведение операции с депозитом кассы.
+     *
+     * @param configuration Настройки транзакции.
+     * @param guid Пользователь.
+     * @param deposit Операция над депозитом.
+     */
     private void setDeposit(final Configuration configuration, final UUID guid, final Field<BigDecimal> deposit) {
         int count = DSL.using(configuration)
                        .update(TREASURE_DEPOSIT)
@@ -110,11 +129,17 @@ public class DepositRepository {
         }
     }
 
+    /**
+     * Преобзазование записи из БД в объект.
+     *
+     * @param record Запись из БД.
+     * @return Объект.
+     */
     private Deposit toDTO(final Record record) {
         return new Deposit(
-            Optional.of(record.getValue(TREASURE_DEPOSIT.USER_UUID, UUID.class))
+        Optional.of(record.getValue(TREASURE_DEPOSIT.USER_UUID, UUID.class))
                     .flatMap(user::findOption)
                     .orElse(null),
-            MONEY.format(record, TREASURE_DEPOSIT.DEPOSIT));
+        Numbers.format(record, TREASURE_DEPOSIT.DEPOSIT));
     }
 }

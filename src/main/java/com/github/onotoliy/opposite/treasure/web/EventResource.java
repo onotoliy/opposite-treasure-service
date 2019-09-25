@@ -30,7 +30,7 @@ extends AbstractModifierResource<
     EventService> {
 
     @Autowired
-    public EventResource(EventService service) {
+    public EventResource(final EventService service) {
         super(service);
     }
 
@@ -54,9 +54,9 @@ extends AbstractModifierResource<
      */
     @GetMapping
     public Page<Event> getAll(
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
-            @RequestParam(value = "numberOfRows", required = false, defaultValue = "10") int numberOfRows) {
+            @RequestParam(value = "name", required = false) final String name,
+            @RequestParam(value = "offset", required = false, defaultValue = "0") final int offset,
+            @RequestParam(value = "numberOfRows", required = false, defaultValue = "10") final int numberOfRows) {
         return service.getAll(new EventSearchParameter(name, offset, numberOfRows));
     }
 
@@ -67,7 +67,7 @@ extends AbstractModifierResource<
      * @return Список событий по которым пользователь не рассчитался.
      */
     @GetMapping("/person/{person}/debts")
-    public Page<Event> getDebts(@PathVariable("person") UUID person) {
+    public Page<Event> getDebts(@PathVariable("person") final UUID person) {
         return service.getDebts(person);
     }
 }

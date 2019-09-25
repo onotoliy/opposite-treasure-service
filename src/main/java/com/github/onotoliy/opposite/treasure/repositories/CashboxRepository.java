@@ -1,6 +1,11 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.data.Cashbox;
+import com.github.onotoliy.opposite.treasure.utils.Dates;
+import com.github.onotoliy.opposite.treasure.utils.Numbers;
+
+import java.math.BigDecimal;
+
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -9,10 +14,6 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
-
-import static com.github.onotoliy.opposite.treasure.utils.BigDecimalUtil.MONEY;
-import static com.github.onotoliy.opposite.treasure.utils.TimestampUtil.TIMESTAMP;
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_CASHBOX;
 
 /**
@@ -76,7 +77,7 @@ public class CashboxRepository {
     private void setDeposit(final Configuration configuration, final Field<BigDecimal> deposit) {
         DSL.using(configuration)
            .update(TREASURE_CASHBOX)
-           .set(TREASURE_CASHBOX.LAST_UPDATE_DATE, TIMESTAMP.now())
+           .set(TREASURE_CASHBOX.LAST_UPDATE_DATE, Dates.now())
            .set(TREASURE_CASHBOX.DEPOSIT, deposit)
            .execute();
     }
@@ -89,7 +90,7 @@ public class CashboxRepository {
      */
     private Cashbox toDTO(final Record record) {
         return new Cashbox(
-            MONEY.format(record, TREASURE_CASHBOX.DEPOSIT),
-            TIMESTAMP.format(record, TREASURE_CASHBOX.LAST_UPDATE_DATE));
+            Numbers.format(record, TREASURE_CASHBOX.DEPOSIT),
+            Dates.format(record, TREASURE_CASHBOX.LAST_UPDATE_DATE));
     }
 }

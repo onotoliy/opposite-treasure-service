@@ -8,6 +8,13 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureTransactionRecord;
 import com.github.onotoliy.opposite.treasure.repositories.core.AbstractModifierRepository;
 import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.utils.Dates;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
+import com.github.onotoliy.opposite.treasure.utils.Numbers;
+import com.github.onotoliy.opposite.treasure.utils.Strings;
+
+import java.util.List;
+
 import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
@@ -18,14 +25,13 @@ import org.jooq.UpdateSetMoreStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_TRANSACTION;
-import static com.github.onotoliy.opposite.treasure.utils.BigDecimalUtil.MONEY;
-import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
-import static com.github.onotoliy.opposite.treasure.utils.TimestampUtil.TIMESTAMP;
-import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
 
+/**
+ * Репозиторий управления транзакциями.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
 @Repository
 public class TransactionRepository
 extends AbstractModifierRepository<
@@ -34,6 +40,12 @@ extends AbstractModifierRepository<
     TreasureTransactionRecord,
     TreasureTransaction> {
 
+    /**
+     * Конструктор.
+     *
+     * @param dsl Контекст подключения к БД.
+     * @param user Сервис чтения пользователей.
+     */
     @Autowired
     public TransactionRepository(final DSLContext dsl, final UserRPC user) {
         super(
@@ -85,32 +97,32 @@ extends AbstractModifierRepository<
     public InsertSetMoreStep<TreasureTransactionRecord> insertQuery(final Configuration configuration,
                                                                     final Transaction dto) {
         return super.insertQuery(configuration, dto)
-                    .set(TABLE.CASH, MONEY.parse(dto.getCash()))
-                    .set(TABLE.USER_GUID, GUID.parse(dto.getPerson()))
-                    .set(TABLE.EVENT_GUID, GUID.parse(dto.getEvent()))
-                    .set(TABLE.TYPE, STRING.parse(dto.getType().name()));
+                    .set(TABLE.CASH, Numbers.parse(dto.getCash()))
+                    .set(TABLE.USER_GUID, GUIDs.parse(dto.getPerson()))
+                    .set(TABLE.EVENT_GUID, GUIDs.parse(dto.getEvent()))
+                    .set(TABLE.TYPE, Strings.parse(dto.getType().name()));
     }
 
     @Override
     public UpdateSetMoreStep<TreasureTransactionRecord> updateQuery(final Configuration configuration,
                                                                     final Transaction dto) {
         return super.updateQuery(configuration, dto)
-                    .set(TABLE.CASH, MONEY.parse(dto.getCash()))
-                    .set(TABLE.USER_GUID, GUID.parse(dto.getPerson()))
-                    .set(TABLE.EVENT_GUID, GUID.parse(dto.getEvent()))
-                    .set(TABLE.TYPE, STRING.parse(dto.getType().name()));
+                    .set(TABLE.CASH, Numbers.parse(dto.getCash()))
+                    .set(TABLE.USER_GUID, GUIDs.parse(dto.getPerson()))
+                    .set(TABLE.EVENT_GUID, GUIDs.parse(dto.getEvent()))
+                    .set(TABLE.TYPE, Strings.parse(dto.getType().name()));
     }
 
     @Override
     protected Transaction toDTO(final Record record) {
         return new Transaction(
-            GUID.format(record, UUID),
-            STRING.format(record, NAME),
-            MONEY.format(record, TABLE.CASH),
-            TransactionType.valueOf(STRING.format(record, TABLE.TYPE)),
+            GUIDs.format(record, UUID),
+            Strings.format(record, NAME),
+            Numbers.format(record, TABLE.CASH),
+            TransactionType.valueOf(Strings.format(record, TABLE.TYPE)),
             formatUser(record, TABLE.USER_GUID),
             EventRepository.toOption(record),
-            TIMESTAMP.format(record, CREATION_DATE),
+            Dates.format(record, CREATION_DATE),
             formatUser(record, AUTHOR)
         );
     }

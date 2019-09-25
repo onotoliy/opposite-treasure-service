@@ -6,7 +6,7 @@ import com.github.onotoliy.opposite.data.core.HasName;
 import com.github.onotoliy.opposite.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.repositories.core.ModifierRepository;
-import com.github.onotoliy.opposite.treasure.utils.UUIDUtil;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import org.jooq.Configuration;
 
 import java.util.UUID;
@@ -26,7 +26,7 @@ implements ModifierService<E, P> {
     public E create(final E dto) {
         repository.transaction(configuration -> create(configuration, dto));
 
-        return get(UUIDUtil.GUID.parse(dto));
+        return get(GUIDs.parse(dto));
     }
 
     protected void create(final Configuration configuration, final E dto) {
@@ -37,7 +37,7 @@ implements ModifierService<E, P> {
     public E update(final E dto) {
         repository.transaction(configuration -> update(configuration, dto));
 
-        return get(UUIDUtil.GUID.parse(dto));
+        return get(GUIDs.parse(dto));
     }
 
     protected void update(final Configuration configuration, final E dto) {

@@ -1,12 +1,11 @@
 package com.github.onotoliy.opposite.treasure.dto;
 
 import com.github.onotoliy.opposite.data.TransactionType;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
+import com.github.onotoliy.opposite.treasure.utils.Objects;
+import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.util.UUID;
-
-import static com.github.onotoliy.opposite.treasure.utils.ObjectUtil.OBJECT;
-import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
-import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
 
 /**
  * Поисковые параметры для транзакции.
@@ -59,7 +58,7 @@ public class TransactionSearchParameter extends SearchParameter {
      * @return Результат проверки.
      */
     public boolean hasName() {
-        return STRING.nonEmpty(name);
+        return Strings.nonEmpty(name);
     }
 
     /**
@@ -77,7 +76,7 @@ public class TransactionSearchParameter extends SearchParameter {
      * @return Результат проверки.
      */
     public boolean hasUser() {
-        return GUID.nonEmpty(user);
+        return GUIDs.nonEmpty(user);
     }
 
     /**
@@ -95,7 +94,7 @@ public class TransactionSearchParameter extends SearchParameter {
      * @return Результат проверки.
      */
     public boolean hasEvent() {
-        return GUID.nonEmpty(event);
+        return GUIDs.nonEmpty(event);
     }
 
     /**
@@ -113,7 +112,7 @@ public class TransactionSearchParameter extends SearchParameter {
      * @return Результат проверки.
      */
     public boolean hasType() {
-        return OBJECT.nonEmpty(type) && OBJECT.nonEqually(type, TransactionType.NONE);
+        return Objects.nonEmpty(type) && Objects.nonEqually(type, TransactionType.NONE);
     }
 
     /**

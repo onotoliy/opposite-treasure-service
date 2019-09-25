@@ -25,7 +25,7 @@ public class DepositResource {
     private final DepositService service;
 
     @Autowired
-    public DepositResource(DepositService service) {
+    public DepositResource(final DepositService service) {
         this.service = service;
     }
 
@@ -36,7 +36,7 @@ public class DepositResource {
      * @return Депозит.
      */
     @GetMapping(value = "/{uuid}")
-    public Deposit get(@PathVariable("uuid") UUID uuid) {
+    public Deposit get(@PathVariable("uuid") final UUID uuid) {
         return service.get(uuid);
     }
 
@@ -49,8 +49,8 @@ public class DepositResource {
      */
     @GetMapping
     public Page<Deposit> getAll(
-            @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
-            @RequestParam(value = "numberOfRows", required = false, defaultValue = "10") int numberOfRows) {
+            @RequestParam(value = "offset", required = false, defaultValue = "0") final int offset,
+            @RequestParam(value = "numberOfRows", required = false, defaultValue = "10") final int numberOfRows) {
         return service.getAll(new DepositSearchParameter(offset, numberOfRows));
     }
 }

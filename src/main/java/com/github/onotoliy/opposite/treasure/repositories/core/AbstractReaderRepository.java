@@ -11,6 +11,8 @@ import com.github.onotoliy.opposite.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
+import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -27,9 +29,6 @@ import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.Table;
 import org.jooq.TableField;
-
-import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
-import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
 
 /**
  * Базовый репозиторий чтения записей из БД.
@@ -147,7 +146,7 @@ implements ReaderRepository<E, P> {
 
     @Override
     public List<Option> getAll() {
-        return findQuery().fetch(record -> new Option(GUID.format(record, UUID), STRING.format(record, NAME)));
+        return findQuery().fetch(record -> new Option(GUIDs.format(record, UUID), Strings.format(record, NAME)));
     }
 
     @Override

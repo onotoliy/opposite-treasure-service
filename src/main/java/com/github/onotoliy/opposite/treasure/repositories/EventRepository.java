@@ -10,6 +10,13 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureEventRecord;
 import com.github.onotoliy.opposite.treasure.repositories.core.AbstractModifierRepository;
 import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.utils.Dates;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
+import com.github.onotoliy.opposite.treasure.utils.Numbers;
+import com.github.onotoliy.opposite.treasure.utils.Strings;
+
+import java.util.List;
+
 import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
@@ -19,15 +26,14 @@ import org.jooq.UpdateSetMoreStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEBT;
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_EVENT;
-import static com.github.onotoliy.opposite.treasure.utils.BigDecimalUtil.MONEY;
-import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
-import static com.github.onotoliy.opposite.treasure.utils.TimestampUtil.TIMESTAMP;
-import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
 
+/**
+ * Репозиторий управления событиями.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
 @Repository
 public class EventRepository
 extends AbstractModifierRepository<
@@ -36,6 +42,12 @@ extends AbstractModifierRepository<
     TreasureEventRecord,
     TreasureEvent> {
 
+    /**
+     * Конструктор.
+     *
+     * @param dsl Контекст подключения к БД.
+     * @param user Сервис чтения пользователей.
+     */
     @Autowired
     public EventRepository(final DSLContext dsl, final UserRPC user) {
         super(
@@ -49,6 +61,12 @@ extends AbstractModifierRepository<
             user);
     }
 
+    /**
+     * Получение событий по которым пользователь должен.
+     *
+     * @param person Пользователь.
+     * @return События.
+     */
     public Page<Event> getDebts(final java.util.UUID person) {
         List<Event> list = dsl.select()
                               .from(TREASURE_DEBT)
@@ -75,39 +93,45 @@ extends AbstractModifierRepository<
     public InsertSetMoreStep<TreasureEventRecord> insertQuery(final Configuration configuration,
                                                               final Event dto) {
         return super.insertQuery(configuration, dto)
-                    .set(TABLE.CONTRIBUTION, MONEY.parse(dto.getContribution()))
-                    .set(TABLE.TOTAL, MONEY.parse(dto.getTotal()))
-                    .set(TABLE.DEADLINE, TIMESTAMP.parse(dto.getDeadline()));
+                    .set(TABLE.CONTRIBUTION, Numbers.parse(dto.getContribution()))
+                    .set(TABLE.TOTAL, Numbers.parse(dto.getTotal()))
+                    .set(TABLE.DEADLINE, Dates.parse(dto.getDeadline()));
     }
 
     @Override
     public UpdateSetMoreStep<TreasureEventRecord> updateQuery(final Configuration configuration,
                                                               final Event dto) {
         return super.updateQuery(configuration, dto)
-                    .set(TABLE.CONTRIBUTION, MONEY.parse(dto.getContribution()))
-                    .set(TABLE.TOTAL, MONEY.parse(dto.getTotal()))
-                    .set(TABLE.DEADLINE, TIMESTAMP.parse(dto.getDeadline()));
+                    .set(TABLE.CONTRIBUTION, Numbers.parse(dto.getContribution()))
+                    .set(TABLE.TOTAL, Numbers.parse(dto.getTotal()))
+                    .set(TABLE.DEADLINE, Dates.parse(dto.getDeadline()));
     }
 
     @Override
     protected Event toDTO(final Record record) {
         return new Event(
-            GUID.format(record, UUID),
-            STRING.format(record, NAME),
-            MONEY.format(record, TABLE.CONTRIBUTION),
-            MONEY.format(record, TABLE.TOTAL),
-            TIMESTAMP.format(record, TABLE.DEADLINE),
-            TIMESTAMP.format(record, CREATION_DATE),
-            formatUser(record, AUTHOR));
+        GUIDs.format(record, UUID),
+        Strings.format(record, NAME),
+        Numbers.format(record, TABLE.CONTRIBUTION),
+        Numbers.format(record, TABLE.TOTAL),
+        Dates.format(record, TABLE.DEADLINE),
+        Dates.format(record, CREATION_DATE),
+        formatUser(record, AUTHOR));
     }
 
+    /**
+     * Преобзазование записи из БД в короткий объект.
+     *
+     * @param record Запись из БД.
+     * @return Объект.
+     */
     public static Option toOption(final Record record) {
         if (record.getValue(TREASURE_EVENT.GUID, java.util.UUID.class) == null) {
             return null;
         }
 
         return new Option(
-            GUID.format(record, TREASURE_EVENT.GUID),
-            STRING.format(record, TREASURE_EVENT.NAME));
+            GUIDs.format(record, TREASURE_EVENT.GUID),
+            Strings.format(record, TREASURE_EVENT.NAME));
     }
 }

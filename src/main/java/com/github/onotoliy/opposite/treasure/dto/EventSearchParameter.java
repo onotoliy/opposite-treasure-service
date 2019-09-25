@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.dto;
 
-import static com.github.onotoliy.opposite.treasure.utils.StringUtil.STRING;
+import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 /**
  * Поисковые параметры для события.
@@ -33,7 +33,7 @@ public class EventSearchParameter extends SearchParameter {
      * @return Результат проверки.
      */
     public boolean hasName() {
-        return STRING.nonEmpty(name);
+        return Strings.nonEmpty(name);
     }
 
     /**

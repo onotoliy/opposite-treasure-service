@@ -1,10 +1,10 @@
 package com.github.onotoliy.opposite.treasure.exceptions;
 
-import org.jooq.Named;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
 import java.util.UUID;
 
-import static com.github.onotoliy.opposite.treasure.utils.UUIDUtil.GUID;
+import org.jooq.Named;
 
 /**
  * Объект с указанным уникальным идентификатором не был найден.
@@ -22,6 +22,6 @@ public class NotFoundException extends RuntimeException {
     public NotFoundException(final Named table, final UUID uuid) {
         super(String.format(
             "Запись с уникальный идентификатором %s в таблице %s не найдена",
-            table.getName(), GUID.format(uuid)));
+            table.getName(), GUIDs.format(uuid)));
     }
 }

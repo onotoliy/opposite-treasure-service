@@ -19,7 +19,7 @@ public class CashboxResource {
     private final CashboxService service;
 
     @Autowired
-    public CashboxResource(CashboxService service) {
+    public CashboxResource(final CashboxService service) {
         this.service = service;
     }
 
