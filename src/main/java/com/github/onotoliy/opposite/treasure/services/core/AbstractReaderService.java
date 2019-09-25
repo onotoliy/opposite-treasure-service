@@ -12,14 +12,30 @@ import com.github.onotoliy.opposite.treasure.repositories.core.ReaderRepository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Базовый сервис чтения объектов.
+ *
+ * @param <E> Объект.
+ * @param <P> Поисковые параметры.
+ * @param <R> Запись из БД
+ * @author Anatoliy Pokhresnyi
+ */
 public abstract class AbstractReaderService<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor,
     P extends SearchParameter,
     R extends ReaderRepository<E, P>>
 implements ReaderService<E, P> {
 
+    /**
+     * Репозиторий
+     */
     protected final R repository;
 
+    /**
+     * Констрктор.
+     *
+     * @param repository Репозиторий.
+     */
     public AbstractReaderService(final R repository) {
         this.repository = repository;
     }
@@ -29,6 +45,7 @@ implements ReaderService<E, P> {
         return repository.get(uuid);
     }
 
+    @Override
     public List<Option> getAll() {
         return repository.getAll();
     }

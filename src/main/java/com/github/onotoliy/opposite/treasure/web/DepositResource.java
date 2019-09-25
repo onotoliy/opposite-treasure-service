@@ -22,8 +22,16 @@ import java.util.UUID;
 @RequestMapping(value = "/deposit")
 public class DepositResource {
 
+    /**
+     * Сервис.
+     */
     private final DepositService service;
 
+    /**
+     * Конструктор.
+     *
+     * @param service Сервис.
+     */
     @Autowired
     public DepositResource(final DepositService service) {
         this.service = service;

@@ -11,6 +11,14 @@ import org.jooq.Configuration;
 
 import java.util.UUID;
 
+/**
+ * Базовый сервис управления объектами.
+ *
+ * @param <E> Объект.
+ * @param <P> Поисковые параметры.
+ * @param <R> Запись из БД
+ * @author Anatoliy Pokhresnyi
+ */
 public abstract class AbstractModifierService<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor,
     P extends SearchParameter,
@@ -18,6 +26,11 @@ public abstract class AbstractModifierService<
 extends AbstractReaderService<E, P, R>
 implements ModifierService<E, P> {
 
+    /**
+     * Конструктор.
+     *
+     * @param repository Репозиторий.
+     */
     public AbstractModifierService(R repository) {
         super(repository);
     }
@@ -29,6 +42,12 @@ implements ModifierService<E, P> {
         return get(GUIDs.parse(dto));
     }
 
+    /**
+     * Создание объекта.
+     *
+     * @param configuration Настройки транзакции.
+     * @param dto Объект.
+     */
     protected void create(final Configuration configuration, final E dto) {
         repository.create(configuration, dto);
     }
@@ -40,6 +59,12 @@ implements ModifierService<E, P> {
         return get(GUIDs.parse(dto));
     }
 
+    /**
+     * Изменение объекта.
+     *
+     * @param configuration Настройки транзакции.
+     * @param dto Объект.
+     */
     protected void update(final Configuration configuration, final E dto) {
         repository.update(configuration, dto);
     }
@@ -49,6 +74,12 @@ implements ModifierService<E, P> {
         repository.transaction(configuration -> delete(configuration, uuid));
     }
 
+    /**
+     * Удаление объекта.
+     *
+     * @param configuration Настройки транзакции.
+     * @param uuid Уникальный идентификатор.
+     */
     protected void delete(final Configuration configuration, final UUID uuid) {
         repository.delete(configuration, uuid);
     }

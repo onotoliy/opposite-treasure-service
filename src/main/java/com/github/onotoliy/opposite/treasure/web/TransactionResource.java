@@ -27,6 +27,11 @@ extends AbstractModifierResource<
     TransactionSearchParameter,
     TransactionService> {
 
+    /**
+     * Конструктор.
+     *
+     * @param service Сервис.
+     */
     @Autowired
     public TransactionResource(final TransactionService service) {
         super(service);

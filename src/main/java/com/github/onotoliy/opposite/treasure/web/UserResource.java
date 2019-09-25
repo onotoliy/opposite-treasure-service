@@ -25,6 +25,10 @@ public class UserResource {
      */
     private final UserRPC user;
 
+    /**
+     * Конструктор
+     * @param user Сервис чтения пользователей системы.
+     */
     @Autowired
     public UserResource(final UserRPC user) {
         this.user = user;

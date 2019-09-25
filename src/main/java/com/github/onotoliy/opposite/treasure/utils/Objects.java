@@ -2,26 +2,68 @@ package com.github.onotoliy.opposite.treasure.utils;
 
 import java.util.Comparator;
 
+/**
+ * Утилитарный класс работы с объектами.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
 public final class Objects {
 
+    /**
+     * Конструктор.
+     */
     private Objects() {
 
     }
 
+    /**
+     * Проверка двух объектов на неравенство.
+     *
+     * @param <T> Тип объекта
+     * @param x X
+     * @param y Y
+     * @return Результат проверки.
+     */
     public static <T> boolean nonEqually(final T x, final T y) {
         return !isEqually(x, y);
     }
 
+    /**
+     * Проверка двух объектов на равенство.
+     *
+     * @param <T> Тип объекта
+     * @param x X
+     * @param y Y
+     * @return Результат проверки.
+     */
     public static <T> boolean isEqually(final T x, final T y) {
         return isEqually(x, y, (o1, o2) -> o1.equals(o2) ? 0 : -1);
     }
 
+    /**
+     * Проверка двух объектов на неравенство.
+     *
+     * @param <T> Тип объекта
+     * @param x X
+     * @param y Y
+     * @param equal Описание метода сравнения.
+     * @return Результат проверки.
+     */
     public static <T> boolean nonEqually(final T x,
                                          final T y,
                                          final Comparator<T> equal) {
         return !isEqually(x, y, equal);
     }
 
+    /**
+     * Проверка двух объектов на равенство.
+     *
+     * @param <T> Тип объекта
+     * @param x X
+     * @param y Y
+     * @param equal Описание метода сравнения.
+     * @return Результат проверки.
+     */
     public static <T> boolean isEqually(final T x,
                                         final T y,
                                         final Comparator<T> equal) {
@@ -36,10 +78,22 @@ public final class Objects {
         return equal.compare(x, y) == 0;
     }
 
+    /**
+     * Проверка содержит ли объект какое-либо значение.
+     *
+     * @param value Объект.
+     * @return Результат проверки.
+     */
     public static boolean nonEmpty(final Object value) {
         return !isEmpty(value);
     }
 
+    /**
+     * Проверяет объект на пустоту.
+     *
+     * @param value Объект
+     * @return Результат проверки.
+     */
     public static boolean isEmpty(final Object value) {
         return value == null;
     }

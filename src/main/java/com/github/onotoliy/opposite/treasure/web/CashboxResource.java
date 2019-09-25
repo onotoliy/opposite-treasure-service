@@ -16,8 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/cashbox")
 public class CashboxResource {
 
+    /**
+     * Сервис.
+     */
     private final CashboxService service;
 
+    /**
+     * Конструктор.
+     *
+     * @param service Сервис.
+     */
     @Autowired
     public CashboxResource(final CashboxService service) {
         this.service = service;

@@ -29,6 +29,11 @@ extends AbstractModifierResource<
     EventSearchParameter,
     EventService> {
 
+    /**
+     * Конструктор.
+     *
+     * @param service Сервис.
+     */
     @Autowired
     public EventResource(final EventService service) {
         super(service);

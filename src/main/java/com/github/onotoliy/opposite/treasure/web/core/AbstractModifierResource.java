@@ -24,8 +24,13 @@ public abstract class AbstractModifierResource<
 extends AbstractReaderResource<E, P, S>
 implements ModifierResource<E> {
 
-    public AbstractModifierResource(final S repository) {
-        super(repository);
+    /**
+     * Конструктор.
+     *
+     * @param service Сервис.
+     */
+    public AbstractModifierResource(final S service) {
+        super(service);
     }
 
     @Override
