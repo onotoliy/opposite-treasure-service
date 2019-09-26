@@ -10,7 +10,7 @@ import com.github.onotoliy.opposite.data.page.Page;
 import com.github.onotoliy.opposite.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
-import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
@@ -84,7 +84,7 @@ implements ReaderRepository<E, P> {
     /**
      * Сервис чтения пользователей.
      */
-    protected final UserRPC user;
+    protected final KeycloakRPC user;
 
     /**
      * Конструктор.
@@ -106,7 +106,7 @@ implements ReaderRepository<E, P> {
             final TableField<R, Timestamp> creationDate,
             final TableField<R, Timestamp> deletionDate,
             final DSLContext dsl,
-            final UserRPC user) {
+            final KeycloakRPC user) {
         this.table = table;
         this.uuid = uuid;
         this.name = name;

@@ -9,7 +9,7 @@ import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureEventRecord;
 import com.github.onotoliy.opposite.treasure.repositories.core.AbstractModifierRepository;
-import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
@@ -49,7 +49,7 @@ extends AbstractModifierRepository<
      * @param user Сервис чтения пользователей.
      */
     @Autowired
-    public EventRepository(final DSLContext dsl, final UserRPC user) {
+    public EventRepository(final DSLContext dsl, final KeycloakRPC user) {
         super(
             TREASURE_EVENT,
             TREASURE_EVENT.GUID,

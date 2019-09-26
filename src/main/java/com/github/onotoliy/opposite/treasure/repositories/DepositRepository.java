@@ -7,7 +7,7 @@ import com.github.onotoliy.opposite.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
-import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
 
 import java.math.BigDecimal;
@@ -40,7 +40,7 @@ public class DepositRepository {
     /**
      * Сервис чтения пользователей.
      */
-    private final UserRPC user;
+    private final KeycloakRPC user;
 
     /**
      * Конструктор.
@@ -49,7 +49,7 @@ public class DepositRepository {
      * @param user Сервис чтения пользователей.
      */
     @Autowired
-    public DepositRepository(final DSLContext dsl, final UserRPC user) {
+    public DepositRepository(final DSLContext dsl, final KeycloakRPC user) {
         this.dsl = dsl;
         this.user = user;
     }

@@ -5,7 +5,7 @@ import com.github.onotoliy.opposite.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
 import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
 import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
-import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
@@ -32,7 +32,7 @@ extends AbstractModifierService<Event, EventSearchParameter, EventRepository> {
     /**
      * Сервис чтения пользователей.
      */
-    private final UserRPC user;
+    private final KeycloakRPC user;
 
     /**
      * Конструктор.
@@ -44,7 +44,7 @@ extends AbstractModifierService<Event, EventSearchParameter, EventRepository> {
     @Autowired
     public EventService(final EventRepository repository,
                         final DebtRepository debt,
-                        final UserRPC user) {
+                        final KeycloakRPC user) {
         super(repository);
         this.debt = debt;
         this.user = user;

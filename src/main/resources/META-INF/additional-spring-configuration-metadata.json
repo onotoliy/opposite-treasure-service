@@ -1,0 +1,39 @@
+{
+  "properties": [
+    {
+      "name": "treasure.modification.roles",
+      "type": "java.lang.String[]",
+      "description": "Роли дающие права на изменение данных."
+    },
+    {
+      "name": "treasure.reading.roles",
+      "type": "java.lang.String[]",
+      "description": "Роли дающие права на чтение данных."
+    },
+    {
+      "name": "treasure.keycloak.url",
+      "type": "java.lang.String",
+      "description": "Description for treasure.keycloak.url."
+    },
+    {
+      "name": "treasure.keycloak.realm",
+      "type": "java.lang.String",
+      "description": "Description for treasure.keycloak.realm."
+    },
+    {
+      "name": "treasure.keycloak.client",
+      "type": "java.lang.String",
+      "description": "Description for treasure.keycloak.client."
+    },
+    {
+      "name": "treasure.keycloak.username",
+      "type": "java.lang.String",
+      "description": "Description for treasure.keycloak.username."
+    },
+    {
+      "name": "treasure.keycloak.password",
+      "type": "java.lang.String",
+      "description": "Description for treasure.keycloak.password."
+    }
+  ]
+}

@@ -7,7 +7,7 @@ import com.github.onotoliy.opposite.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
-import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
@@ -64,7 +64,7 @@ implements ModifierRepository<E, P> {
             final  TableField<R, Timestamp> creationDate,
             final TableField<R, Timestamp> deletionDate,
             final DSLContext dsl,
-            final UserRPC user) {
+            final KeycloakRPC user) {
         super(table, uuid, name, author, creationDate, deletionDate, dsl, user);
     }
 

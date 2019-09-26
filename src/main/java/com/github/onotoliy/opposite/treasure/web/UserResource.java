@@ -1,7 +1,7 @@
 package com.github.onotoliy.opposite.treasure.web;
 
 import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class UserResource {
     /**
      * Сервис чтения пользователей системы.
      */
-    private final UserRPC user;
+    private final KeycloakRPC user;
 
     /**
      * Конструктор.
@@ -31,7 +31,7 @@ public class UserResource {
      * @param user Сервис чтения пользователей системы.
      */
     @Autowired
-    public UserResource(final UserRPC user) {
+    public UserResource(final KeycloakRPC user) {
         this.user = user;
     }
 

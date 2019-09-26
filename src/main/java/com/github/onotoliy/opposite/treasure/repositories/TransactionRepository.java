@@ -7,7 +7,7 @@ import com.github.onotoliy.opposite.treasure.jooq.Tables;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureTransactionRecord;
 import com.github.onotoliy.opposite.treasure.repositories.core.AbstractModifierRepository;
-import com.github.onotoliy.opposite.treasure.rpc.UserRPC;
+import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
@@ -47,7 +47,7 @@ extends AbstractModifierRepository<
      * @param user Сервис чтения пользователей.
      */
     @Autowired
-    public TransactionRepository(final DSLContext dsl, final UserRPC user) {
+    public TransactionRepository(final DSLContext dsl, final KeycloakRPC user) {
         super(
             TREASURE_TRANSACTION,
             TREASURE_TRANSACTION.GUID,
