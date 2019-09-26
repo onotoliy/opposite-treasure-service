@@ -46,6 +46,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    /**
+     * Keycloak
+     */
+    implementation 'org.keycloak:keycloak-spring-boot-starter:4.8.3.Final'
 
     /**
      * Kotlin
