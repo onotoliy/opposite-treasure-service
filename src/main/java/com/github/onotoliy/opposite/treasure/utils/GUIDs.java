@@ -40,8 +40,9 @@ public final class GUIDs {
      * @param value Значение в формате {@link UUID}.
      * @return Значение в формате {@link String}.
      */
+    @NotNull
     public static String format(final UUID value) {
-        return value.toString();
+        return value == null ? "" : value.toString();
     }
 
     /**

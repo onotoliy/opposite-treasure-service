@@ -33,13 +33,33 @@ public final class Numbers {
     }
 
     /**
+     * Проверка содержит ли объект какое-либо значение.
+     *
+     * @param value Объект.
+     * @return Результат проверки.
+     */
+    public static boolean nonEmpty(final String value) {
+        return Strings.nonEmpty(value) && nonEmpty(parse(value));
+    }
+
+    /**
      * Проверяет объект на пустоту.
      *
      * @param value Объект
      * @return Результат проверки.
      */
     public static boolean isEmpty(final BigDecimal value) {
-        return value == null;
+        return value == null || BigDecimal.ZERO.equals(value);
+    }
+
+    /**
+     * Проверяет объект на пустоту.
+     *
+     * @param value Объект
+     * @return Результат проверки.
+     */
+    public static boolean isEmpty(final String value) {
+        return Strings.isEmpty(value) && isEmpty(parse(value));
     }
 
     /**

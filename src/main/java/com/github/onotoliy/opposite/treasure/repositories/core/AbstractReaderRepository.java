@@ -196,10 +196,6 @@ implements ReaderRepository<E, P> {
      * @return Пользователь.
      */
     protected Option formatUser(final Record record, final Field<UUID> field) {
-        return Optional.ofNullable(record.getValue(field, java.util.UUID.class))
-                       .map(user::findOption)
-                       .filter(Optional::isPresent)
-                       .map(Optional::get)
-                       .orElse(null);
+        return user.find(record.getValue(field, UUID.class));
     }
 }

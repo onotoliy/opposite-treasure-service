@@ -2,9 +2,6 @@ package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.page.Meta;
-import com.github.onotoliy.opposite.data.page.Page;
-import com.github.onotoliy.opposite.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureEventRecord;
@@ -26,7 +23,6 @@ import org.jooq.UpdateSetMoreStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEBT;
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_EVENT;
 
 /**
@@ -59,26 +55,6 @@ extends AbstractModifierRepository<
             TREASURE_EVENT.DELETION_DATE,
             dsl,
             user);
-    }
-
-    /**
-     * Получение событий по которым пользователь должен.
-     *
-     * @param person Пользователь.
-     * @return События.
-     */
-    public Page<Event> getDebts(final java.util.UUID person) {
-        List<Event> list = dsl
-            .select()
-            .from(TREASURE_DEBT)
-            .join(TREASURE_EVENT)
-            .on(TREASURE_EVENT.GUID.eq(TREASURE_DEBT.EVENT_GUID))
-            .where(TREASURE_DEBT.USER_UUID.eq(person))
-            .fetch(this::toDTO);
-
-        return new Page<>(new Meta(list.size(),
-                                   new Paging(0, list.size())),
-                          list);
     }
 
     @Override
@@ -117,14 +93,25 @@ extends AbstractModifierRepository<
 
     @Override
     protected Event toDTO(final Record record) {
+        return toDTO(record, formatUser(record, author));
+    }
+
+    /**
+     * Преобзазование записи из БД в объект.
+     *
+     * @param record Запись из БД.
+     * @param author Пользователь.
+     * @return Объект.
+     */
+    public static Event toDTO(final Record record, final Option author) {
         return new Event(
-            GUIDs.format(record, uuid),
-            Strings.format(record, name),
-            Numbers.format(record, table.CONTRIBUTION),
-            Numbers.format(record, table.TOTAL),
-            Dates.format(record, table.DEADLINE),
-            Dates.format(record, creationDate),
-            formatUser(record, author)
+            GUIDs.format(record, TREASURE_EVENT.GUID),
+            Strings.format(record, TREASURE_EVENT.NAME),
+            Numbers.format(record, TREASURE_EVENT.CONTRIBUTION),
+            Numbers.format(record, TREASURE_EVENT.TOTAL),
+            Dates.format(record, TREASURE_EVENT.DEADLINE),
+            Dates.format(record, TREASURE_EVENT.CREATION_DATE),
+            author
         );
     }
 

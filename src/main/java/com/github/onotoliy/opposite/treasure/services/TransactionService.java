@@ -22,8 +22,6 @@ import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.github.onotoliy.opposite.treasure.utils.Objects.nonEmpty;
-
 /**
  * Сервис управления транзакциями.
  *
@@ -85,21 +83,28 @@ extends AbstractModifierService<
 
         validation(dto);
 
+        if (dto.getType() == TransactionType.COST) {
+            cashbox.cost(configuration, money);
+        }
+
         if (dto.getType() == TransactionType.CONTRIBUTION) {
             cashbox.contribution(configuration, money);
+            debt.contribution(configuration,
+                              GUIDs.parse(dto.getPerson()),
+                              GUIDs.parse(dto.getEvent()));
+        }
 
-            if (nonEmpty(dto.getPerson()) && Objects.isEmpty(dto.getEvent())) {
-                deposit.contribution(
-                    configuration, GUIDs.parse(dto.getPerson()), money);
-            }
+        if (dto.getType() == TransactionType.WRITE_OFF) {
+            deposit.cost(configuration, GUIDs.parse(dto.getPerson()), money);
+            debt.contribution(configuration,
+                              GUIDs.parse(dto.getPerson()),
+                              GUIDs.parse(dto.getEvent()));
+        }
 
-            if (nonEmpty(dto.getPerson()) && nonEmpty(dto.getEvent())) {
-                debt.contribution(configuration,
-                                  GUIDs.parse(dto.getPerson()),
-                                  GUIDs.parse(dto.getEvent()));
-            }
-        } else {
-            cashbox.cost(configuration, money);
+        if (dto.getType() == TransactionType.PAID) {
+            deposit.contribution(configuration,
+                                 GUIDs.parse(dto.getPerson()),
+                                 money);
         }
 
         repository.create(configuration, dto);
@@ -115,8 +120,7 @@ extends AbstractModifierService<
         }
 
         if (Objects.nonEqually(dto.getCash(), previous.getCash())) {
-            throw new ModificationException(
-                "Нельзя менять сумму взносов/расходов");
+            throw new ModificationException("Нельзя менять сумму транзакции");
         }
 
         if (Objects.nonEqually(dto.getPerson(), previous.getPerson())) {
@@ -138,20 +142,28 @@ extends AbstractModifierService<
 
         BigDecimal money = Numbers.parse(dto.getCash());
 
+        if (dto.getType() == TransactionType.COST) {
+            cashbox.contribution(configuration, money);
+        }
+
         if (dto.getType() == TransactionType.CONTRIBUTION) {
             cashbox.cost(configuration, money);
+            debt.cost(configuration,
+                      GUIDs.parse(dto.getPerson()),
+                      GUIDs.parse(dto.getEvent()));
+        }
 
-            if (Objects.isEmpty(dto.getEvent())) {
-                deposit.cost(configuration,
-                             GUIDs.parse(dto.getPerson()),
-                             money);
-            } else {
-                debt.cost(configuration,
-                          GUIDs.parse(dto.getPerson()),
-                          GUIDs.parse(dto.getEvent()));
-            }
-        } else {
-            cashbox.contribution(configuration, money);
+        if (dto.getType() == TransactionType.WRITE_OFF) {
+            deposit.contribution(configuration,
+                                 GUIDs.parse(dto.getPerson()),
+                                 money);
+            debt.cost(configuration,
+                      GUIDs.parse(dto.getPerson()),
+                      GUIDs.parse(dto.getEvent()));
+        }
+
+        if (dto.getType() == TransactionType.PAID) {
+            deposit.cost(configuration, GUIDs.parse(dto.getPerson()), money);
         }
 
         repository.delete(configuration, uuid);
@@ -159,9 +171,15 @@ extends AbstractModifierService<
 
     /**
      * Проверка полноты данных.
+     *
      * @param dto Транзакция.
      */
     private void validation(final Transaction dto) {
+        if (dto.getType() == TransactionType.NONE) {
+            throw new ModificationException(
+                "У транзакции должен быть указан тип");
+        }
+
         if (dto.getType() != TransactionType.CONTRIBUTION) {
             return;
         }
