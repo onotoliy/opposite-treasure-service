@@ -11,10 +11,12 @@ import java.util.stream.Collectors;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.keycloak.KeycloakPrincipal;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -90,6 +92,20 @@ public class KeycloakRPC {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    public UUID getAuthenticationUUID() {
+        return GUIDs.parse(getKeycloakPrincipal().getName());
+    }
+
+    public KeycloakPrincipal getKeycloakPrincipal() {
+        return (KeycloakPrincipal) SecurityContextHolder.getContext()
+                                                        .getAuthentication()
+                                                        .getPrincipal();
+    }
+
+    public Option getCurrentUser() {
+        return find(getAuthenticationUUID());
     }
 
     /**

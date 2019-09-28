@@ -2,7 +2,6 @@ package com.github.onotoliy.opposite.treasure.web;
 
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class UserResource {
      */
     @GetMapping(value = "/current")
     public Option getCurrentUser() {
-        return user.find(GUIDs.parse("8098207c-6fbb-45ec-ae10-184607262a1a"));
+        return user.getCurrentUser();
     }
 
     /**

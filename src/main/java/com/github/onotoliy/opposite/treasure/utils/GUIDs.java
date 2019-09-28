@@ -7,6 +7,8 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.keycloak.KeycloakPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Утилитарный класс работы с уникальными идентификаторами.

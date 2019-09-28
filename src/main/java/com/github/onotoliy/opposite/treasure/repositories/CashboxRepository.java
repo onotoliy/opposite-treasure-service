@@ -48,6 +48,13 @@ public class CashboxRepository {
         return dsl.select().from(TREASURE_CASHBOX).fetchAny(this::toDTO);
     }
 
+    public BigDecimal money() {
+        return dsl.select()
+                  .from(TREASURE_CASHBOX)
+                  .fetchAny(record -> record.getValue(TREASURE_CASHBOX.DEPOSIT,
+                                                      BigDecimal.class));
+    }
+
     /**
      * Уменьшение депозита кассы на указанную сумму.
      *

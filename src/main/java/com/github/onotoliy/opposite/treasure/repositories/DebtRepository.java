@@ -103,4 +103,18 @@ public class DebtRepository {
                TREASURE_DEBT.EVENT_GUID.eq(event))
            .execute();
     }
+
+    /**
+     * Списание долга пользователей.
+     *
+     * @param configuration Настройки транзакции.
+     * @param event Событие
+     */
+    public void contribution(final Configuration configuration,
+                             final UUID event) {
+        DSL.using(configuration)
+           .deleteFrom(TREASURE_DEBT)
+           .where(TREASURE_DEBT.EVENT_GUID.eq(event))
+           .execute();
+    }
 }

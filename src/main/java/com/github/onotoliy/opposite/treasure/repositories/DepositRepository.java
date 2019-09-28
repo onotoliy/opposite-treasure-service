@@ -61,11 +61,23 @@ public class DepositRepository {
      * @return Депозит.
      */
     public Deposit get(final UUID uuid) {
-        return dsl.select().from(TREASURE_DEPOSIT)
+        return dsl.select()
+                  .from(TREASURE_DEPOSIT)
                   .where(TREASURE_DEPOSIT.USER_UUID.eq(uuid))
                   .fetchOptional(this::toDTO)
                   .orElseThrow(() -> new NotFoundException(TREASURE_DEPOSIT,
                                                            uuid));
+    }
+
+    public BigDecimal money(final UUID uuid) {
+        return dsl.select()
+                  .from(TREASURE_DEPOSIT)
+                  .where(TREASURE_DEPOSIT.USER_UUID.eq(uuid))
+                  .fetchOptional(record ->
+                      record.getValue(TREASURE_DEPOSIT.DEPOSIT,
+                                      BigDecimal.class))
+                  .orElseThrow(() ->
+                      new NotFoundException(TREASURE_DEPOSIT, uuid));
     }
 
     /**

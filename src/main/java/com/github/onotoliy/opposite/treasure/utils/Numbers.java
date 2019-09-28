@@ -59,7 +59,7 @@ public final class Numbers {
      * @return Результат проверки.
      */
     public static boolean isEmpty(final String value) {
-        return Strings.isEmpty(value) && isEmpty(parse(value));
+        return Strings.isEmpty(value) || isEmpty(parse(value));
     }
 
     /**

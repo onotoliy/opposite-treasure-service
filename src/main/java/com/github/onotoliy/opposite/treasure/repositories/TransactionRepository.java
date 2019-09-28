@@ -1,5 +1,6 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
+import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.Transaction;
 import com.github.onotoliy.opposite.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
@@ -14,6 +15,7 @@ import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Configuration;
@@ -119,12 +121,16 @@ extends AbstractModifierRepository<
 
     @Override
     protected Transaction toDTO(final Record record) {
+        Option person = record.getValue(table.USER_GUID, UUID.class) == null
+            ? null
+            : formatUser(record, table.USER_GUID);
+
         return new Transaction(
             GUIDs.format(record, uuid),
             Strings.format(record, name),
             Numbers.format(record, table.CASH),
             TransactionType.valueOf(Strings.format(record, table.TYPE)),
-            formatUser(record, table.USER_GUID),
+            person,
             EventRepository.toOption(record),
             Dates.format(record, creationDate),
             formatUser(record, author)

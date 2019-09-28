@@ -81,10 +81,21 @@ extends AbstractModifierService<
                           final Transaction dto) {
         BigDecimal money = Numbers.parse(dto.getCash());
 
+        if (money == null) {
+            throw new ModificationException("Денежные средсва не заполнены");
+        }
+
         validation(dto);
 
         if (dto.getType() == TransactionType.COST) {
-            cashbox.cost(configuration, money);
+            BigDecimal cashbox = this.cashbox.money();
+
+            if (cashbox == null || cashbox.compareTo(money) < 0) {
+                throw new ModificationException(
+                    "В кассе не может быть отрицательная сумма");
+            }
+
+            this.cashbox.cost(configuration, money);
         }
 
         if (dto.getType() == TransactionType.CONTRIBUTION) {
@@ -95,10 +106,18 @@ extends AbstractModifierService<
         }
 
         if (dto.getType() == TransactionType.WRITE_OFF) {
-            deposit.cost(configuration, GUIDs.parse(dto.getPerson()), money);
-            debt.contribution(configuration,
-                              GUIDs.parse(dto.getPerson()),
-                              GUIDs.parse(dto.getEvent()));
+            UUID person = GUIDs.parse(dto.getPerson());
+            BigDecimal deposit = this.deposit.money(person);
+
+            if (deposit == null || deposit.compareTo(money) < 0) {
+                throw new ModificationException(
+                    "Депозит не может быть отрицательным");
+            }
+
+            this.deposit.cost(configuration, person, money);
+            this.debt.contribution(configuration,
+                                   person,
+                                   GUIDs.parse(dto.getEvent()));
         }
 
         if (dto.getType() == TransactionType.PAID) {

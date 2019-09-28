@@ -40,8 +40,8 @@
     <insert tableName="treasure_event">
       <column name="guid" type="uuid" value="a276deb4-0a93-4fc1-b9f8-76dbda5f3c7d"/>
       <column name="name" type="varchar(255)" value="Закрытие мото-сезона 2019 Улан-Удэ"/>
-      <column name="contribution" type="numeric" valueNumeric="1000.0"/>
-      <column name="total" type="numeric" valueNumeric="10000.0"/>
+      <column name="contribution" type="numeric" valueNumeric="0"/>
+      <column name="total" type="numeric" valueNumeric="0"/>
       <column name="creation_date" type="datetime" value="now()"/>
       <column name="deadline" type="datetime" value="now()"/>
       <column name="author" type="uuid" value="c3facefb-c626-4505-8a7f-b3f83f308bfc"/>
@@ -60,56 +60,52 @@
 
   <changeSet id="2019-07-18-1-treasure-data" author="onotoliy">
     <insert tableName="treasure_deposit">
-      <column name="user_uuid" type="uuid" value="8098207c-6fbb-45ec-ae10-184607262a1a"/>
+      <column name="user_uuid" type="uuid" value="8b833546-f4b3-4137-9863-1b88a982f3fd"/>
       <column name="deposit" type="numeric" valueNumeric="0.0"/>
     </insert>
 
     <insert tableName="treasure_deposit">
-      <column name="user_uuid" type="uuid" value="7167c7d7-9695-4a6c-b746-b860255b36bb"/>
+      <column name="user_uuid" type="uuid" value="6f1f06f9-57e3-44fa-8fb8-cc76a67e43fe"/>
       <column name="deposit" type="numeric" valueNumeric="0.0"/>
     </insert>
 
     <insert tableName="treasure_deposit">
-      <column name="user_uuid" type="uuid" value="29325b60-f623-417d-b7d4-a106c42e8c77"/>
+      <column name="user_uuid" type="uuid" value="e2f2d134-8127-4ade-86e6-ea1ba250ce3c"/>
       <column name="deposit" type="numeric" valueNumeric="0.0"/>
     </insert>
 
     <insert tableName="treasure_deposit">
-      <column name="user_uuid" type="uuid" value="f6f2fdee-e611-4d27-9288-e30d124de1de"/>
+      <column name="user_uuid" type="uuid" value="597cd539-3683-4943-9914-169e50d294b4"/>
       <column name="deposit" type="numeric" valueNumeric="0.0"/>
     </insert>
 
     <insert tableName="treasure_deposit">
-      <column name="user_uuid" type="uuid" value="8960887b-6f90-410e-8d10-5204e04982da"/>
+      <column name="user_uuid" type="uuid" value="1519f13d-e891-4229-a2c4-d8770b35bb5e"/>
       <column name="deposit" type="numeric" valueNumeric="0.0"/>
     </insert>
 
     <insert tableName="treasure_deposit">
-      <column name="user_uuid" type="uuid" value="fc4e6582-e4ac-46e0-a9e3-80dbdb3ad9a7"/>
+      <column name="user_uuid" type="uuid" value="fad1f03b-8f89-42dd-bc08-f8216007a054"/>
       <column name="deposit" type="numeric" valueNumeric="0.0"/>
     </insert>
 
     <insert tableName="treasure_deposit">
-      <column name="user_uuid" type="uuid" value="8cbc7413-7841-47af-b635-f6ac88e553b1"/>
+      <column name="user_uuid" type="uuid" value="c51cfed0-99f9-49ce-aea8-5c9fbda83c68"/>
       <column name="deposit" type="numeric" valueNumeric="0.0"/>
     </insert>
 
     <insert tableName="treasure_deposit">
-      <column name="user_uuid" type="uuid" value="433e3a62-0d27-4d2d-8f46-c0cf04d253ae"/>
+      <column name="user_uuid" type="uuid" value="1ec64404-eac1-45e3-bdb7-023def4da3e6"/>
       <column name="deposit" type="numeric" valueNumeric="0.0"/>
     </insert>
 
     <insert tableName="treasure_deposit">
-      <column name="user_uuid" type="uuid" value="9f02281b-8696-4bb3-8e0c-0f8a1c7bceaa"/>
-      <column name="deposit" type="numeric" valueNumeric="0.0"/>
-    </insert>
-
-    <insert tableName="treasure_deposit">
-      <column name="user_uuid" type="uuid" value="c3facefb-c626-4505-8a7f-b3f83f308bfc"/>
+      <column name="user_uuid" type="uuid" value="c135bf10-8f2d-4c00-8558-4555b482a1c3"/>
       <column name="deposit" type="numeric" valueNumeric="0.0"/>
     </insert>
   </changeSet>
 
+  <!--
   <changeSet id="2019-07-18-2-treasure-data" author="onotoliy">
     <insert tableName="treasure_transaction">
       <column name="guid" type="uuid" value="ea8dae3c-ca0a-4cb7-92a1-950d4ed7f036"/>
@@ -152,4 +148,5 @@
       <column name="creation_date" type="datetime" value="now()"/>
     </insert>
   </changeSet>
+  -->
 </databaseChangeLog>
