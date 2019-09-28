@@ -69,6 +69,12 @@ public class DepositRepository {
                                                            uuid));
     }
 
+    /**
+     * Получение суммы денежных средств на депозите.
+     *
+     * @param uuid Уникальный идентификатор.
+     * @return Сумма денежных средств на депозите.
+     */
     public BigDecimal money(final UUID uuid) {
         return dsl.select()
                   .from(TREASURE_DEPOSIT)

@@ -71,7 +71,8 @@ public class KeycloakRPC {
 
     /**
      * Конструктор.
-     *  @param url URL на котором развернут Keycloak.
+     *
+     * @param url URL на котором развернут Keycloak.
      * @param realm Название realm.
      * @param client Название клиента.
      * @param username Имя пользователя.
@@ -94,16 +95,32 @@ public class KeycloakRPC {
         this.role = role;
     }
 
+    /**
+     * Получение уникального идентификатора  текущего пользователя из контекста.
+     *
+     * @return Уникальный идентификатор пользователя.
+     */
     public UUID getAuthenticationUUID() {
         return GUIDs.parse(getKeycloakPrincipal().getName());
     }
 
+    /**
+     * Получение текущего пользователя в формате {@link KeycloakPrincipal} из
+     * контекста.
+     *
+     * @return Пользователь в формате {@link KeycloakPrincipal}
+     */
     public KeycloakPrincipal getKeycloakPrincipal() {
         return (KeycloakPrincipal) SecurityContextHolder.getContext()
                                                         .getAuthentication()
                                                         .getPrincipal();
     }
 
+    /**
+     * Получение текущего пользователя.
+     *
+     * @return Пользователь.
+     */
     public Option getCurrentUser() {
         return find(getAuthenticationUUID());
     }

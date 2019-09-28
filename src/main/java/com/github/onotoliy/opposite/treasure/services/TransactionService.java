@@ -5,18 +5,20 @@ import com.github.onotoliy.opposite.data.Transaction;
 import com.github.onotoliy.opposite.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
-import com.github.onotoliy.opposite.treasure.repositories.CashboxRepository;
-import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
-import com.github.onotoliy.opposite.treasure.repositories.DepositRepository;
 import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
 import com.github.onotoliy.opposite.treasure.repositories.TransactionRepository;
 import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
+import com.github.onotoliy.opposite.treasure.services.transactions.TransactionExecutor;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,96 +37,40 @@ extends AbstractModifierService<
     TransactionRepository> {
 
     /**
-     * Репозиторий данных о кассе.
-     */
-    private final CashboxRepository cashbox;
-
-    /**
-     * Репозиторий депозитов.
-     */
-    private final DepositRepository deposit;
-
-    /**
      * Репозиторий событий.
      */
     private final EventRepository event;
 
     /**
-     * Репозиторий долгов.
+     * Сервисы описывающие бизнес логику тразакций.
      */
-    private final DebtRepository debt;
+    private final Map<TransactionType, TransactionExecutor> executors;
 
     /**
      * Конструктор.
      *
      * @param repository Репозиторий транзакций.
-     * @param cashbox Репозиторий данных о кассе.
-     * @param deposit Репозиторий депозитов.
      * @param event Репозиторий событий.
-     * @param debt Репозиторий долгов.
+     * @param executors Список сервисов описывающие бизнес логику тразакций.
      */
     @Autowired
     public TransactionService(final TransactionRepository repository,
-                              final CashboxRepository cashbox,
-                              final DepositRepository deposit,
                               final EventRepository event,
-                              final DebtRepository debt) {
+                              final List<TransactionExecutor> executors) {
         super(repository);
-        this.cashbox = cashbox;
-        this.deposit = deposit;
         this.event = event;
-        this.debt = debt;
+        this.executors = executors
+            .stream()
+            .collect(Collectors.toMap(TransactionExecutor::type,
+                                      Function.identity()));
     }
 
     @Override
     protected void create(final Configuration configuration,
                           final Transaction dto) {
-        BigDecimal money = Numbers.parse(dto.getCash());
-
-        if (money == null) {
-            throw new ModificationException("Денежные средсва не заполнены");
-        }
-
         validation(dto);
 
-        if (dto.getType() == TransactionType.COST) {
-            BigDecimal cashbox = this.cashbox.money();
-
-            if (cashbox == null || cashbox.compareTo(money) < 0) {
-                throw new ModificationException(
-                    "В кассе не может быть отрицательная сумма");
-            }
-
-            this.cashbox.cost(configuration, money);
-        }
-
-        if (dto.getType() == TransactionType.CONTRIBUTION) {
-            cashbox.contribution(configuration, money);
-            debt.contribution(configuration,
-                              GUIDs.parse(dto.getPerson()),
-                              GUIDs.parse(dto.getEvent()));
-        }
-
-        if (dto.getType() == TransactionType.WRITE_OFF) {
-            UUID person = GUIDs.parse(dto.getPerson());
-            BigDecimal deposit = this.deposit.money(person);
-
-            if (deposit == null || deposit.compareTo(money) < 0) {
-                throw new ModificationException(
-                    "Депозит не может быть отрицательным");
-            }
-
-            this.deposit.cost(configuration, person, money);
-            this.debt.contribution(configuration,
-                                   person,
-                                   GUIDs.parse(dto.getEvent()));
-        }
-
-        if (dto.getType() == TransactionType.PAID) {
-            deposit.contribution(configuration,
-                                 GUIDs.parse(dto.getPerson()),
-                                 money);
-        }
+        execute(dto, executor -> executor.create(configuration, dto));
 
         repository.create(configuration, dto);
     }
@@ -157,33 +103,8 @@ extends AbstractModifierService<
 
     @Override
     protected void delete(final Configuration configuration, final UUID uuid) {
-        Transaction dto = get(uuid);
-
-        BigDecimal money = Numbers.parse(dto.getCash());
-
-        if (dto.getType() == TransactionType.COST) {
-            cashbox.contribution(configuration, money);
-        }
-
-        if (dto.getType() == TransactionType.CONTRIBUTION) {
-            cashbox.cost(configuration, money);
-            debt.cost(configuration,
-                      GUIDs.parse(dto.getPerson()),
-                      GUIDs.parse(dto.getEvent()));
-        }
-
-        if (dto.getType() == TransactionType.WRITE_OFF) {
-            deposit.contribution(configuration,
-                                 GUIDs.parse(dto.getPerson()),
-                                 money);
-            debt.cost(configuration,
-                      GUIDs.parse(dto.getPerson()),
-                      GUIDs.parse(dto.getEvent()));
-        }
-
-        if (dto.getType() == TransactionType.PAID) {
-            deposit.cost(configuration, GUIDs.parse(dto.getPerson()), money);
-        }
+        execute(get(uuid),
+                executor -> executor.delete(configuration, get(uuid)));
 
         repository.delete(configuration, uuid);
     }
@@ -215,5 +136,23 @@ extends AbstractModifierService<
                      "Внесенный взнос не равен взносу с человека");
             }
         }
+    }
+
+    /**
+     * Исполнение бизнес логики транзакции.
+     *
+     * @param dto Транзакция.
+     * @param consumer Бизнес логика.
+     */
+    private void execute(final Transaction dto,
+                         final Consumer<TransactionExecutor> consumer) {
+        TransactionExecutor executor = executors.get(dto.getType());
+
+        if (executor == null) {
+            throw new ModificationException(
+                "Не удалось найти описание бизнес логики транзакции");
+        }
+
+        consumer.accept(executor);
     }
 }

@@ -48,6 +48,11 @@ public class CashboxRepository {
         return dsl.select().from(TREASURE_CASHBOX).fetchAny(this::toDTO);
     }
 
+    /**
+     * Получение суммы денежных средств в кассе.
+     *
+     * @return Сумма денежных средств в кассе.
+     */
     public BigDecimal money() {
         return dsl.select()
                   .from(TREASURE_CASHBOX)

@@ -12,7 +12,6 @@ import com.github.onotoliy.opposite.treasure.repositories.TransactionRepository;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 
 import java.util.UUID;
@@ -21,7 +20,7 @@ import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.github.onotoliy.opposite.treasure.utils.Numbers.*;
+import static com.github.onotoliy.opposite.treasure.utils.Numbers.isEmpty;
 
 /**
  * Сервис управления событиями.
