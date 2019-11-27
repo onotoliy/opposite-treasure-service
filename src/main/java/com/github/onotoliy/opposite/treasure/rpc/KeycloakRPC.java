@@ -126,6 +126,19 @@ public class KeycloakRPC {
     }
 
     /**
+     * Получение ролей текущего пользователя.
+     *
+     * @return Роли.
+     */
+    public List<String> getCurrentUserRoles() {
+        return keycloak().realm(realm)
+                         .users()
+                         .get(getKeycloakPrincipal().getName())
+                         .toRepresentation()
+                         .getRealmRoles();
+    }
+
+    /**
      * Получение пользователя.
      *
      * @param uuid Уникальный идентификатор.

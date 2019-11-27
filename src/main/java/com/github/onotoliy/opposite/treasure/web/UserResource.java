@@ -45,6 +45,16 @@ public class UserResource {
     }
 
     /**
+     * Получение ролей текущего пользователя.
+     *
+     * @return Роли.
+     */
+    @GetMapping(value = "/current/roles")
+    public List<String> getCurrentUserRoles() {
+        return user.getCurrentUserRoles();
+    }
+
+    /**
      * Получение списка всех пользователей, зарегистрированных в системе.
      *
      * @return Пользователи.
