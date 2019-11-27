@@ -2,13 +2,13 @@ package com.github.onotoliy.opposite.treasure.web;
 
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * WEB сервис чтения пользователей системы.
@@ -50,7 +50,7 @@ public class UserResource {
      * @return Роли.
      */
     @GetMapping(value = "/current/roles")
-    public List<String> getCurrentUserRoles() {
+    public Set<String> getCurrentUserRoles() {
         return user.getCurrentUserRoles();
     }
 

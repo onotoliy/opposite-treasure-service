@@ -3,12 +3,6 @@ package com.github.onotoliy.opposite.treasure.rpc;
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.keycloak.KeycloakPrincipal;
@@ -18,6 +12,12 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -130,12 +130,11 @@ public class KeycloakRPC {
      *
      * @return Роли.
      */
-    public List<String> getCurrentUserRoles() {
-        return keycloak().realm(realm)
-                         .users()
-                         .get(getKeycloakPrincipal().getName())
-                         .toRepresentation()
-                         .getRealmRoles();
+    public Set<String> getCurrentUserRoles() {
+        return getKeycloakPrincipal().getKeycloakSecurityContext()
+                                     .getToken()
+                                     .getRealmAccess()
+                                     .getRoles();
     }
 
     /**
