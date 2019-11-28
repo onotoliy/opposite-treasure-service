@@ -147,9 +147,10 @@ implements ReaderRepository<E, P> {
 
     @Override
     public List<Option> getAll() {
-        return findQuery().fetch(record ->
-            new Option(GUIDs.format(record, uuid),
-                       Strings.format(record, name)));
+        return findQuery().where(deletionDate.isNull())
+                          .fetch(record ->
+                              new Option(GUIDs.format(record, uuid),
+                                  Strings.format(record, name)));
     }
 
     @Override
