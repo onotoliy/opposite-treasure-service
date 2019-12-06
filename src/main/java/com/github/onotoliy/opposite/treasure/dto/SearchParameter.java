@@ -60,6 +60,6 @@ public abstract class SearchParameter {
      * @return Размер страницы.
      */
     public int numberOfRows() {
-        return NUMBER_OF_ROWS;
+        return numberOfRows;
     }
 }
