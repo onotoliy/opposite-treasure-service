@@ -42,6 +42,11 @@ extends AbstractModifierService<
     private final EventRepository event;
 
     /**
+     * Сервис уведомлений.
+     */
+    private final NotificationService notification;
+
+    /**
      * Сервисы описывающие бизнес логику тразакций.
      */
     private final Map<TransactionType, TransactionExecutor> executors;
@@ -51,14 +56,17 @@ extends AbstractModifierService<
      *
      * @param repository Репозиторий транзакций.
      * @param event Репозиторий событий.
+     * @param notification Сервис уведомлений.
      * @param executors Список сервисов описывающие бизнес логику тразакций.
      */
     @Autowired
     public TransactionService(final TransactionRepository repository,
                               final EventRepository event,
+                              final NotificationService notification,
                               final List<TransactionExecutor> executors) {
         super(repository);
         this.event = event;
+        this.notification = notification;
         this.executors = executors
             .stream()
             .collect(Collectors.toMap(TransactionExecutor::type,
@@ -73,6 +81,7 @@ extends AbstractModifierService<
         execute(dto, executor -> executor.create(configuration, dto));
 
         repository.create(configuration, dto);
+        notification.push(dto);
     }
 
     @Override
@@ -99,6 +108,7 @@ extends AbstractModifierService<
         validation(dto);
 
         repository.update(configuration, dto);
+        notification.push(dto);
     }
 
     @Override

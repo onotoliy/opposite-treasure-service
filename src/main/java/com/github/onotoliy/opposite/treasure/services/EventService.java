@@ -32,6 +32,11 @@ public class EventService
 extends AbstractModifierService<Event, EventSearchParameter, EventRepository> {
 
     /**
+     * Сервис уведомлений.
+     */
+    private final NotificationService notification;
+
+    /**
      * Репозиторий транзакций.
      */
     private final TransactionRepository transaction;
@@ -51,16 +56,19 @@ extends AbstractModifierService<Event, EventSearchParameter, EventRepository> {
      *
      * @param repository Репозиторий событий.
      * @param transaction Репозиторий транзакций.
+     * @param notification Сервис уведомлений.
      * @param debt Репозиторий долгов.
      * @param user Сервис пользователей.
      */
     @Autowired
     public EventService(final EventRepository repository,
                         final TransactionRepository transaction,
+                        final NotificationService notification,
                         final DebtRepository debt,
                         final KeycloakRPC user) {
         super(repository);
         this.transaction = transaction;
+        this.notification = notification;
         this.debt = debt;
         this.user = user;
     }
@@ -75,6 +83,7 @@ extends AbstractModifierService<Event, EventSearchParameter, EventRepository> {
 
         user.getAll().forEach(e ->
             debt.cost(configuration, GUIDs.parse(e), GUIDs.parse(dto)));
+        notification.push(dto);
     }
 
     @Override
@@ -92,6 +101,7 @@ extends AbstractModifierService<Event, EventSearchParameter, EventRepository> {
         }
 
         repository.update(configuration, dto);
+        notification.push(dto);
     }
 
     @Override

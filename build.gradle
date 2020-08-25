@@ -41,6 +41,11 @@ dependencies {
     implementation 'com.github.onotoliy.opposite:treasure-data-jvm:1.0.3'
 
     /**
+     * Push Notification
+     */
+    implementation 'com.google.firebase:firebase-admin:7.0.0'
+
+    /**
      * Spring Boot
      */
     implementation 'org.springframework.boot:spring-boot-starter'
