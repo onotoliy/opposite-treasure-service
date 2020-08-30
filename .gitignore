@@ -8,3 +8,4 @@
 /service.log.*
 /build/
 /out/
+/src/main/resources/firebase-config.json

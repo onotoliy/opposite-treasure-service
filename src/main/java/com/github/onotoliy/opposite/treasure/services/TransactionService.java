@@ -81,7 +81,7 @@ extends AbstractModifierService<
         execute(dto, executor -> executor.create(configuration, dto));
 
         repository.create(configuration, dto);
-        notification.push(dto);
+        notification.notify(dto);
     }
 
     @Override
@@ -108,7 +108,7 @@ extends AbstractModifierService<
         validation(dto);
 
         repository.update(configuration, dto);
-        notification.push(dto);
+        notification.notify(dto);
     }
 
     @Override

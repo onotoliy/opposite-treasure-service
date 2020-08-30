@@ -83,7 +83,7 @@ extends AbstractModifierService<Event, EventSearchParameter, EventRepository> {
 
         user.getAll().forEach(e ->
             debt.cost(configuration, GUIDs.parse(e), GUIDs.parse(dto)));
-        notification.push(dto);
+        notification.notify(dto);
     }
 
     @Override
@@ -101,7 +101,7 @@ extends AbstractModifierService<Event, EventSearchParameter, EventRepository> {
         }
 
         repository.update(configuration, dto);
-        notification.push(dto);
+        notification.notify(dto);
     }
 
     @Override

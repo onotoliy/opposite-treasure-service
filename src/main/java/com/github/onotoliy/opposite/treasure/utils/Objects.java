@@ -1,6 +1,7 @@
 package com.github.onotoliy.opposite.treasure.utils;
 
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Утилитарный класс работы с объектами.
@@ -96,5 +97,27 @@ public final class Objects {
      */
     public static boolean isEmpty(final Object value) {
         return value == null;
+    }
+
+    /**
+     * Проверяет список объектов на пустоту.
+     *
+     * @param value Список объектов.
+     * @param <T> Тип объекта.
+     * @return Результат проверки.
+     */
+    public static <T> boolean isEmpty(final List<T> value) {
+        return value == null || value.isEmpty();
+    }
+
+    /**
+     * Проверка содержит ли список объектов какое-либо значение.
+     *
+     * @param value Список объектов.
+     * @param <T> Тип объекта.
+     * @return Результат проверки.
+     */
+    public static <T> boolean nonEmpty(final List<T> value) {
+        return value == null || value.isEmpty();
     }
 }

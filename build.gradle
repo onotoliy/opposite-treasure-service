@@ -38,12 +38,13 @@ repositories {
 
 dependencies {
 
-    implementation 'com.github.onotoliy.opposite:treasure-data-jvm:1.0.3'
+    implementation 'com.github.onotoliy.opposite:treasure-data-jvm:1.0.5'
 
     /**
      * Push Notification
      */
     implementation 'com.google.firebase:firebase-admin:7.0.0'
+    implementation 'com.twilio.sdk:twilio:7.20.0'
 
     /**
      * Spring Boot
@@ -52,6 +53,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     /**

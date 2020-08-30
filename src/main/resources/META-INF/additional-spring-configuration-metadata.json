@@ -1,39 +1,74 @@
 {
   "properties": [
     {
-      "name": "treasure.modification.roles",
+      "name": "treasure.roles.modification",
       "type": "java.lang.String[]",
       "description": "Роли дающие права на изменение данных."
     },
     {
-      "name": "treasure.reading.roles",
+      "name": "treasure.roles.reading",
       "type": "java.lang.String[]",
       "description": "Роли дающие права на чтение данных."
     },
     {
+      "name": "treasure.roles.default",
+      "type": "java.lang.String",
+      "description": "Роль по умолчанию."
+    },
+    {
       "name": "treasure.keycloak.url",
       "type": "java.lang.String",
-      "description": "Description for treasure.keycloak.url."
+      "description": "URL к административной консоле Keycloak."
     },
     {
       "name": "treasure.keycloak.realm",
       "type": "java.lang.String",
-      "description": "Description for treasure.keycloak.realm."
+      "description": "Название реалма в Keycloak."
     },
     {
       "name": "treasure.keycloak.client",
       "type": "java.lang.String",
-      "description": "Description for treasure.keycloak.client."
+      "description": "Название клиента в Keycloak."
     },
     {
       "name": "treasure.keycloak.username",
       "type": "java.lang.String",
-      "description": "Description for treasure.keycloak.username."
+      "description": "Имя пользователя в Keycloak."
     },
     {
       "name": "treasure.keycloak.password",
       "type": "java.lang.String",
-      "description": "Description for treasure.keycloak.password."
+      "description": "Пароль в Keycloak."
+    },
+    {
+      "name": "treasure.firebase.icon",
+      "type": "java.lang.String",
+      "description": "URL к логотипу приложения."
+    },
+    {
+      "name": "treasure.firebase.topic",
+      "type": "java.lang.String",
+      "description": "Название топика отправки push уведомлений."
+    },
+    {
+      "name": "treasure.firebase.config.path",
+      "type": "java.lang.String",
+      "description": "Файл подключения к Firebase."
+    },
+    {
+      "name": "treasure.twilio.from",
+      "type": "java.lang.String",
+      "description": "Номер телефона Twilio."
+    },
+    {
+      "name": "treasure.twilio.username",
+      "type": "java.lang.String",
+      "description": "Имя пользователя Twilio."
+    },
+    {
+      "name": "treasure.twilio.password",
+      "type": "java.lang.String",
+      "description": "Пароль Twilio."
     }
   ]
 }

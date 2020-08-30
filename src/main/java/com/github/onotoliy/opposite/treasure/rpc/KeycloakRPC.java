@@ -1,7 +1,9 @@
 package com.github.onotoliy.opposite.treasure.rpc;
 
 import com.github.onotoliy.opposite.data.Option;
+import com.github.onotoliy.opposite.data.User;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
+import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -86,7 +90,7 @@ public class KeycloakRPC {
             @Value("${treasure.keycloak.client}") final String client,
             @Value("${treasure.keycloak.username}") final String username,
             @Value("${treasure.keycloak.password}") final String password,
-            @Value("${treasure.default.role}") final String role) {
+            @Value("${treasure.roles.default}") final String role) {
 
         this.realm = realm;
         this.url = url;
@@ -161,7 +165,8 @@ public class KeycloakRPC {
                                          .users()
                                          .get(GUIDs.format(uuid))
                                          .toRepresentation())
-                           .map(this::toDTO);
+                           .map(this::toDTO)
+                           .map(e -> new Option(e.getUuid(), e.getName()));
         } catch (Exception e) {
             return Optional.of(emptyDTO(uuid));
         }
@@ -172,14 +177,14 @@ public class KeycloakRPC {
      *
      * @return Пользователи
      */
-    public List<Option> getAll() {
+    public List<User> getAll() {
         return keycloak().realm(realm)
                          .roles()
                          .get(role)
                          .getRoleUserMembers()
                          .stream()
                          .map(this::toDTO)
-                         .sorted(Comparator.comparing(Option::getName))
+                         .sorted(Comparator.comparing(User::getName))
                          .collect(Collectors.toList());
     }
 
@@ -219,11 +224,35 @@ public class KeycloakRPC {
      * @param user Пользователь.
      * @return Пользователь.
      */
-    private Option toDTO(final UserRepresentation user) {
-        return new Option(user.getId(),
-                          toName(user.getFirstName(),
-                                 user.getLastName(),
-                                 user.getUsername()));
+    private User toDTO(final UserRepresentation user) {
+        return new User(
+            user.getId(),
+            toName(user.getFirstName(), user.getLastName(), user.getUsername()),
+            user.getUsername(),
+            user.getEmail(),
+            toFirstAttribute("phone", user.getAttributes(), ""),
+            Boolean.parseBoolean(toFirstAttribute(
+                "notifyByPhone", user.getAttributes(), "false")),
+            Boolean.parseBoolean(toFirstAttribute(
+                "notifyByEmail", user.getAttributes(), "true")),
+            new HashSet<>(user.getRealmRoles())
+        );
+    }
+
+    /**
+     * Получение первого атрибута из списка.
+     *
+     * @param key Ключ атрибута.
+     * @param attributes Список атрибутов.
+     * @param defaultValue Значение по умолчанию.
+     * @return Значение атрибута или если его нет значение по умолчанию.
+     */
+    private String toFirstAttribute(final String key,
+                                    final Map<String, List<String>> attributes,
+                                    final String defaultValue) {
+        List<String> list = attributes.get(key);
+
+        return Objects.isEmpty(list) ? defaultValue : list.get(0);
     }
 
     /**

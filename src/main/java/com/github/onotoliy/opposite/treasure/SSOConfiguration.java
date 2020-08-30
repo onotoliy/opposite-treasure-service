@@ -48,9 +48,9 @@ extends KeycloakWebSecurityConfigurerAdapter {
      * @param reading Роли дающие права на чтение данных.
      */
     public SSOConfiguration(
-            @Value("${treasure.modification.roles}")
+            @Value("${treasure.roles.modification}")
             final String[] modification,
-            @Value("${treasure.reading.roles}")
+            @Value("${treasure.roles.reading}")
             final String[] reading) {
         this.modification = modification;
         this.reading = reading;

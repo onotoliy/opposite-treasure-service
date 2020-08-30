@@ -1,6 +1,7 @@
 package com.github.onotoliy.opposite.treasure.web;
 
 import com.github.onotoliy.opposite.data.Option;
+import com.github.onotoliy.opposite.data.User;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * WEB сервис чтения пользователей системы.
@@ -61,6 +63,19 @@ public class UserResource {
      */
     @GetMapping(value = "/list")
     public List<Option> getAll() {
+        return user.getAll()
+                   .stream()
+                   .map(e -> new Option(e.getUuid(), e.getName()))
+                   .collect(Collectors.toList());
+    }
+
+    /**
+     * Получение списка всех пользователей, зарегистрированных в системе.
+     *
+     * @return Пользователи.
+     */
+    @GetMapping(value = "/list/full")
+    public List<User> getFullDTOAll() {
         return user.getAll();
     }
 }
