@@ -5,6 +5,7 @@ import com.github.onotoliy.opposite.data.User;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
+
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.keycloak.KeycloakPrincipal;
@@ -85,12 +86,12 @@ public class KeycloakRPC {
      * @param role Роль по умолчанию.
      */
     public KeycloakRPC(
-            @Value("${treasure.keycloak.url}") final String url,
-            @Value("${treasure.keycloak.realm}") final String realm,
-            @Value("${treasure.keycloak.client}") final String client,
-            @Value("${treasure.keycloak.username}") final String username,
-            @Value("${treasure.keycloak.password}") final String password,
-            @Value("${treasure.roles.default}") final String role) {
+        @Value("${treasure.keycloak.url}") final String url,
+        @Value("${treasure.keycloak.realm}") final String realm,
+        @Value("${treasure.keycloak.client}") final String client,
+        @Value("${treasure.keycloak.username}") final String username,
+        @Value("${treasure.keycloak.password}") final String password,
+        @Value("${treasure.roles.default}") final String role) {
 
         this.realm = realm;
         this.url = url;
@@ -201,9 +202,9 @@ public class KeycloakRPC {
                               .password(password)
                               .clientId(client)
                               .resteasyClient(new ResteasyClientBuilder()
-                                              .connectionPoolSize(POOL_SIZE)
-                                              .readTimeout(TIMEOUT, SECONDS)
-                                              .build())
+                                                  .connectionPoolSize(POOL_SIZE)
+                                                  .readTimeout(TIMEOUT, SECONDS)
+                                                  .build())
                               .build();
     }
 
@@ -252,7 +253,13 @@ public class KeycloakRPC {
                                     final String defaultValue) {
         List<String> list = attributes.get(key);
 
-        return Objects.isEmpty(list) ? defaultValue : list.get(0);
+        if (Objects.isEmpty(list)) {
+            return defaultValue;
+        }
+
+        String value = list.get(0);
+
+        return Strings.isEmpty(value) ? defaultValue : value;
     }
 
     /**
