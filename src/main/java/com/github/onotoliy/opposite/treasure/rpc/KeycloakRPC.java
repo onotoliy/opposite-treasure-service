@@ -253,6 +253,10 @@ public class KeycloakRPC {
     private String toFirstAttribute(final String key,
                                     final Map<String, List<String>> attributes,
                                     final String defaultValue) {
+        if (Objects.isEmpty(attributes)) {
+            return defaultValue;
+        }
+
         List<String> list = attributes.get(key);
 
         if (Objects.isEmpty(list)) {
