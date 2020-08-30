@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -230,13 +232,14 @@ public class KeycloakRPC {
             user.getId(),
             toName(user.getFirstName(), user.getLastName(), user.getUsername()),
             user.getUsername(),
-            user.getEmail(),
+            Strings.isEmpty(user.getEmail()) ? "" : user.getEmail(),
             toFirstAttribute("phone", user.getAttributes(), ""),
             Boolean.parseBoolean(toFirstAttribute(
                 "notifyByPhone", user.getAttributes(), "false")),
             Boolean.parseBoolean(toFirstAttribute(
                 "notifyByEmail", user.getAttributes(), "true")),
-            new HashSet<>(user.getRealmRoles())
+            Objects.isEmpty(user.getRealmRoles())
+                ? Collections.emptySet() : new HashSet<>()
         );
     }
 
