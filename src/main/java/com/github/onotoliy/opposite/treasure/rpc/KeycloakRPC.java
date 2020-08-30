@@ -6,25 +6,24 @@ import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -191,6 +190,24 @@ public class KeycloakRPC {
     }
 
     /**
+     * Получение всех ролей пользователя.
+     *
+     * @param uuid Уникальный идентификатор.
+     * @return Список ролей.
+     */
+    private Set<String> getAllRoles(final String uuid) {
+        return keycloak().realm(realm)
+                         .users()
+                         .get(uuid)
+                         .roles()
+                         .getAll()
+                         .getRealmMappings()
+                         .stream()
+                         .map(RoleRepresentation::getName)
+                         .collect(Collectors.toSet());
+    }
+
+    /**
      * Подключение к Keycloak.
      *
      * @return WEB сервис Keycloak-а.
@@ -237,8 +254,7 @@ public class KeycloakRPC {
                 "notifyByPhone", user.getAttributes(), "false")),
             Boolean.parseBoolean(toFirstAttribute(
                 "notifyByEmail", user.getAttributes(), "true")),
-            Objects.isEmpty(user.getRealmRoles())
-                ? Collections.emptySet() : new HashSet<>()
+            getAllRoles(user.getId())
         );
     }
 
