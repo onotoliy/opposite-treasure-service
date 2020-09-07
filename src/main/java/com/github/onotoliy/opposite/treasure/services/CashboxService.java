@@ -2,6 +2,7 @@ package com.github.onotoliy.opposite.treasure.services;
 
 import com.github.onotoliy.opposite.data.Cashbox;
 import com.github.onotoliy.opposite.treasure.repositories.CashboxRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @author Anatoliy Pokhresnyi
  */
 @Service
-public class CashboxService {
+public class CashboxService implements ICashboxService {
 
     /**
      * Репозиторий.
@@ -28,11 +29,7 @@ public class CashboxService {
         this.repository = repository;
     }
 
-    /**
-     * Получение данных о кассе.
-     *
-     * @return Данные о кассе.
-     */
+    @Override
     public Cashbox get() {
         return repository.find();
     }

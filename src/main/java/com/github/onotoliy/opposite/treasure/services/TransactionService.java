@@ -34,7 +34,8 @@ public class TransactionService
 extends AbstractModifierService<
     Transaction,
     TransactionSearchParameter,
-    TransactionRepository> {
+    TransactionRepository>
+implements ITransactionService {
 
     /**
      * Репозиторий событий.

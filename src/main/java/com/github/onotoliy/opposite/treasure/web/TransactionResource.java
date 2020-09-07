@@ -4,7 +4,7 @@ import com.github.onotoliy.opposite.data.Transaction;
 import com.github.onotoliy.opposite.data.TransactionType;
 import com.github.onotoliy.opposite.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
-import com.github.onotoliy.opposite.treasure.services.TransactionService;
+import com.github.onotoliy.opposite.treasure.services.ITransactionService;
 import com.github.onotoliy.opposite.treasure.web.core.AbstractModifierResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +25,7 @@ public class TransactionResource
 extends AbstractModifierResource<
     Transaction,
     TransactionSearchParameter,
-    TransactionService> {
+    ITransactionService> {
 
     /**
      * Конструктор.
@@ -33,7 +33,7 @@ extends AbstractModifierResource<
      * @param service Сервис.
      */
     @Autowired
-    public TransactionResource(final TransactionService service) {
+    public TransactionResource(final ITransactionService service) {
         super(service);
     }
 

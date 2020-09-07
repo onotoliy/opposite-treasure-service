@@ -1,7 +1,8 @@
 package com.github.onotoliy.opposite.treasure.web;
 
 import com.github.onotoliy.opposite.data.Cashbox;
-import com.github.onotoliy.opposite.treasure.services.CashboxService;
+import com.github.onotoliy.opposite.treasure.services.ICashboxService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,7 @@ public class CashboxResource {
     /**
      * Сервис.
      */
-    private final CashboxService service;
+    private final ICashboxService service;
 
     /**
      * Конструктор.
@@ -27,7 +28,7 @@ public class CashboxResource {
      * @param service Сервис.
      */
     @Autowired
-    public CashboxResource(final CashboxService service) {
+    public CashboxResource(final ICashboxService service) {
         this.service = service;
     }
 

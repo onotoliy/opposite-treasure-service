@@ -29,7 +29,8 @@ import static com.github.onotoliy.opposite.treasure.utils.Numbers.isEmpty;
  */
 @Service
 public class EventService
-extends AbstractModifierService<Event, EventSearchParameter, EventRepository> {
+extends AbstractModifierService<Event, EventSearchParameter, EventRepository>
+implements IEventService {
 
     /**
      * Сервис уведомлений.

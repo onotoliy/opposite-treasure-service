@@ -56,6 +56,16 @@ public final class GUIDs {
     }
 
     /**
+     * Получение случайного уникального идентификатора.
+     *
+     * @return Случайный уникальный идентификатор.
+     */
+    @NotNull
+    public static UUID random() {
+        return UUID.randomUUID();
+    }
+
+    /**
      * Преобразование {@link String} в {@link UUID}.
      *
      * @param value Значение в формате {@link String}.

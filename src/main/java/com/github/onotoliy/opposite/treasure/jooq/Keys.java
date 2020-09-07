@@ -7,10 +7,12 @@ package com.github.onotoliy.opposite.treasure.jooq;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDebt;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDeposit;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
+import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureDebtRecord;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureDepositRecord;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureEventRecord;
+import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureLogRecord;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureTransactionRecord;
 
 import javax.annotation.Generated;
@@ -43,9 +45,10 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<TreasureDebtRecord> TREASURE_DEBT_PKEY = UniqueKeys0.TREASURE_DEBT_PKEY;
+    public static final UniqueKey<TreasureDebtRecord> TREASURE_DEBT_USER_UUID_EVENT_GUID_KEY = UniqueKeys0.TREASURE_DEBT_USER_UUID_EVENT_GUID_KEY;
     public static final UniqueKey<TreasureDepositRecord> TREASURE_DEPOSIT_PKEY = UniqueKeys0.TREASURE_DEPOSIT_PKEY;
     public static final UniqueKey<TreasureEventRecord> TREASURE_EVENT_PKEY = UniqueKeys0.TREASURE_EVENT_PKEY;
+    public static final UniqueKey<TreasureLogRecord> TREASURE_LOG_PKEY = UniqueKeys0.TREASURE_LOG_PKEY;
     public static final UniqueKey<TreasureTransactionRecord> TREASURE_TRANSACTION_PKEY = UniqueKeys0.TREASURE_TRANSACTION_PKEY;
 
     // -------------------------------------------------------------------------
@@ -60,9 +63,10 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     private static class UniqueKeys0 {
-        public static final UniqueKey<TreasureDebtRecord> TREASURE_DEBT_PKEY = Internal.createUniqueKey(TreasureDebt.TREASURE_DEBT, "treasure_debt_pkey", TreasureDebt.TREASURE_DEBT.USER_UUID);
+        public static final UniqueKey<TreasureDebtRecord> TREASURE_DEBT_USER_UUID_EVENT_GUID_KEY = Internal.createUniqueKey(TreasureDebt.TREASURE_DEBT, "treasure_debt_user_uuid_event_guid_key", TreasureDebt.TREASURE_DEBT.USER_UUID, TreasureDebt.TREASURE_DEBT.EVENT_GUID);
         public static final UniqueKey<TreasureDepositRecord> TREASURE_DEPOSIT_PKEY = Internal.createUniqueKey(TreasureDeposit.TREASURE_DEPOSIT, "treasure_deposit_pkey", TreasureDeposit.TREASURE_DEPOSIT.USER_UUID);
         public static final UniqueKey<TreasureEventRecord> TREASURE_EVENT_PKEY = Internal.createUniqueKey(TreasureEvent.TREASURE_EVENT, "treasure_event_pkey", TreasureEvent.TREASURE_EVENT.GUID);
+        public static final UniqueKey<TreasureLogRecord> TREASURE_LOG_PKEY = Internal.createUniqueKey(TreasureLog.TREASURE_LOG, "treasure_log_pkey", TreasureLog.TREASURE_LOG.GUID);
         public static final UniqueKey<TreasureTransactionRecord> TREASURE_TRANSACTION_PKEY = Internal.createUniqueKey(TreasureTransaction.TREASURE_TRANSACTION, "treasure_transaction_pkey", TreasureTransaction.TREASURE_TRANSACTION.GUID);
     }
 

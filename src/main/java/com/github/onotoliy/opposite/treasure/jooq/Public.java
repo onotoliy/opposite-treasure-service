@@ -8,6 +8,7 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureCashbox;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDebt;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDeposit;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
+import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = 1151370289;
+    private static final long serialVersionUID = -199889112;
 
     /**
      * The reference instance of <code>public</code>
@@ -60,6 +61,11 @@ public class Public extends SchemaImpl {
      * События
      */
     public final TreasureEvent TREASURE_EVENT = com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent.TREASURE_EVENT;
+
+    /**
+     * Логи
+     */
+    public final TreasureLog TREASURE_LOG = com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog.TREASURE_LOG;
 
     /**
      * Транзакции
@@ -95,6 +101,7 @@ public class Public extends SchemaImpl {
             TreasureDebt.TREASURE_DEBT,
             TreasureDeposit.TREASURE_DEPOSIT,
             TreasureEvent.TREASURE_EVENT,
+            TreasureLog.TREASURE_LOG,
             TreasureTransaction.TREASURE_TRANSACTION);
     }
 }

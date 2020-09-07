@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TreasureDebt extends TableImpl<TreasureDebtRecord> {
 
-    private static final long serialVersionUID = -1217458773;
+    private static final long serialVersionUID = 875309345;
 
     /**
      * The reference instance of <code>public.treasure_debt</code>
@@ -59,7 +59,7 @@ public class TreasureDebt extends TableImpl<TreasureDebtRecord> {
     /**
      * The column <code>public.treasure_debt.user_uuid</code>. Пользователь
      */
-    public final TableField<TreasureDebtRecord, UUID> USER_UUID = createField("user_uuid", org.jooq.impl.SQLDataType.UUID.nullable(false), this, "Пользователь");
+    public final TableField<TreasureDebtRecord, UUID> USER_UUID = createField("user_uuid", org.jooq.impl.SQLDataType.UUID, this, "Пользователь");
 
     /**
      * The column <code>public.treasure_debt.event_guid</code>. Событие
@@ -112,15 +112,7 @@ public class TreasureDebt extends TableImpl<TreasureDebtRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.TREASURE_DEBT_PKEY);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public UniqueKey<TreasureDebtRecord> getPrimaryKey() {
-        return Keys.TREASURE_DEBT_PKEY;
+        return Arrays.<Index>asList(Indexes.TREASURE_DEBT_USER_UUID_EVENT_GUID_KEY);
     }
 
     /**
@@ -128,7 +120,7 @@ public class TreasureDebt extends TableImpl<TreasureDebtRecord> {
      */
     @Override
     public List<UniqueKey<TreasureDebtRecord>> getKeys() {
-        return Arrays.<UniqueKey<TreasureDebtRecord>>asList(Keys.TREASURE_DEBT_PKEY);
+        return Arrays.<UniqueKey<TreasureDebtRecord>>asList(Keys.TREASURE_DEBT_USER_UUID_EVENT_GUID_KEY);
     }
 
     /**

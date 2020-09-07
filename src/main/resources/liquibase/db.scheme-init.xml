@@ -76,4 +76,18 @@
 
     <addUniqueConstraint tableName="treasure_debt" columnNames="user_uuid,event_guid"/>
   </changeSet>
+
+  <changeSet id="2020-09-04-1-treasure-init" author="onotoliy">
+    <createTable tableName="treasure_log" remarks="Логи">
+      <column name="guid" type="uuid" remarks="Уникальный идентификатор">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="author" type="uuid" remarks="Автор"/>
+      <column name="level" type="varchar(255)" remarks="Уровень логирования"/>
+      <column name="creation_date" type="datetime" remarks="Дата создания записи"/>
+      <column name="message" type="varchar(255)" remarks="Сообщение"/>
+      <column name="bean_name" type="varchar(255)" remarks="Название класса"/>
+      <column name="stack_trace" type="varchar(255)" remarks="Stack Trace"/>
+    </createTable>
+  </changeSet>
 </databaseChangeLog>

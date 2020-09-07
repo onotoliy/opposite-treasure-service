@@ -4,7 +4,7 @@ import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Transaction;
 import com.github.onotoliy.opposite.data.User;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.services.CashboxService;
+import com.github.onotoliy.opposite.treasure.services.ICashboxService;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 import com.twilio.Twilio;
@@ -31,7 +31,7 @@ public class TwilioNotificationExecutor implements NotificationExecutor {
     /**
      * Сервис чтения данных о кассе.
      */
-    private final CashboxService cashbox;
+    private final ICashboxService cashbox;
 
     /**
      * Сервис чтения данных о пользвателях из Keycloak.
@@ -52,7 +52,7 @@ public class TwilioNotificationExecutor implements NotificationExecutor {
         @Value("treasure.twilio.username") final String username,
         @Value("treasure.twilio.password") final String password,
         @Value("treasure.twilio.from") final String from,
-        final CashboxService cashbox,
+        final ICashboxService cashbox,
         final KeycloakRPC keycloak
     ) {
         Twilio.init(username, password);

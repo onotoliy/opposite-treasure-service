@@ -6,7 +6,7 @@ import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Transaction;
 import com.github.onotoliy.opposite.data.User;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.services.CashboxService;
+import com.github.onotoliy.opposite.treasure.services.ICashboxService;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
@@ -39,7 +39,7 @@ public class MailNotificationExecutor implements NotificationExecutor {
     /**
      * Сервис чтения данных о кассе.
      */
-    private final CashboxService cashbox;
+    private final ICashboxService cashbox;
 
     /**
      * Mail от имени которого отправляются сообщения.
@@ -58,7 +58,7 @@ public class MailNotificationExecutor implements NotificationExecutor {
     @Autowired
     public MailNotificationExecutor(
         final JavaMailSender sender,
-        final CashboxService cashbox,
+        final ICashboxService cashbox,
         final KeycloakRPC keycloak,
         @Value("${spring.mail.username}") final String from)
     throws

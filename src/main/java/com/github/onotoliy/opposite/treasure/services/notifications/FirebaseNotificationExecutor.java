@@ -3,7 +3,7 @@ package com.github.onotoliy.opposite.treasure.services.notifications;
 import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Transaction;
 import com.github.onotoliy.opposite.treasure.exceptions.NotificationException;
-import com.github.onotoliy.opposite.treasure.services.CashboxService;
+import com.github.onotoliy.opposite.treasure.services.ICashboxService;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -34,7 +34,7 @@ public class FirebaseNotificationExecutor implements NotificationExecutor {
     /**
      * Сервис чтения данных о кассе.
      */
-    private final CashboxService cashbox;
+    private final ICashboxService cashbox;
 
     /**
      * Название топика.
@@ -60,7 +60,7 @@ public class FirebaseNotificationExecutor implements NotificationExecutor {
         @Value("${treasure.firebase.config.path}") final String path,
         @Value("${treasure.firebase.topic}") final String topic,
         @Value("${treasure.firebase.icon}") final String icon,
-        final CashboxService cashbox
+        final ICashboxService cashbox
     ) throws
         IOException {
         this.topic = topic;

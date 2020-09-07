@@ -8,6 +8,7 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureCashbox;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDebt;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDeposit;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
+import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 
 import javax.annotation.Generated;
@@ -45,6 +46,11 @@ public class Tables {
      * События
      */
     public static final TreasureEvent TREASURE_EVENT = com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent.TREASURE_EVENT;
+
+    /**
+     * Логи
+     */
+    public static final TreasureLog TREASURE_LOG = com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog.TREASURE_LOG;
 
     /**
      * Транзакции

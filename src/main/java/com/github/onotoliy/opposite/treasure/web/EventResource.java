@@ -4,7 +4,7 @@ import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
-import com.github.onotoliy.opposite.treasure.services.EventService;
+import com.github.onotoliy.opposite.treasure.services.IEventService;
 import com.github.onotoliy.opposite.treasure.web.core.AbstractModifierResource;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class EventResource
 extends AbstractModifierResource<
     Event,
     EventSearchParameter,
-    EventService> {
+    IEventService> {
 
     /**
      * Конструктор.
@@ -34,7 +34,7 @@ extends AbstractModifierResource<
      * @param service Сервис.
      */
     @Autowired
-    public EventResource(final EventService service) {
+    public EventResource(final IEventService service) {
         super(service);
     }
 
