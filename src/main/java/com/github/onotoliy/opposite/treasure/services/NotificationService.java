@@ -2,6 +2,8 @@ package com.github.onotoliy.opposite.treasure.services;
 
 import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Transaction;
+import com.github.onotoliy.opposite.treasure.convectors.EventNotificationConvector;
+import com.github.onotoliy.opposite.treasure.convectors.TransactionNotificationConvector;
 import com.github.onotoliy.opposite.treasure.services.notifications.NotificationExecutor;
 
 import java.util.List;
@@ -23,13 +25,21 @@ public class NotificationService {
     private final List<NotificationExecutor> executors;
 
     /**
+     * Сервис чтения данных о кассе.
+     */
+    private final CashboxService cashbox;
+
+    /**
      * Конструктор.
      *
      * @param executors Сервисы описывающие бизнес логику тразакций.
+     * @param cashbox Сервис чтения данных о кассе.
      */
     @Autowired
-    public NotificationService(final List<NotificationExecutor> executors) {
+    public NotificationService(final List<NotificationExecutor> executors,
+                               final CashboxService cashbox) {
         this.executors = executors;
+        this.cashbox = cashbox;
     }
 
     /**
@@ -38,7 +48,12 @@ public class NotificationService {
      * @param event Событие.
      */
     public void notify(final Event event) {
-        executors.forEach(executor -> executor.notify(event));
+        executors.forEach(executor -> {
+            String message = new EventNotificationConvector(executor.isHTML())
+                .toNotification(event, cashbox.get());
+
+            executor.notify("Событие", message);
+        });
     }
 
     /**
@@ -47,6 +62,13 @@ public class NotificationService {
      * @param transaction Транзакция.
      */
     public void notify(final Transaction transaction) {
-        executors.forEach(executor -> executor.notify(transaction));
+        executors.forEach(executor -> {
+            String message =
+                new TransactionNotificationConvector(executor.isHTML())
+                    .toNotification(transaction, cashbox.get());
+
+            executor.notify("Событие", message);
+        });
     }
+
 }

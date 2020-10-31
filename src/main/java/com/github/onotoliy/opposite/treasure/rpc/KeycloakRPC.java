@@ -2,6 +2,9 @@ package com.github.onotoliy.opposite.treasure.rpc;
 
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.User;
+import com.github.onotoliy.opposite.treasure.dto.Contact;
+import com.github.onotoliy.opposite.treasure.exceptions.ResetCredentialException;
+import com.github.onotoliy.opposite.treasure.services.notifications.NotificationExecutor;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
@@ -19,8 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -44,6 +50,11 @@ public class KeycloakRPC {
      * Таймаут.
      */
     private static final int TIMEOUT = 10;
+
+    /**
+     * Длина пароля.
+     */
+    private static final int PASSWORD_LENGTH = 6;
 
     /**
      * Название realm.
@@ -76,22 +87,30 @@ public class KeycloakRPC {
     private final String role;
 
     /**
+     * Сервис отправки SMS уведомлений.
+     */
+    private final NotificationExecutor twilio;
+
+    /**
      * Конструктор.
      *
-     * @param url URL на котором развернут Keycloak.
-     * @param realm Название realm.
-     * @param client Название клиента.
+     * @param url      URL на котором развернут Keycloak.
+     * @param realm    Название realm.
+     * @param client   Название клиента.
      * @param username Имя пользователя.
      * @param password Пароль.
-     * @param role Роль по умолчанию.
+     * @param role     Роль по умолчанию.
+     * @param twilio   Сервис отправки SMS уведомлений.
      */
+    @Autowired
     public KeycloakRPC(
         @Value("${treasure.keycloak.url}") final String url,
         @Value("${treasure.keycloak.realm}") final String realm,
         @Value("${treasure.keycloak.client}") final String client,
         @Value("${treasure.keycloak.username}") final String username,
         @Value("${treasure.keycloak.password}") final String password,
-        @Value("${treasure.roles.default}") final String role) {
+        @Value("${treasure.roles.default}") final String role,
+        @Qualifier("twilio") final NotificationExecutor twilio) {
 
         this.realm = realm;
         this.url = url;
@@ -99,6 +118,7 @@ public class KeycloakRPC {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.twilio = twilio;
     }
 
     /**
@@ -174,6 +194,64 @@ public class KeycloakRPC {
     }
 
     /**
+     * Сброс пароля по номеру телефона.
+     *
+     * @param phone Номер телефона, без кода страны (+7).
+     */
+    public void resetPassword(final String phone) {
+        String telephone = "+7" + phone;
+
+        Set<UserRepresentation> representations = keycloak()
+            .realm(realm)
+            .roles()
+            .get(role)
+            .getRoleUserMembers();
+
+        for (UserRepresentation representation : representations) {
+            String attribute = toFirstAttribute("phone",
+                                                representation.getAttributes(),
+                                                "");
+
+            if (Objects.nonEqually(attribute, telephone)) {
+                continue;
+            }
+
+            resetPassword(representation, Strings.random(PASSWORD_LENGTH));
+
+            return;
+        }
+
+        throw new ResetCredentialException(
+            "Пользователь с номером телефона не найден"
+        );
+    }
+
+    /**
+     * Сброс пароля пользователя.
+     *
+     * @param user     Пользователь.
+     * @param password Номер телефона, без кода страны (+7).
+     */
+    private void resetPassword(final UserRepresentation user,
+                               final String password) {
+        CredentialRepresentation representation =
+            new CredentialRepresentation();
+        representation.setType(CredentialRepresentation.PASSWORD);
+        representation.setValue(password);
+        representation.setTemporary(false);
+
+        keycloak().realm(realm).users().get(user.getId())
+                  .resetPassword(representation);
+
+        String message = String.format(
+            "Имя пользователя: %s\nНовый пароль: %s", user.getUsername(),
+            password
+        );
+
+        twilio.notify(toContactDTO(user), "Смена пароля. Оппозит МК", message);
+    }
+
+    /**
      * Получение всех пользователей зарегистрированных в системе.
      *
      * @return Пользователи
@@ -187,6 +265,21 @@ public class KeycloakRPC {
                          .map(this::toDTO)
                          .sorted(Comparator.comparing(User::getName))
                          .collect(Collectors.toList());
+    }
+
+    /**
+     * Получение контактной информации пользователя.
+     *
+     * @param uuid Уникальный идентификатор пользователя.
+     * @return Контактная информация пользователя.
+     */
+    public Contact getContact(final String uuid) {
+        return Optional.of(keycloak().realm(realm)
+                                     .users()
+                                     .get(uuid)
+                                     .toRepresentation())
+                       .map(this::toContactDTO)
+                       .orElse(emptyContactDTO(uuid));
     }
 
     /**
@@ -237,8 +330,20 @@ public class KeycloakRPC {
     }
 
     /**
+     * Получение пустой (удаленной) контактной информации пользователя.
+     *
+     * @param uuid Уникальный идентификатор пользователя.
+     * @return Контактная информация пользователя.
+     */
+    private Contact emptyContactDTO(final String uuid) {
+        return new Contact(
+            uuid, null, false, null, false, null, false, null, false
+        );
+    }
+
+    /**
      * Преобразование пользователя из {@link UserRepresentation} в
-     * {@link Option}.
+     * {@link User}.
      *
      * @param user Пользователь.
      * @return Пользователь.
@@ -259,10 +364,35 @@ public class KeycloakRPC {
     }
 
     /**
+     * Преобразование контактной информации пользователя из
+     * {@link UserRepresentation} в {@link Contact}.
+     *
+     * @param user Пользователь.
+     * @return Контактная информация пользователя.
+     */
+    private Contact toContactDTO(final UserRepresentation user) {
+        return new Contact(
+            user.getId(),
+            user.getEmail(),
+            Boolean.parseBoolean(toFirstAttribute(
+                "notifyByEmail", user.getAttributes(), "true")),
+            toFirstAttribute("phone", user.getAttributes(), ""),
+            Boolean.parseBoolean(toFirstAttribute(
+                "notifyByPhone", user.getAttributes(), "false")),
+            toFirstAttribute("telegram", user.getAttributes(), ""),
+            Boolean.parseBoolean(toFirstAttribute(
+                "notifyByTelegram", user.getAttributes(), "false")),
+            toFirstAttribute("firebase", user.getAttributes(), ""),
+            Boolean.parseBoolean(toFirstAttribute(
+                "notifyByFirebase", user.getAttributes(), "false"))
+        );
+    }
+
+    /**
      * Получение первого атрибута из списка.
      *
-     * @param key Ключ атрибута.
-     * @param attributes Список атрибутов.
+     * @param key          Ключ атрибута.
+     * @param attributes   Список атрибутов.
      * @param defaultValue Значение по умолчанию.
      * @return Значение атрибута или если его нет значение по умолчанию.
      */
@@ -288,8 +418,8 @@ public class KeycloakRPC {
      * Получение имени пользователя.
      *
      * @param firstName Имя.
-     * @param lastName Фамилия.
-     * @param username Логин.
+     * @param lastName  Фамилия.
+     * @param username  Логин.
      * @return Имя пользователя.
      */
     private String toName(final String firstName,

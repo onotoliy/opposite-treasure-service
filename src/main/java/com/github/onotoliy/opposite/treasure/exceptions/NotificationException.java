@@ -16,4 +16,12 @@ public class NotificationException extends RuntimeException {
         super(throwable);
     }
 
+    /**
+     * Конструктор.
+     *
+     * @param message Сообщение от ошибке.
+     */
+    public NotificationException(final String message) {
+        super(message);
+    }
 }

@@ -1,10 +1,7 @@
 package com.github.onotoliy.opposite.treasure.services.notifications;
 
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Transaction;
+import com.github.onotoliy.opposite.treasure.dto.Contact;
 import com.github.onotoliy.opposite.treasure.exceptions.NotificationException;
-import com.github.onotoliy.opposite.treasure.services.ICashboxService;
-import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -20,6 +17,7 @@ import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,12 +27,8 @@ import org.springframework.stereotype.Service;
  * @author Anatoliy Pokhresnyi
  */
 @Service
+@Qualifier("firebase")
 public class FirebaseNotificationExecutor implements NotificationExecutor {
-
-    /**
-     * Сервис чтения данных о кассе.
-     */
-    private final ICashboxService cashbox;
 
     /**
      * Название топика.
@@ -52,20 +46,17 @@ public class FirebaseNotificationExecutor implements NotificationExecutor {
      * @param path Путь к файлу подключения Firebase.
      * @param topic Название топика.
      * @param icon URL к иконке.
-     * @param cashbox Сервис чтения данных о кассе.
      * @throws IOException Ошибка чтения файла подключения Firebase.
      */
     @Autowired
     public FirebaseNotificationExecutor(
         @Value("${treasure.firebase.config.path}") final String path,
         @Value("${treasure.firebase.topic}") final String topic,
-        @Value("${treasure.firebase.icon}") final String icon,
-        final ICashboxService cashbox
-    ) throws
-        IOException {
+        @Value("${treasure.firebase.icon}") final String icon
+    ) throws IOException {
+
         this.topic = topic;
         this.icon = icon;
-        this.cashbox = cashbox;
 
         GoogleCredentials credentials =
             GoogleCredentials.fromStream(new FileInputStream(path));
@@ -80,73 +71,38 @@ public class FirebaseNotificationExecutor implements NotificationExecutor {
     }
 
     @Override
-    public void notify(final Event event) {
-        notify(event.getName(), String.format(
-            "Сумма взноса %s. Сдать до: %s",
-            event.getContribution(), event.getDeadline()
-        ));
+    public void notify(final Contact to,
+                       final String title,
+                       final String body) {
+
     }
 
     @Override
-    public void notify(final Transaction transaction) {
-        StringBuilder builder = new StringBuilder()
-            .append("Тип: ")
-            .append(transaction.getType().getLabel())
-            .append(". ")
-            .append("Сумма: ")
-            .append(transaction.getCash())
-            .append(". ");
-
-        if (Objects.nonEmpty(transaction.getEvent())) {
-            builder.append("Событие: ")
-                   .append(transaction.getEvent().getName())
-                   .append(". ");
-        }
-
-        if (Objects.nonEmpty(transaction.getPerson())) {
-            builder.append("Пользователь: ")
-                   .append(transaction.getPerson().getName())
-                   .append(". ");
-        }
-
-        builder.append("В кассе: ")
-               .append(cashbox.get().getDeposit())
-               .append("руб.");
-
-        notify(transaction.getName(), builder.toString());
-    }
-
-    /**
-     * Отправка push уведомления.
-     *
-     * @param title Заголовок.
-     * @param body Сообщение.
-     */
-    private void notify(final String title, final String body) {
+    public void notify(final String title, final String body) {
         AndroidConfig android = AndroidConfig
-            .builder()
-            .setTtl(Duration.ofMinutes(2).toMillis())
-            .setCollapseKey(topic)
-            .setPriority(AndroidConfig.Priority.HIGH)
-            .setNotification(AndroidNotification
-                                 .builder()
-                                 .setSound("default")
-                                 .setColor("#FFFF00")
-                                 .setTag(topic)
-                                 .build())
-            .build();
+                .builder()
+                .setTtl(Duration.ofMinutes(2).toMillis())
+                .setCollapseKey(topic)
+                .setPriority(AndroidConfig.Priority.HIGH)
+                .setNotification(AndroidNotification
+                                         .builder()
+                                         .setSound("default")
+                                         .setColor("#FFFF00")
+                                         .setTag(topic)
+                                         .build())
+                .build();
 
         Message message = Message
-            .builder()
-            .setAndroidConfig(android)
-            .setNotification(Notification
-                                 .builder()
-                                 .setImage(icon)
-                                 .setTitle(title)
-                                 .setBody(body)
-                                 .build())
-            .setTopic(topic)
-            .build();
+                .builder()
+                .setAndroidConfig(android)
+                .setNotification(Notification
+                                         .builder()
+                                         .setImage(icon)
+                                         .setTitle(title)
+                                         .setBody(body)
+                                         .build())
+                .setTopic(topic)
+                .build();
 
         try {
             FirebaseMessaging.getInstance().sendAsync(message).get();

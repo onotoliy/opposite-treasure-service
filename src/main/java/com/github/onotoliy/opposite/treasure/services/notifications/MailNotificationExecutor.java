@@ -1,22 +1,18 @@
 package com.github.onotoliy.opposite.treasure.services.notifications;
 
-import javax.mail.internet.InternetAddress;
-
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.User;
+import com.github.onotoliy.opposite.treasure.dto.Contact;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.services.ICashboxService;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
-
-import java.io.UnsupportedEncodingException;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import javax.mail.internet.InternetAddress;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Описание бизнес логики уведомления отправляемого по электронному адресу.
@@ -24,6 +20,7 @@ import org.springframework.stereotype.Service;
  * @author Anatoliy Pokhresnyi
  */
 @Service
+@Qualifier("mail")
 public class MailNotificationExecutor implements NotificationExecutor {
 
     /**
@@ -32,49 +29,67 @@ public class MailNotificationExecutor implements NotificationExecutor {
     private final JavaMailSender sender;
 
     /**
-     * Сервис чтения данных о пользвателях из Keycloak.
-     */
-    private final KeycloakRPC keycloak;
-
-    /**
-     * Сервис чтения данных о кассе.
-     */
-    private final ICashboxService cashbox;
-
-    /**
      * Mail от имени которого отправляются сообщения.
      */
     private final InternetAddress from;
 
     /**
+     * Сервис чтения данных о пользвателях из Keycloak.
+     */
+    private final KeycloakRPC users;
+
+    /**
      * Конструктор.
      *
      * @param sender Отправитель сообщений.
-     * @param cashbox Сервис чтения данных о кассе.
-     * @param keycloak Сервис чтения данных о пользвателях из Keycloak.
-     * @param from Mail от имени которого отправляются сообщения.
+     * @param users  Сервис чтения данных о пользвателях из Keycloak.
+     * @param from   Mail от имени которого отправляются сообщения.
      * @throws UnsupportedEncodingException Ошибка чтения электронного адреса.
      */
     @Autowired
     public MailNotificationExecutor(
         final JavaMailSender sender,
-        final ICashboxService cashbox,
-        final KeycloakRPC keycloak,
-        @Value("${spring.mail.username}") final String from)
-    throws
-        UnsupportedEncodingException {
+        final KeycloakRPC users,
+        @Value("${spring.mail.username}") final String from
+    ) throws UnsupportedEncodingException {
+
+        this.users = users;
         this.sender = sender;
-        this.cashbox = cashbox;
-        this.keycloak = keycloak;
         this.from = new InternetAddress(from, "Оппозит МК");
     }
 
+    @Override
+    public void notify(final String title, final String body) {
+        users.getAll()
+             .stream()
+             .map(user -> users.getContact(user.getUuid()))
+             .filter(Objects::nonEmpty)
+             .filter(Contact::isNotifyByEmail)
+             .map(Contact::getEmail)
+             .filter(Strings::nonEmpty)
+             .forEach(to -> notify(to, title, body));
+    }
+
+    @Override
+    public void notify(final Contact to,
+                       final String title,
+                       final String body) {
+        if (Strings.isEmpty(to.getEmail())) {
+            throw new IllegalArgumentException(String.format(
+                "У пользователя (%s) не указана электронная почта",
+                to.getUuid()
+            ));
+        }
+
+        notify(to.getEmail(), title, body);
+    }
+
     /**
-     * Отправка уведомления по электронной почте.
+     * Отправка текстового уведомления.
      *
-     * @param to Электронный адрес получателя.
-     * @param title Заголовок уведомления.
-     * @param body Текст уведомления.
+     * @param to Пользователь.
+     * @param title Заголовок.
+     * @param body Сообщение.
      */
     private void notify(final String to,
                         final String title,
@@ -86,59 +101,5 @@ public class MailNotificationExecutor implements NotificationExecutor {
             helper.setSubject(title);
             helper.setText(body, true);
         });
-    }
-
-    /**
-     * Отправка уведомлений по электронной почте.
-     *
-     * @param title Заголовок уведомления.
-     * @param body Текст уведомления.
-     */
-    private void notify(final String title, final String body) {
-        keycloak.getAll()
-                .stream()
-                .filter(User::getNotifyByEmail)
-                .map(User::getEmail)
-                .filter(Strings::nonEmpty)
-                .forEach(email -> notify(email, title, body));
-    }
-
-    @Override
-    public void notify(final Event event) {
-        notify(event.getName(), String.format(
-            "<b>%s.</b><br/><b>Сумма взноса</b>: %s.<br/><b>Сдать до:</b> %s",
-            event.getName(), event.getContribution(), event.getDeadline()
-        ));
-    }
-
-    @Override
-    public void notify(final Transaction transaction) {
-        StringBuilder builder = new StringBuilder()
-            .append("<b>Тип</b>: ")
-            .append(transaction.getType().getLabel())
-            .append(".<br/>")
-            .append("<b>Сумма</b>: ")
-            .append(transaction.getCash())
-            .append(".<br/>");
-
-        if (Objects.nonEmpty(transaction.getEvent())) {
-            builder.append("<b>Событие</b>: ")
-                   .append(transaction.getEvent().getName())
-                   .append(". ")
-                   .append("<br/>");
-        }
-
-        if (Objects.nonEmpty(transaction.getPerson())) {
-            builder.append("<b>Пользователь</b>: ")
-                   .append(transaction.getPerson().getName())
-                   .append(". ")
-                   .append("<br/>");
-        }
-
-        builder.append("<b>В кассе</b>: ")
-               .append(cashbox.get().getDeposit())
-               .append("руб.");
-
-        notify(transaction.getName(), builder.toString());
     }
 }

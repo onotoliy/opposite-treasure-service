@@ -4,12 +4,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Record;
 
+import java.util.Random;
+
 /**
  * Утилитарный класс работы со строками.
  *
  * @author Anatoliy Pokhresnyi
  */
 public final class Strings {
+
+    /**
+     * Индекс символа 'a'.
+     */
+    private static final int A_INDEX = 97;
+
+    /**
+     * Индекс символа 'z'.
+     */
+    private static final int Z_INDEX = 122;
 
     /**
      * Пустая строка.
@@ -21,6 +33,22 @@ public final class Strings {
      */
     private Strings() {
 
+    }
+
+    /**
+     * Генерация случайной строки указанной длины.
+     *
+     * @param length Длина строки.
+     * @return Сдучайная строка.
+     */
+    public static String random(final int length) {
+        return new Random()
+            .ints(A_INDEX, Z_INDEX + 1)
+            .limit(length)
+            .collect(StringBuilder::new,
+                     StringBuilder::appendCodePoint,
+                     StringBuilder::append)
+            .toString();
     }
 
     /**

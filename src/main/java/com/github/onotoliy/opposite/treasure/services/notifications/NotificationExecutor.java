@@ -1,8 +1,7 @@
 package com.github.onotoliy.opposite.treasure.services.notifications;
 
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Transaction;
 import com.github.onotoliy.opposite.treasure.bpp.log.Log;
+import com.github.onotoliy.opposite.treasure.dto.Contact;
 
 /**
  * Описание бизнес логики отправки уведомлений.
@@ -12,19 +11,30 @@ import com.github.onotoliy.opposite.treasure.bpp.log.Log;
 public interface NotificationExecutor {
 
     /**
-     * Отправка уведомлений по событию.
+     * Отправка текстового уведомления.
      *
-     * @param event Событие.
+     * @param to Пользователь.
+     * @param title Заголовок.
+     * @param body Сообщение.
      */
     @Log(db = true)
-    void notify(Event event);
+    void notify(Contact to, String title, String body);
 
     /**
-     * Отправка уведомлений по транзакции.
+     * Отправка текстового уведомления.
      *
-     * @param transaction Транзакция.
+     * @param title Заголовок.
+     * @param body Сообщение.
      */
     @Log(db = true)
-    void notify(Transaction transaction);
+    void notify(String title, String body);
 
+    /**
+     * Нужна HTML разметка.
+     *
+     * @return Нужна HTML разметка.
+     */
+    default boolean isHTML() {
+        return false;
+    }
 }
