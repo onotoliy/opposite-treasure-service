@@ -5,7 +5,6 @@ import com.github.onotoliy.opposite.data.Deposit;
 import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.page.Page;
-import com.github.onotoliy.opposite.treasure.bpp.log.Log;
 import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
 
 import java.util.UUID;
@@ -61,7 +60,6 @@ public class DebtService {
      *
      * @return Версия сущности.
      */
-    @Log(db = true)
     public Option version() {
         return repository.version();
     }
@@ -73,7 +71,6 @@ public class DebtService {
      * @param numberOfRows Размер страницы.
      * @return Данные, которые необходимо синхронизировать.
      */
-    @Log(db = true)
     public Page<Debt> sync(final int offset, final int numberOfRows) {
         return repository.sync(offset, numberOfRows);
     }

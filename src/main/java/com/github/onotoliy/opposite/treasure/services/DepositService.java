@@ -59,7 +59,6 @@ public class DepositService {
      *
      * @return Версия сущности.
      */
-    @Log(db = true)
     public Option version() {
         return repository.version();
     }
@@ -71,7 +70,6 @@ public class DepositService {
      * @param numberOfRows Размер страницы.
      * @return Данные, которые необходимо синхронизировать.
      */
-    @Log(db = true)
     public Page<Deposit> sync(final int offset, final int numberOfRows) {
         return repository.sync(offset, numberOfRows);
     }
