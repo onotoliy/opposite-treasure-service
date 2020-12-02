@@ -3,7 +3,6 @@ package com.github.onotoliy.opposite.treasure.services;
 import com.github.onotoliy.opposite.data.Deposit;
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.page.Page;
-import com.github.onotoliy.opposite.treasure.bpp.log.Log;
 import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.repositories.DepositRepository;
 import org.springframework.beans.factory.annotation.Autowired;
