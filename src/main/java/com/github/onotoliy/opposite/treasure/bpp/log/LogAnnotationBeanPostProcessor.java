@@ -1,17 +1,22 @@
 package com.github.onotoliy.opposite.treasure.bpp.log;
 
-import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.core.DBLoggerService;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
+import org.keycloak.KeycloakPrincipal;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,20 +38,12 @@ public class LogAnnotationBeanPostProcessor implements BeanPostProcessor {
     private final DBLoggerService dbLogger;
 
     /**
-     * Сервис чтения данных о пользвателях из Keycloak.
-     */
-    private final KeycloakRPC users;
-
-    /**
      * Кноструктор.
      *
      * @param dbLogger Сервис логирования.
-     * @param users Сервис чтения данных о пользвателях из Keycloak.
      */
     @Autowired
-    public LogAnnotationBeanPostProcessor(final DBLoggerService dbLogger,
-                                          final KeycloakRPC users) {
-        this.users = users;
+    public LogAnnotationBeanPostProcessor(final DBLoggerService dbLogger) {
         this.dbLogger = dbLogger;
     }
 
@@ -75,15 +72,21 @@ public class LogAnnotationBeanPostProcessor implements BeanPostProcessor {
     ) throws BeansException {
         Class<?> original = beans.get(beanName);
 
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context == null
+            ? null : context.getAuthentication();
+        Object object = authentication == null
+            ? null : authentication.getPrincipal();
+        KeycloakPrincipal principal = object == null
+            ? null : (KeycloakPrincipal) object;
+        UUID author = principal == null
+            ? null : GUIDs.parse(principal.getName());
+
         return original == null
             ? bean
             : Proxy.newProxyInstance(
                 original.getClassLoader(),
                 original.getInterfaces(),
-                new LogInvocationHandler(original,
-                                         bean,
-                                         users.getAuthenticationUUID(),
-                                         dbLogger
-                ));
+                new LogInvocationHandler(original, bean, author, dbLogger));
     }
 }
