@@ -3,8 +3,6 @@ package com.github.onotoliy.opposite.treasure.rpc;
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.User;
 import com.github.onotoliy.opposite.treasure.dto.Contact;
-import com.github.onotoliy.opposite.treasure.exceptions.ResetCredentialException;
-import com.github.onotoliy.opposite.treasure.services.notifications.NotificationExecutor;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
@@ -22,11 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -50,11 +46,6 @@ public class KeycloakRPC {
      * Таймаут.
      */
     private static final int TIMEOUT = 10;
-
-    /**
-     * Длина пароля.
-     */
-    private static final int PASSWORD_LENGTH = 6;
 
     /**
      * Название realm.
@@ -87,11 +78,6 @@ public class KeycloakRPC {
     private final String role;
 
     /**
-     * Сервис отправки SMS уведомлений.
-     */
-    private final NotificationExecutor twilio;
-
-    /**
      * Конструктор.
      *
      * @param url      URL на котором развернут Keycloak.
@@ -100,7 +86,6 @@ public class KeycloakRPC {
      * @param username Имя пользователя.
      * @param password Пароль.
      * @param role     Роль по умолчанию.
-     * @param twilio   Сервис отправки SMS уведомлений.
      */
     @Autowired
     public KeycloakRPC(
@@ -109,8 +94,7 @@ public class KeycloakRPC {
         @Value("${treasure.keycloak.client}") final String client,
         @Value("${treasure.keycloak.username}") final String username,
         @Value("${treasure.keycloak.password}") final String password,
-        @Value("${treasure.roles.default}") final String role,
-        @Qualifier("twilio") final NotificationExecutor twilio) {
+        @Value("${treasure.roles.default}") final String role) {
 
         this.realm = realm;
         this.url = url;
@@ -118,7 +102,6 @@ public class KeycloakRPC {
         this.username = username;
         this.password = password;
         this.role = role;
-        this.twilio = twilio;
     }
 
     /**
@@ -191,64 +174,6 @@ public class KeycloakRPC {
         } catch (Exception e) {
             return Optional.of(emptyDTO(uuid));
         }
-    }
-
-    /**
-     * Сброс пароля по номеру телефона.
-     *
-     * @param phone Номер телефона, без кода страны (+7).
-     */
-    public void resetPassword(final String phone) {
-        String telephone = "+7" + phone;
-
-        Set<UserRepresentation> representations = keycloak()
-            .realm(realm)
-            .roles()
-            .get(role)
-            .getRoleUserMembers();
-
-        for (UserRepresentation representation : representations) {
-            String attribute = toFirstAttribute("phone",
-                                                representation.getAttributes(),
-                                                "");
-
-            if (Objects.nonEqually(attribute, telephone)) {
-                continue;
-            }
-
-            resetPassword(representation, Strings.random(PASSWORD_LENGTH));
-
-            return;
-        }
-
-        throw new ResetCredentialException(
-            "Пользователь с номером телефона не найден"
-        );
-    }
-
-    /**
-     * Сброс пароля пользователя.
-     *
-     * @param user     Пользователь.
-     * @param password Номер телефона, без кода страны (+7).
-     */
-    private void resetPassword(final UserRepresentation user,
-                               final String password) {
-        CredentialRepresentation representation =
-            new CredentialRepresentation();
-        representation.setType(CredentialRepresentation.PASSWORD);
-        representation.setValue(password);
-        representation.setTemporary(false);
-
-        keycloak().realm(realm).users().get(user.getId())
-                  .resetPassword(representation);
-
-        String message = String.format(
-            "Имя пользователя: %s\nНовый пароль: %s", user.getUsername(),
-            password
-        );
-
-        twilio.notify(toContactDTO(user), "Смена пароля. Оппозит МК", message);
     }
 
     /**
