@@ -10,6 +10,7 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDeposit;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
+import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureVersion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +36,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = -199889112;
+    private static final long serialVersionUID = -425365713;
 
     /**
      * The reference instance of <code>public</code>
@@ -73,6 +74,11 @@ public class Public extends SchemaImpl {
     public final TreasureTransaction TREASURE_TRANSACTION = com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction.TREASURE_TRANSACTION;
 
     /**
+     * Версия таблицы
+     */
+    public final TreasureVersion TREASURE_VERSION = com.github.onotoliy.opposite.treasure.jooq.tables.TreasureVersion.TREASURE_VERSION;
+
+    /**
      * No further instances allowed
      */
     private Public() {
@@ -102,6 +108,7 @@ public class Public extends SchemaImpl {
             TreasureDeposit.TREASURE_DEPOSIT,
             TreasureEvent.TREASURE_EVENT,
             TreasureLog.TREASURE_LOG,
-            TreasureTransaction.TREASURE_TRANSACTION);
+            TreasureTransaction.TREASURE_TRANSACTION,
+            TreasureVersion.TREASURE_VERSION);
     }
 }

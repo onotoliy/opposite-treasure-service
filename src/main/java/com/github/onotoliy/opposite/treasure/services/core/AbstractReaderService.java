@@ -54,4 +54,16 @@ implements ReaderService<E, P> {
     public Page<E> getAll(final P parameter) {
         return repository.getAll(parameter);
     }
+
+    @Override
+    public Option version() {
+        return repository.version();
+    }
+
+    @Override
+    public Page<E> sync(final long version,
+                        final int offset,
+                        final int numberOfRows) {
+        return repository.sync(version, offset, numberOfRows);
+    }
 }

@@ -90,4 +90,22 @@
       <column name="stack_trace" type="varchar(255)" remarks="Stack Trace"/>
     </createTable>
   </changeSet>
+
+  <changeSet id="2020-12-02-1-treasure-init" author="onotoliy">
+    <addColumn tableName="treasure_transaction">
+      <column name="transaction_date" type="datetime" remarks="Дата совершения транзации"/>
+    </addColumn>
+
+    <createTable tableName="treasure_version" remarks="Версия таблицы">
+      <column name="name" type="varchar" remarks="Название таблицы">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="version" type="number" remarks="Версия" defaultValueNumeric="0"/>
+    </createTable>
+
+    <sql>
+      insert into treasure_version(name, version) values ('treasure_cashbox', 1), ('treasure_debt', 1), ('treasure_deposit', 1), ('treasure_event', 1), ('treasure_log', 1), ('treasure_transaction', 1), ('treasure_version', 1);
+      update treasure_transaction set transaction_date = creation_date where transaction_date is null;
+    </sql>
+  </changeSet>
 </databaseChangeLog>

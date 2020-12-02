@@ -12,6 +12,7 @@ import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
+import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.sql.Timestamp;
@@ -29,6 +30,9 @@ import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.impl.DSL;
+
+import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_VERSION;
 
 /**
  * Базовый репозиторий чтения записей из БД.
@@ -151,6 +155,41 @@ implements ReaderRepository<E, P> {
                           .fetch(record ->
                               new Option(GUIDs.format(record, uuid),
                                   Strings.format(record, name)));
+    }
+
+    @Override
+    public Option version() {
+        return dsl.select()
+           .from(TREASURE_VERSION)
+           .where(TREASURE_VERSION.NAME.eq(table.getName()))
+           .fetchOptional(record -> new Option(
+               Strings.format(record, TREASURE_VERSION.NAME),
+               Numbers.format(record, TREASURE_VERSION.VERSION)
+           ))
+           .orElse(new Option(table.getName(), "0"));
+    }
+
+    @Override
+    public Page<E> sync(final long version,
+                        final int offset,
+                        final int numberOfRows) {
+       Condition condition = version == 0
+           ? DSL.noCondition()
+           : creationDate.greaterOrEqual(new Timestamp(version));
+
+        return new Page<>(
+            new Meta(
+                dsl.selectCount()
+                   .from(table)
+                   .where(condition)
+                   .fetchOptional(0, int.class)
+                   .orElse(0),
+                new Paging(offset, numberOfRows)),
+            findQuery().where(condition)
+                       .orderBy(orderBy())
+                       .offset(offset)
+                       .limit(numberOfRows)
+                       .fetch(this::toDTO));
     }
 
     @Override

@@ -9,11 +9,13 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDeposit;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
+import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureVersion;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureDebtRecord;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureDepositRecord;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureEventRecord;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureLogRecord;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureTransactionRecord;
+import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureVersionRecord;
 
 import javax.annotation.Generated;
 
@@ -50,6 +52,7 @@ public class Keys {
     public static final UniqueKey<TreasureEventRecord> TREASURE_EVENT_PKEY = UniqueKeys0.TREASURE_EVENT_PKEY;
     public static final UniqueKey<TreasureLogRecord> TREASURE_LOG_PKEY = UniqueKeys0.TREASURE_LOG_PKEY;
     public static final UniqueKey<TreasureTransactionRecord> TREASURE_TRANSACTION_PKEY = UniqueKeys0.TREASURE_TRANSACTION_PKEY;
+    public static final UniqueKey<TreasureVersionRecord> TREASURE_VERSION_PKEY = UniqueKeys0.TREASURE_VERSION_PKEY;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -68,6 +71,7 @@ public class Keys {
         public static final UniqueKey<TreasureEventRecord> TREASURE_EVENT_PKEY = Internal.createUniqueKey(TreasureEvent.TREASURE_EVENT, "treasure_event_pkey", TreasureEvent.TREASURE_EVENT.GUID);
         public static final UniqueKey<TreasureLogRecord> TREASURE_LOG_PKEY = Internal.createUniqueKey(TreasureLog.TREASURE_LOG, "treasure_log_pkey", TreasureLog.TREASURE_LOG.GUID);
         public static final UniqueKey<TreasureTransactionRecord> TREASURE_TRANSACTION_PKEY = Internal.createUniqueKey(TreasureTransaction.TREASURE_TRANSACTION, "treasure_transaction_pkey", TreasureTransaction.TREASURE_TRANSACTION.GUID);
+        public static final UniqueKey<TreasureVersionRecord> TREASURE_VERSION_PKEY = Internal.createUniqueKey(TreasureVersion.TREASURE_VERSION, "treasure_version_pkey", TreasureVersion.TREASURE_VERSION.NAME);
     }
 
     private static class ForeignKeys0 {

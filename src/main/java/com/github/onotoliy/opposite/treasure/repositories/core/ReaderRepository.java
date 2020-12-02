@@ -53,4 +53,21 @@ public interface ReaderRepository<
      * @return Объекты.
      */
     Page<E> getAll(P parameter);
+
+    /**
+     * Получение версии сущности.
+     *
+     * @return Версия сущности.
+     */
+    Option version();
+
+    /**
+     * Данные, которые необходимо синхронизировать.
+     *
+     * @param version Версия объекта.
+     * @param offset Количество записей которое необходимо пропустить.
+     * @param numberOfRows Размер страницы.
+     * @return Данные, которые необходимо синхронизировать.
+     */
+    Page<E> sync(long version, int offset, int numberOfRows);
 }

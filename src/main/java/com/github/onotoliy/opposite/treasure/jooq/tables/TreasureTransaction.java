@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TreasureTransaction extends TableImpl<TreasureTransactionRecord> {
 
-    private static final long serialVersionUID = -2023263630;
+    private static final long serialVersionUID = -817272631;
 
     /**
      * The reference instance of <code>public.treasure_transaction</code>
@@ -102,6 +102,11 @@ public class TreasureTransaction extends TableImpl<TreasureTransactionRecord> {
      * The column <code>public.treasure_transaction.deletion_date</code>. Дата удаления записи
      */
     public final TableField<TreasureTransactionRecord, Timestamp> DELETION_DATE = createField("deletion_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата удаления записи");
+
+    /**
+     * The column <code>public.treasure_transaction.transaction_date</code>. Дата совершения транзации
+     */
+    public final TableField<TreasureTransactionRecord, Timestamp> TRANSACTION_DATE = createField("transaction_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата совершения транзации");
 
     /**
      * Create a <code>public.treasure_transaction</code> table reference

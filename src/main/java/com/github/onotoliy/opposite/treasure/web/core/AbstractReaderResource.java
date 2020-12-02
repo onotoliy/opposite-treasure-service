@@ -1,9 +1,11 @@
 package com.github.onotoliy.opposite.treasure.web.core;
 
+import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.core.HasAuthor;
 import com.github.onotoliy.opposite.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.data.core.HasName;
 import com.github.onotoliy.opposite.data.core.HasUUID;
+import com.github.onotoliy.opposite.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.services.core.ReaderService;
 
@@ -40,5 +42,17 @@ implements ReaderResource<E> {
     @Override
     public E get(final UUID uuid) {
         return service.get(uuid);
+    }
+
+    @Override
+    public Option version() {
+        return service.version();
+    }
+
+    @Override
+    public Page<E> sync(final long version,
+                        final int offset,
+                        final int numberOfRows) {
+        return service.sync(version, offset, numberOfRows);
     }
 }

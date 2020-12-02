@@ -104,6 +104,9 @@ extends AbstractModifierRepository<
      * @return Объект.
      */
     public static Event toDTO(final Record record, final Option author) {
+        String deletionDate =
+            Dates.format(record, TREASURE_EVENT.DELETION_DATE);
+
         return new Event(
             GUIDs.format(record, TREASURE_EVENT.GUID),
             Strings.format(record, TREASURE_EVENT.NAME),
@@ -111,7 +114,8 @@ extends AbstractModifierRepository<
             Numbers.format(record, TREASURE_EVENT.TOTAL),
             Dates.format(record, TREASURE_EVENT.DEADLINE),
             Dates.format(record, TREASURE_EVENT.CREATION_DATE),
-            author
+            author,
+            deletionDate.equals("—") ? null : deletionDate
         );
     }
 

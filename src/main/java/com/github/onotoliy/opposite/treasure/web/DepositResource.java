@@ -1,6 +1,7 @@
 package com.github.onotoliy.opposite.treasure.web;
 
 import com.github.onotoliy.opposite.data.Deposit;
+import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.services.DepositService;
@@ -64,7 +65,39 @@ public class DepositResource {
             @RequestParam(value = "numberOfRows",
                           required = false,
                           defaultValue = "10")
-            final int numberOfRows) {
+            final int numberOfRows
+    ) {
         return service.getAll(new DepositSearchParameter(offset, numberOfRows));
+    }
+
+    /**
+     * Получение версии сущности.
+     *
+     * @return Версия сущности.
+     */
+    @GetMapping(value = "/version")
+    public Option version() {
+        return service.version();
+    }
+
+    /**
+     * Данные, которые необходимо синхронизировать.
+     *
+     * @param offset Количество записей которое необходимо пропустить.
+     * @param numberOfRows Размер страницы.
+     * @return Данные, которые необходимо синхронизировать.
+     */
+    @GetMapping(value = "/sync")
+    public Page<Deposit> sync(
+            @RequestParam(value = "offset",
+                          required = false,
+                          defaultValue = "0")
+            final int offset,
+            @RequestParam(value = "numberOfRows",
+                          required = false,
+                          defaultValue = "10")
+            final int numberOfRows
+    ) {
+        return service.sync(offset, numberOfRows);
     }
 }

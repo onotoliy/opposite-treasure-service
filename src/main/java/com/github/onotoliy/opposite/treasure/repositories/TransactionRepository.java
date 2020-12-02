@@ -27,6 +27,7 @@ import org.jooq.UpdateSetMoreStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_EVENT;
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_TRANSACTION;
 
 /**
@@ -124,6 +125,8 @@ extends AbstractModifierRepository<
         Option person = record.getValue(table.USER_GUID, UUID.class) == null
             ? null
             : formatUser(record, table.USER_GUID);
+        String deletionDate =
+            Dates.format(record, TREASURE_EVENT.DELETION_DATE);
 
         return new Transaction(
             GUIDs.format(record, uuid),
@@ -133,7 +136,9 @@ extends AbstractModifierRepository<
             person,
             EventRepository.toOption(record),
             Dates.format(record, creationDate),
-            formatUser(record, author)
+            Dates.format(record, creationDate),
+            formatUser(record, author),
+            deletionDate.equals("—") ? null : deletionDate
         );
     }
 }

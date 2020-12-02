@@ -1,7 +1,9 @@
 package com.github.onotoliy.opposite.treasure.services;
 
 import com.github.onotoliy.opposite.data.Deposit;
+import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.treasure.bpp.log.Log;
 import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.repositories.DepositRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +52,27 @@ public class DepositService {
      */
     public Page<Deposit> getAll(final DepositSearchParameter parameter) {
         return repository.getAll(parameter);
+    }
+
+    /**
+     * Получение версии сущности.
+     *
+     * @return Версия сущности.
+     */
+    @Log(db = true)
+    public Option version() {
+        return repository.version();
+    }
+
+    /**
+     * Данные, которые необходимо синхронизировать.
+     *
+     * @param offset Количество записей которое необходимо пропустить.
+     * @param numberOfRows Размер страницы.
+     * @return Данные, которые необходимо синхронизировать.
+     */
+    @Log(db = true)
+    public Page<Deposit> sync(final int offset, final int numberOfRows) {
+        return repository.sync(offset, numberOfRows);
     }
 }

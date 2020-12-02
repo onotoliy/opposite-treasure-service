@@ -1,6 +1,7 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.data.Deposit;
+import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.page.Meta;
 import com.github.onotoliy.opposite.data.page.Page;
 import com.github.onotoliy.opposite.data.page.Paging;
@@ -8,7 +9,9 @@ import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
+import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
+import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -23,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEPOSIT;
+import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_VERSION;
 
 /**
  * Репозиторий управления депозитами.
@@ -87,6 +91,42 @@ public class DepositRepository {
     }
 
     /**
+     * Получение версии сущности.
+     *
+     * @return Версия сущности.
+     */
+    public Option version() {
+        return dsl.select()
+                  .from(TREASURE_VERSION)
+                  .where(TREASURE_VERSION.NAME.eq(TREASURE_DEPOSIT.getName()))
+                  .fetchOptional(record -> new Option(
+                      Strings.format(record, TREASURE_VERSION.NAME),
+                      Numbers.format(record, TREASURE_VERSION.VERSION)
+                  ))
+                  .orElse(new Option(TREASURE_DEPOSIT.getName(), "0"));
+    }
+
+    /**
+     * Данные, которые необходимо синхронизировать.
+     *
+     * @param offset Количество записей которое необходимо пропустить.
+     * @param numberOfRows Размер страницы.
+     * @return Данные, которые необходимо синхронизировать.
+     */
+    public Page<Deposit> sync(final int offset, final int numberOfRows) {
+        return new Page<>(
+            new Meta(
+                dsl.selectCount()
+                   .from(TREASURE_DEPOSIT)
+                   .fetchOptional(0, int.class)
+                   .orElse(0),
+                new Paging(offset, numberOfRows)),
+            dsl.select().from(TREASURE_DEPOSIT)
+               .limit(offset, numberOfRows)
+               .fetch(this::toDTO));
+    }
+
+    /**
      * Поиск депозитов.
      *
      * @param parameter Поисковые параметры.
@@ -147,6 +187,8 @@ public class DepositRepository {
                        .where(TREASURE_DEPOSIT.USER_UUID.eq(guid))
                        .execute();
 
+        setVersion(configuration);
+
         if (count > 1) {
             throw new NotUniqueException(TREASURE_DEPOSIT, guid);
         }
@@ -163,10 +205,37 @@ public class DepositRepository {
      * @return Объект.
      */
     private Deposit toDTO(final Record record) {
+        return toDTO(user, record);
+    }
+
+    /**
+     * Преобзазование записи из БД в объект.
+     *
+     * @param user Сервис чтения пользователей.
+     * @param record Запись из БД.
+     * @return Объект.
+     */
+    public static Deposit toDTO(final KeycloakRPC user, final Record record) {
         return new Deposit(
             Optional.of(record.getValue(TREASURE_DEPOSIT.USER_UUID, UUID.class))
                     .flatMap(user::findOption)
                     .orElse(null),
             Numbers.format(record, TREASURE_DEPOSIT.DEPOSIT));
+    }
+
+    /**
+     * Изменение версии справочника.
+     *
+     * @param configuration Настройка транзакции.
+     */
+    private void setVersion(
+        final Configuration configuration
+    ) {
+        BigDecimal version = BigDecimal.valueOf(Dates.now().getTime());
+
+        DSL.using(configuration)
+           .update(TREASURE_VERSION)
+           .set(TREASURE_VERSION.VERSION, version)
+           .where(TREASURE_VERSION.NAME.eq(TREASURE_DEPOSIT.getName()));
     }
 }

@@ -12,7 +12,9 @@ import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -26,6 +28,8 @@ import org.jooq.TableField;
 import org.jooq.UpdateConditionStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
+
+import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_VERSION;
 
 /**
  * Базовый репозиторий управления записями из БД.
@@ -128,8 +132,12 @@ implements ModifierRepository<E, P> {
      * @return Запрос.
      */
     protected InsertSetMoreStep<R> insertQuery(
-            final Configuration configuration,
-            final E dto) {
+        final Configuration configuration,
+        final E dto
+    ) {
+
+        setVersion(configuration, dto);
+
         return DSL.using(configuration)
                   .insertInto(table)
                   .set(uuid, GUIDs.parse(dto))
@@ -147,12 +155,16 @@ implements ModifierRepository<E, P> {
      * @return Запрос.
      */
     protected UpdateSetMoreStep<R> updateQuery(
-            final Configuration configuration,
-            final E dto) {
+        final Configuration configuration,
+        final E dto
+    ) {
+        setVersion(configuration, dto);
+
         return DSL.using(configuration)
                   .update(table)
                   .set(name, Strings.parse(dto.getName()))
-                  .set(creationDate, Dates.now())
+                  .set(creationDate, Dates.parse(dto.getCreationDate()) == null
+                      ? Dates.now() : Dates.parse(dto.getCreationDate()))
                   .set(author, GUIDs.parse(dto.getAuthor()));
     }
 
@@ -218,5 +230,27 @@ implements ModifierRepository<E, P> {
         if (count > 1) {
             throw new NotUniqueException(table, uuid);
         }
+    }
+
+    /**
+     * Изменение версии справочника.
+     *
+     * @param configuration Настройка транзакции.
+     * @param dto Объект.
+     */
+    protected void setVersion(
+        final Configuration configuration,
+        final E dto
+    ) {
+        Timestamp timestamp = Dates.parse(dto.getCreationDate()) == null
+            ? Dates.now() : Dates.parse(dto.getCreationDate());
+
+        BigDecimal version = BigDecimal.valueOf(
+            Objects.requireNonNull(timestamp).getTime());
+
+        DSL.using(configuration)
+           .update(TREASURE_VERSION)
+           .set(TREASURE_VERSION.VERSION, version)
+           .where(TREASURE_VERSION.NAME.eq(table.getName()));
     }
 }
