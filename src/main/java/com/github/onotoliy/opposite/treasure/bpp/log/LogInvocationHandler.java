@@ -1,6 +1,7 @@
 package com.github.onotoliy.opposite.treasure.bpp.log;
 
 import com.github.onotoliy.opposite.treasure.services.core.DBLoggerService;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -10,8 +11,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Обработчик запросов логгирования.
@@ -24,11 +29,6 @@ public class LogInvocationHandler implements InvocationHandler {
      * Список стандартных Logger-ов.
      */
     private static final Map<String, Logger> LOGGERS = new HashMap<>();
-
-    /**
-     * Автор.
-     */
-    private final UUID author;
 
     /**
      * Bean.
@@ -55,16 +55,13 @@ public class LogInvocationHandler implements InvocationHandler {
      *
      * @param obc Оригинальный тип Bean класса.
      * @param bean Bean.
-     * @param author Автор.
      * @param dbLogger Logger записывающий в БД.
      */
     public LogInvocationHandler(final Class<?> obc,
                                 final Object bean,
-                                final UUID author,
                                 final DBLoggerService dbLogger) {
         this.obc = obc;
         this.bean = bean;
-        this.author = author;
         this.dbLogger = dbLogger;
         this.logger = LOGGERS.computeIfAbsent(
             obc.getCanonicalName(),
@@ -77,6 +74,16 @@ public class LogInvocationHandler implements InvocationHandler {
                          final Method method,
                          final Object[] args
     ) throws Throwable {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context == null
+            ? null : context.getAuthentication();
+        Object object = authentication == null
+            ? null : authentication.getPrincipal();
+        KeycloakPrincipal principal = object == null
+            ? null : (KeycloakPrincipal) object;
+        UUID author = principal == null
+            ? null : GUIDs.parse(principal.getName());
+
         Log annotation = obc
             .getMethod(method.getName(), method.getParameterTypes())
             .getAnnotation(Log.class);
@@ -100,7 +107,7 @@ public class LogInvocationHandler implements InvocationHandler {
         );
 
         try {
-            log(annotation.level(), annotation.db(), message);
+            log(annotation.level(), author, annotation.db(), message);
 
             return method.invoke(bean, args);
         } catch (Exception exception) {
@@ -114,10 +121,12 @@ public class LogInvocationHandler implements InvocationHandler {
      * Логгирование события.
      *
      * @param level Уровень логирования.
+     * @param author Автор.
      * @param bd Записать лог в БД.
      * @param message Сообщение.
      */
     private void log(final LogLevel level,
+                     final UUID author,
                      final boolean bd,
                      final String message) {
         switch (level) {
