@@ -216,10 +216,13 @@ public class DepositRepository {
      * @return Объект.
      */
     public static Deposit toDTO(final KeycloakRPC user, final Record record) {
+        Optional<Option> person = Optional
+            .of(record.getValue(TREASURE_DEPOSIT.USER_UUID, UUID.class))
+            .flatMap(user::findOption);
+
         return new Deposit(
-            Optional.of(record.getValue(TREASURE_DEPOSIT.USER_UUID, UUID.class))
-                    .flatMap(user::findOption)
-                    .orElse(null),
+            person.map(Option::getUuid).orElse(""),
+            person.map(Option::getName).orElse(""),
             Numbers.format(record, TREASURE_DEPOSIT.DEPOSIT));
     }
 
