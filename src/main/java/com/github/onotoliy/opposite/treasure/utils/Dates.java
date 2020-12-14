@@ -63,9 +63,9 @@ public final class Dates {
             : value;
 
         try {
-            return value.endsWith("Z")
-                ? parse(ISO_WITHOUT_TIMEZONE.parse(v))
-                : parse(ISO_WITH_TIMEZONE.parse(v));
+            return v.endsWith("Z")
+                ? parse(ISO_WITH_TIMEZONE.parse(v))
+                : parse(ISO_WITHOUT_TIMEZONE.parse(v));
         } catch (ParseException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
