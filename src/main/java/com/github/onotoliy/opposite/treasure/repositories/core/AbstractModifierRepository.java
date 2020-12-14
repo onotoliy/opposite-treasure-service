@@ -251,6 +251,7 @@ implements ModifierRepository<E, P> {
         DSL.using(configuration)
            .update(TREASURE_VERSION)
            .set(TREASURE_VERSION.VERSION, version)
-           .where(TREASURE_VERSION.NAME.eq(table.getName()));
+           .where(TREASURE_VERSION.NAME.eq(table.getName()))
+           .execute();
     }
 }
