@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -20,6 +22,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LogAnnotationBeanPostProcessor implements BeanPostProcessor {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(LogAnnotationBeanPostProcessor.class);
 
     /**
      * Карта Bean-ов которые необходимо перехватывать.
@@ -53,7 +61,17 @@ public class LogAnnotationBeanPostProcessor implements BeanPostProcessor {
             .anyMatch(m -> m.isAnnotationPresent(Log.class));
 
         if (clazz.isAnnotationPresent(Log.class) || isPresent) {
+            LOGGER.info(
+                "Bean {} constraint annotation @Log",
+                clazz.getCanonicalName()
+            );
+
             beans.put(beanName, bean.getClass());
+        } else {
+            LOGGER.info(
+                "Bean {} not constraint annotation @Log",
+                clazz.getCanonicalName()
+            );
         }
 
         return bean;

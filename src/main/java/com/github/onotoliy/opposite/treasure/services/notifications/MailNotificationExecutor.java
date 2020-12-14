@@ -59,6 +59,11 @@ public class MailNotificationExecutor implements NotificationExecutor {
     }
 
     @Override
+    public boolean isHTML() {
+        return true;
+    }
+
+    @Override
     public void notify(final String title, final String body) {
         users.getAll()
              .stream()

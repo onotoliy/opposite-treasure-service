@@ -67,7 +67,7 @@ public class NotificationService {
                 new TransactionNotificationConvector(executor.isHTML())
                     .toNotification(transaction, cashbox.get());
 
-            executor.notify("Событие", message);
+            executor.notify("Тразакция", message);
         });
     }
 
