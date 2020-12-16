@@ -14,6 +14,7 @@ import com.google.firebase.messaging.Notification;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,12 +74,15 @@ public class FirebaseNotificationExecutor implements NotificationExecutor {
     @Override
     public void notify(final Contact to,
                        final String title,
-                       final String body) {
+                       final String body,
+                       final Map<String, String> parameters) {
 
     }
 
     @Override
-    public void notify(final String title, final String body) {
+    public void notify(final String title,
+                       final String body,
+                       final Map<String, String> parameters) {
         AndroidConfig android = AndroidConfig
                 .builder()
                 .setTtl(Duration.ofMinutes(2).toMillis())
@@ -94,6 +98,7 @@ public class FirebaseNotificationExecutor implements NotificationExecutor {
 
         Message message = Message
                 .builder()
+                .putAllData(parameters)
                 .setAndroidConfig(android)
                 .setNotification(Notification
                                          .builder()

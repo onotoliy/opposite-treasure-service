@@ -7,8 +7,10 @@ import com.github.onotoliy.opposite.treasure.convectors.TransactionNotificationC
 import com.github.onotoliy.opposite.treasure.services.notifications.NotificationExecutor;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -47,12 +49,21 @@ public class NotificationService {
      *
      * @param event Событие.
      */
+    @Async
     public void notify(final Event event) {
+        Map<String, String> parameters = Map.of(
+            "uuid", event.getUuid(),
+            "title", event.getName(),
+            "contribution", event.getContribution(),
+            "deadline", event.getDeadline(),
+            "type", "event"
+        );
+
         executors.forEach(executor -> {
             String message = new EventNotificationConvector(executor.isHTML())
                 .toNotification(event, cashbox.get());
 
-            executor.notify("Событие", message);
+            executor.notify("Событие", message, parameters);
         });
     }
 
@@ -61,13 +72,26 @@ public class NotificationService {
      *
      * @param transaction Транзакция.
      */
+    @Async
     public void notify(final Transaction transaction) {
+        Map<String, String> parameters = Map.of(
+            "uuid", transaction.getUuid(),
+            "title", transaction.getName(),
+            "cash", transaction.getCash(),
+            "event", transaction.getEvent() == null
+                ? "" : transaction.getEvent().getName(),
+            "person", transaction.getPerson() == null
+                ? "" : transaction.getPerson().getName(),
+            "transaction", transaction.getType().getLabel(),
+            "type", "event"
+        );
+
         executors.forEach(executor -> {
             String message =
                 new TransactionNotificationConvector(executor.isHTML())
                     .toNotification(transaction, cashbox.get());
 
-            executor.notify("Тразакция", message);
+            executor.notify("Транзакция", message, parameters);
         });
     }
 

@@ -12,6 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,7 +77,8 @@ public class TelegramNotificationExecutor implements NotificationExecutor {
     @Override
     public void notify(final Contact to,
                        final String title,
-                       final String body) {
+                       final String body,
+                       final Map<String, String> parameters) {
         if (Strings.isEmpty(to.getPhone())) {
             throw new IllegalArgumentException(String.format(
                 "У пользователя (%s) не указан чат Telegram", to.getUuid()
@@ -87,7 +89,9 @@ public class TelegramNotificationExecutor implements NotificationExecutor {
     }
 
     @Override
-    public void notify(final String title, final String body) {
+    public void notify(final String title,
+                       final String body,
+                       final Map<String, String> parameters) {
         notify(chat, title, body);
     }
 

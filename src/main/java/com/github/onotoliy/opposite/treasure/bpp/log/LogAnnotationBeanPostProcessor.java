@@ -56,25 +56,40 @@ public class LogAnnotationBeanPostProcessor implements BeanPostProcessor {
     ) throws BeansException {
         Class<?> clazz = bean.getClass();
 
-        boolean isPresent = Arrays
-            .stream(clazz.getMethods())
-            .anyMatch(m -> m.isAnnotationPresent(Log.class));
-
-        if (clazz.isAnnotationPresent(Log.class) || isPresent) {
+        if (isAnnotationPresent(clazz)) {
             LOGGER.info(
                 "Bean {} constraint annotation @Log",
                 clazz.getCanonicalName()
             );
 
             beans.put(beanName, bean.getClass());
-        } else {
-            LOGGER.info(
-                "Bean {} not constraint annotation @Log",
-                clazz.getCanonicalName()
-            );
         }
 
         return bean;
+    }
+
+    /**
+     * Проверка содержит ли класс аннотацию {@link Log}.
+     *
+     * @param clazz Класс.
+     * @return Результат проверки.
+     */
+    private boolean isAnnotationPresent(final Class<?> clazz) {
+        if (clazz.isAnnotationPresent(Log.class)) {
+            return true;
+        }
+
+        boolean isAnnotationPresent = Arrays
+            .stream(clazz.getMethods())
+            .anyMatch(m -> m.isAnnotationPresent(Log.class));
+
+        if (isAnnotationPresent) {
+            return true;
+        } else {
+            return Arrays
+                .stream(clazz.getInterfaces())
+                .anyMatch(this::isAnnotationPresent);
+        }
     }
 
     @Override

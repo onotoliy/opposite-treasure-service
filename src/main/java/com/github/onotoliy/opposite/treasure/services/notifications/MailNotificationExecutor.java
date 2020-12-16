@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.internet.InternetAddress;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
  * Описание бизнес логики уведомления отправляемого по электронному адресу.
@@ -64,7 +65,9 @@ public class MailNotificationExecutor implements NotificationExecutor {
     }
 
     @Override
-    public void notify(final String title, final String body) {
+    public void notify(final String title,
+                       final String body,
+                       final Map<String, String> parameters) {
         users.getAll()
              .stream()
              .map(user -> users.getContact(user.getUuid()))
@@ -78,7 +81,8 @@ public class MailNotificationExecutor implements NotificationExecutor {
     @Override
     public void notify(final Contact to,
                        final String title,
-                       final String body) {
+                       final String body,
+                       final Map<String, String> parameters) {
         if (Strings.isEmpty(to.getEmail())) {
             throw new IllegalArgumentException(String.format(
                 "У пользователя (%s) не указана электронная почта",

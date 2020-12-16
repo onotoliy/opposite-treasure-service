@@ -7,6 +7,9 @@ import com.github.onotoliy.opposite.treasure.utils.Strings;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,7 +58,8 @@ public class TwilioNotificationExecutor implements NotificationExecutor {
     @Override
     public void notify(final Contact to,
                        final String title,
-                       final String body) {
+                       final String body,
+                       final Map<String, String> parameters) {
         if (Strings.isEmpty(to.getPhone())) {
             throw new IllegalArgumentException(String.format(
                 "У пользователя (%s) не указан номер телефона", to.getUuid()
@@ -66,7 +70,9 @@ public class TwilioNotificationExecutor implements NotificationExecutor {
     }
 
     @Override
-    public void notify(final String title, final String body) {
+    public void notify(final String title,
+                       final String body,
+                       final Map<String, String> parameters) {
         users.getAll()
              .stream()
              .map(user -> users.getContact(user.getUuid()))
