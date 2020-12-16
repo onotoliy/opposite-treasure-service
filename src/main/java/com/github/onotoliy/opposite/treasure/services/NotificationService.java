@@ -29,7 +29,7 @@ public class NotificationService {
     /**
      * Сервис чтения данных о кассе.
      */
-    private final CashboxService cashbox;
+    private final ICashboxService cashbox;
 
     /**
      * Конструктор.
@@ -39,7 +39,7 @@ public class NotificationService {
      */
     @Autowired
     public NotificationService(final List<NotificationExecutor> executors,
-                               final CashboxService cashbox) {
+                               final ICashboxService cashbox) {
         this.executors = executors;
         this.cashbox = cashbox;
     }
