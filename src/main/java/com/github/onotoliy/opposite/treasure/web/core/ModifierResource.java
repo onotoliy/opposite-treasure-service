@@ -48,4 +48,13 @@ extends ReaderResource<E> {
     @DeleteMapping(value = "/{uuid}")
     void delete(@PathVariable("uuid") UUID uuid);
 
+    /**
+     * Синхронизация объекта.
+     *
+     * @param dto Объект.
+     * @return Измененный объект.
+     */
+    @PutMapping
+    E sync(@RequestBody E dto);
+
 }

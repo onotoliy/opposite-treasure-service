@@ -47,4 +47,9 @@ implements ModifierResource<E> {
     public void delete(final UUID uuid) {
         service.delete(uuid);
     }
+
+    @Override
+    public E sync(final E dto) {
+        return service.sync(dto);
+    }
 }

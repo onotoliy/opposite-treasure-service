@@ -5,12 +5,15 @@ import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import java.util.UUID;
 
 import org.jooq.Named;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Объект с указанным уникальным идентификатором уже существует.
  *
  * @author Anatoliy Pokhresnyi
  */
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class NotUniqueException extends RuntimeException {
 
     /**

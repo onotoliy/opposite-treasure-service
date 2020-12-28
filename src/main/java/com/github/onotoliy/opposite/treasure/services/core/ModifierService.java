@@ -46,4 +46,13 @@ extends ReaderService<E, P> {
      */
     @Log(db = true)
     void delete(UUID uuid);
+
+    /**
+     * Синхронизация объекта.
+     *
+     * @param dto Объект.
+     * @return Объект.
+     */
+    @Log(db = true)
+    E sync(E dto);
 }

@@ -83,4 +83,9 @@ implements ModifierService<E, P> {
     protected void delete(final Configuration configuration, final UUID uuid) {
         repository.delete(configuration, uuid);
     }
+
+    @Override
+    public E sync(final E dto) {
+        return repository.sync(dto);
+    }
 }

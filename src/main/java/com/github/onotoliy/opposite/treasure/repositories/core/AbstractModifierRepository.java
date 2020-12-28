@@ -108,6 +108,25 @@ implements ModifierRepository<E, P> {
         execute(uuid, deleteQuery(configuration, uuid));
     }
 
+    @Override
+    public E sync(final E dto) {
+        return dsl.transactionResult(
+            configuration -> sync(configuration, dto));
+    }
+
+    @Override
+    public E sync(final Configuration configuration, final E dto) {
+        DSL.using(configuration)
+           .select()
+           .from(table)
+           .where(uuid.eq(GUIDs.parse(dto)))
+           .fetchOptional()
+           .ifPresentOrElse(record -> update(configuration, dto),
+                            () -> create(configuration, dto));
+
+        return get(GUIDs.parse(dto));
+    }
+
     /**
      * Получение delete from запроса из таблицы.
      *

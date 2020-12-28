@@ -77,4 +77,21 @@ extends ReaderRepository<E, P> {
      * @param uuid Уникальный идентификатор.
      */
     void delete(Configuration configuration, UUID uuid);
+
+    /**
+     * Синхронизация объекта.
+     *
+     * @param dto Объект.
+     * @return Объект.
+     */
+    E sync(E dto);
+
+    /**
+     * Синхронизация объекта.
+     *
+     * @param configuration Настройки транзакции.
+     * @param dto Объект.
+     * @return Объект.
+     */
+    E sync(Configuration configuration, E dto);
 }
