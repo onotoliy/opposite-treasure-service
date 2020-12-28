@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 /**
  * Перехватчик ошибок.
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * @author Anatoliy Pokhresnyi
  */
 @ControllerAdvice
-public class TreasureExceptionResolver {
+public class TreasureExceptionResolver extends ResponseEntityExceptionHandler {
 
     /**
      * Конструктор по умолчанию.
