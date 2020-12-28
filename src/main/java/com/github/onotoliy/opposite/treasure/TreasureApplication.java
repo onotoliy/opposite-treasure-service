@@ -3,6 +3,7 @@ package com.github.onotoliy.opposite.treasure;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * Главный класс приложения.
@@ -10,6 +11,7 @@ import org.springframework.cache.annotation.EnableCaching;
  * @author Anatoliy Pokhresnyi
  */
 @SpringBootApplication
+@EnableAsync
 @EnableCaching(proxyTargetClass = true)
 public class TreasureApplication {
 
