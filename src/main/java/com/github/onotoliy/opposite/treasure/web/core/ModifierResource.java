@@ -54,7 +54,7 @@ extends ReaderResource<E> {
      * @param dto Объект.
      * @return Измененный объект.
      */
-    @PutMapping
+    @PutMapping(value = "/sync")
     E sync(@RequestBody E dto);
 
 }
