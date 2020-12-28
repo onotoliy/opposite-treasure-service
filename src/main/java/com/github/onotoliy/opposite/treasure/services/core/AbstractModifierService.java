@@ -7,9 +7,10 @@ import com.github.onotoliy.opposite.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.repositories.core.ModifierRepository;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import org.jooq.Configuration;
 
 import java.util.UUID;
+
+import org.jooq.Configuration;
 
 /**
  * Базовый сервис управления объектами.
@@ -86,6 +87,11 @@ implements ModifierService<E, P> {
 
     @Override
     public E sync(final E dto) {
-        return repository.sync(dto);
+        repository.transaction(configuration -> repository
+            .getOptional(GUIDs.parse(dto))
+            .ifPresentOrElse(record -> update(configuration, dto),
+                             () -> create(configuration, dto)));
+
+        return get(GUIDs.parse(dto));
     }
 }
