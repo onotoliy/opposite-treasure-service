@@ -1,5 +1,6 @@
 package com.github.onotoliy.opposite.treasure.web.core;
 
+import com.github.onotoliy.opposite.data.SyncResponse;
 import com.github.onotoliy.opposite.data.core.HasAuthor;
 import com.github.onotoliy.opposite.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.data.core.HasName;
@@ -55,6 +56,6 @@ extends ReaderResource<E> {
      * @return Измененный объект.
      */
     @PutMapping(value = "/sync")
-    E sync(@RequestBody E dto);
+    SyncResponse sync(@RequestBody E dto);
 
 }

@@ -1,5 +1,6 @@
 package com.github.onotoliy.opposite.treasure.web.core;
 
+import com.github.onotoliy.opposite.data.SyncResponse;
 import com.github.onotoliy.opposite.data.core.HasAuthor;
 import com.github.onotoliy.opposite.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.data.core.HasName;
@@ -49,7 +50,7 @@ implements ModifierResource<E> {
     }
 
     @Override
-    public E sync(final E dto) {
+    public SyncResponse sync(final E dto) {
         return service.sync(dto);
     }
 }

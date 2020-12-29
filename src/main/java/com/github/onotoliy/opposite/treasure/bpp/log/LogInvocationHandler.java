@@ -2,6 +2,7 @@ package com.github.onotoliy.opposite.treasure.bpp.log;
 
 import com.github.onotoliy.opposite.treasure.services.core.DBLoggerService;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
+import com.github.onotoliy.opposite.treasure.utils.Objects;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -79,10 +80,13 @@ public class LogInvocationHandler implements InvocationHandler {
             ? null : context.getAuthentication();
         Object object = authentication == null
             ? null : authentication.getPrincipal();
-        KeycloakPrincipal principal = object == null
-            ? null : (KeycloakPrincipal) object;
-        UUID author = principal == null
-            ? null : GUIDs.parse(principal.getName());
+        UUID author = UUID.fromString("00000000-0000-0000-0000-000000000001");
+
+        if (Objects.nonEmpty(object)) {
+            if (object instanceof KeycloakPrincipal) {
+                author = GUIDs.parse(((KeycloakPrincipal) object).getName());
+            }
+        }
 
         Log annotation = obc
             .getMethod(method.getName(), method.getParameterTypes())
