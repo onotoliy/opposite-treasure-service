@@ -14,6 +14,8 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,12 @@ import org.springframework.stereotype.Service;
 @Service
 @Qualifier("telegram")
 public class TelegramNotificationExecutor implements NotificationExecutor {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(TelegramNotificationExecutor.class);
 
     /**
      * Duration.
@@ -111,6 +119,10 @@ public class TelegramNotificationExecutor implements NotificationExecutor {
                         final String title,
                         final String body
     ) {
+        LOGGER.info(
+            "Telegram notify. To {}. Title {}. Body {}", to, title, body
+        );
+
         String url = "https://" + host + "/bot" + bot + "/sendMessage?";
         String message = title + "\n" + body.replaceAll("<br/>", "\n");
 

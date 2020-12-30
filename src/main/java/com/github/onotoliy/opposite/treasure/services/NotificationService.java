@@ -9,6 +9,8 @@ import com.github.onotoliy.opposite.treasure.services.notifications.Notification
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class NotificationService {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(NotificationService.class);
 
     /**
      * Сервисы описывающие бизнес логику тразакций.
@@ -74,6 +82,8 @@ public class NotificationService {
      */
     @Async
     public void notify(final Transaction transaction) {
+        LOGGER.info("Transaction notify {}", transaction);
+
         Map<String, String> parameters = Map.of(
             "uuid", transaction.getUuid(),
             "title", transaction.getName(),
