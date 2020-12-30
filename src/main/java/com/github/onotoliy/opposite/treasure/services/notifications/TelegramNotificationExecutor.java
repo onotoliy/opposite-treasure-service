@@ -95,6 +95,11 @@ public class TelegramNotificationExecutor implements NotificationExecutor {
         notify(chat, title, body);
     }
 
+    @Override
+    public boolean isHTML() {
+        return true;
+    }
+
     /**
      * Отправка текстового уведомления.
      *
