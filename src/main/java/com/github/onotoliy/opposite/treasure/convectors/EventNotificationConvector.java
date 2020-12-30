@@ -1,6 +1,7 @@
 package com.github.onotoliy.opposite.treasure.convectors;
 
 import com.github.onotoliy.opposite.data.Event;
+import com.github.onotoliy.opposite.treasure.utils.Dates;
 
 /**
  * Класс описывающий логику преобразования событие в текстовое уведомление.
@@ -23,7 +24,7 @@ extends AbstractNotificationConvector<Event> {
     protected void append(final Event dto) {
         append("Мероприятие", dto.getName());
         append("Сумма взноса", dto.getContribution());
-        append("Сдать до", dto.getDeadline());
+        append("Сдать до", Dates.format(dto.getDeadline()));
     }
 
 }

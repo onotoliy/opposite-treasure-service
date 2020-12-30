@@ -1,6 +1,7 @@
 package com.github.onotoliy.opposite.treasure.convectors;
 
 import com.github.onotoliy.opposite.data.Transaction;
+import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 
 /**
@@ -23,7 +24,9 @@ extends AbstractNotificationConvector<Transaction> {
     @Override
     protected void append(final Transaction dto) {
         append("Тип", dto.getType().getLabel());
+        append("Название", dto.getName());
         append("Сумма", dto.getCash());
+        append("Дата транзации", Dates.format(dto.getTransactionDate()));
 
         if (Objects.nonEmpty(dto.getEvent())) {
             append("Событие", dto.getEvent().getName());

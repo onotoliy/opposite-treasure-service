@@ -18,6 +18,12 @@ import org.jooq.Record;
 public final class Dates {
 
     /**
+     * Короткий формат даты.
+     */
+    private static final SimpleDateFormat SHORT =
+        new SimpleDateFormat("dd.MM.yyyy");
+
+    /**
      * Формат даты с timezone.
      */
     private static final SimpleDateFormat ISO_WITHOUT_TIMEZONE =
@@ -113,5 +119,15 @@ public final class Dates {
     public static String format(final Record record,
                                 final Field<Timestamp> field) {
         return format(record.getValue(field, Timestamp.class));
+    }
+
+    /**
+     * Преобразование даты из ISO формата в которкий формат даты.
+     *
+     * @param value Дата в ISO формате.
+     * @return Дата в коротком формате.
+     */
+    public static String format(final String value) {
+        return Strings.isEmpty(value) ? "" : SHORT.format(parse(value));
     }
 }
