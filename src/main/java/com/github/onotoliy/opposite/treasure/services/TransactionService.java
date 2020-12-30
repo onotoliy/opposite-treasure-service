@@ -94,7 +94,7 @@ implements ITransactionService {
             throw new ModificationException("Нельзя менять тип транзакции");
         }
 
-        if (Objects.nonEqually(dto.getCash(), previous.getCash())) {
+        if (Numbers.nonEqually(dto.getCash(), previous.getCash())) {
             throw new ModificationException("Нельзя менять сумму транзакции");
         }
 

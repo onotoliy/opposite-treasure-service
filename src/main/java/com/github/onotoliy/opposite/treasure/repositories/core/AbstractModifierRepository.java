@@ -135,7 +135,6 @@ implements ModifierRepository<E, P> {
         final Configuration configuration,
         final E dto
     ) {
-
         setVersion(configuration, dto);
 
         return DSL.using(configuration)
