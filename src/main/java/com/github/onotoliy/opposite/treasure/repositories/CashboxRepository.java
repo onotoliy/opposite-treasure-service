@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_CASHBOX;
+import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEPOSIT;
+import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_VERSION;
 
 /**
  * Репозиторий управления данными о кассе.
@@ -92,6 +94,8 @@ public class CashboxRepository {
      */
     private void setDeposit(final Configuration configuration,
                             final Field<BigDecimal> deposit) {
+        setVersion(configuration);
+
         DSL.using(configuration)
            .update(TREASURE_CASHBOX)
            .set(TREASURE_CASHBOX.LAST_UPDATE_DATE, Dates.now())
@@ -109,5 +113,21 @@ public class CashboxRepository {
         return new Cashbox(
             Numbers.format(record, TREASURE_CASHBOX.DEPOSIT),
             Dates.format(record, TREASURE_CASHBOX.LAST_UPDATE_DATE));
+    }
+
+    /**
+     * Изменение версии справочника.
+     *
+     * @param configuration Настройка транзакции.
+     */
+    private void setVersion(
+        final Configuration configuration
+    ) {
+        BigDecimal version = BigDecimal.valueOf(Dates.now().getTime());
+
+        DSL.using(configuration)
+           .update(TREASURE_VERSION)
+           .set(TREASURE_VERSION.VERSION, version)
+           .where(TREASURE_VERSION.NAME.eq(TREASURE_DEPOSIT.getName()));
     }
 }
