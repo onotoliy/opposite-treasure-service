@@ -12,6 +12,7 @@ import com.github.onotoliy.opposite.treasure.repositories.TransactionRepository;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
+import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 
 import java.util.UUID;
@@ -91,13 +92,13 @@ implements IEventService {
     protected void update(final Configuration configuration, final Event dto) {
         Event previous = get(GUIDs.parse(dto));
 
-        if (Objects.nonEqually(dto.getContribution(),
+        if (Numbers.nonEqually(dto.getContribution(),
                                previous.getContribution())) {
             throw new ModificationException(
                 "Нельзя менять сумму взноса с одного человека");
         }
 
-        if (Objects.nonEqually(dto.getTotal(), previous.getTotal())) {
+        if (Numbers.nonEqually(dto.getTotal(), previous.getTotal())) {
             throw new ModificationException("Нельзя менять общую сумму");
         }
 
