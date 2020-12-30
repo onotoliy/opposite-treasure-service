@@ -4,7 +4,9 @@ import com.github.onotoliy.opposite.data.Transaction;
 import com.github.onotoliy.opposite.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.repositories.CashboxRepository;
 import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
+import com.github.onotoliy.opposite.treasure.repositories.DepositRepository;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
+import com.github.onotoliy.opposite.treasure.utils.Objects;
 
 import java.math.BigDecimal;
 
@@ -27,6 +29,11 @@ extends AbstractTransactionExecutor {
     private final CashboxRepository cashbox;
 
     /**
+     * Репозиторий депозитов.
+     */
+    private final DepositRepository deposit;
+
+    /**
      * Репозиторий долгов.
      */
     private final DebtRepository debt;
@@ -35,12 +42,15 @@ extends AbstractTransactionExecutor {
      * Конструктор.
      *
      * @param cashbox Репозиторий данных о кассе.
+     * @param deposit Репозиторий депозитов.
      * @param debt Репозиторий долгов.
      */
     @Autowired
     public ContributionTransactionExecutor(final CashboxRepository cashbox,
+                                           final DepositRepository deposit,
                                            final DebtRepository debt) {
         this.cashbox = cashbox;
+        this.deposit = deposit;
         this.debt = debt;
     }
 
@@ -48,20 +58,36 @@ extends AbstractTransactionExecutor {
     public void create(final Configuration configuration,
                        final Transaction dto,
                        final BigDecimal money) {
+        if (Objects.nonEmpty(dto.getEvent())) {
+            debt.contribution(configuration,
+                              GUIDs.parse(dto.getPerson()),
+                              GUIDs.parse(dto.getEvent()));
+        } else {
+            deposit.contribution(
+                configuration,
+                GUIDs.parse(dto.getPerson()),
+                money
+            );
+        }
         cashbox.contribution(configuration, money);
-        debt.contribution(configuration,
-                          GUIDs.parse(dto.getPerson()),
-                          GUIDs.parse(dto.getEvent()));
     }
 
     @Override
     public void delete(final Configuration configuration,
                        final Transaction dto,
                        final BigDecimal money) {
+        if (Objects.nonEmpty(dto.getEvent())) {
+            debt.cost(configuration,
+                      GUIDs.parse(dto.getPerson()),
+                      GUIDs.parse(dto.getEvent()));
+        } else {
+            deposit.cost(
+                configuration,
+                GUIDs.parse(dto.getPerson()),
+                money
+            );
+        }
         cashbox.cost(configuration, money);
-        debt.cost(configuration,
-                  GUIDs.parse(dto.getPerson()),
-                  GUIDs.parse(dto.getEvent()));
     }
 
     @Override
