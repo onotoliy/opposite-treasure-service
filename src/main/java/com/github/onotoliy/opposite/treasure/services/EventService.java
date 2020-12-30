@@ -13,7 +13,6 @@ import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
-import com.github.onotoliy.opposite.treasure.utils.Objects;
 
 import java.util.UUID;
 
