@@ -65,12 +65,12 @@ public class DebtRepository {
     public Option version() {
         return dsl.select()
                   .from(TREASURE_VERSION)
-                  .where(TREASURE_VERSION.NAME.eq(TREASURE_DEPOSIT.getName()))
+                  .where(TREASURE_VERSION.NAME.eq(TREASURE_DEBT.getName()))
                   .fetchOptional(record -> new Option(
                       Strings.format(record, TREASURE_VERSION.NAME),
                       Numbers.format(record, TREASURE_VERSION.VERSION)
                   ))
-                  .orElse(new Option(TREASURE_DEPOSIT.getName(), "0"));
+                  .orElse(new Option(TREASURE_DEBT.getName(), "0"));
     }
 
     /**
