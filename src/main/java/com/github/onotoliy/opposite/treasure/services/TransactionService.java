@@ -98,11 +98,11 @@ implements ITransactionService {
             throw new ModificationException("Нельзя менять сумму транзакции");
         }
 
-        if (Objects.nonEqually(dto.getPerson(), previous.getPerson())) {
+        if (GUIDs.nonEqually(dto.getPerson(), previous.getPerson())) {
             throw new ModificationException("Нельзя менять члена клуба");
         }
 
-        if (Objects.nonEqually(dto.getEvent(), previous.getEvent())) {
+        if (GUIDs.nonEqually(dto.getEvent(), previous.getEvent())) {
             throw new ModificationException("Нельзя менять мероприятие");
         }
 

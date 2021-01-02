@@ -123,7 +123,7 @@ public final class GUIDs {
      * @param y Y
      * @return Результат проверки.
      */
-    public static boolean notEqually(final HasUUID x, final HasUUID y) {
+    public static boolean nonEqually(final HasUUID x, final HasUUID y) {
         return !isEqually(x, y);
     }
 
