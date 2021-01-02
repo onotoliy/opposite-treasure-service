@@ -119,12 +119,12 @@ public class TelegramNotificationExecutor implements NotificationExecutor {
                         final String title,
                         final String body
     ) {
+        String url = "https://" + host + "/bot" + bot + "/sendMessage?";
+        String message = title + "\n" + body.replaceAll("<br/>", "\n");
+
         LOGGER.info(
             "Telegram notify. To {}. Title {}. Body {}", to, title, body
         );
-
-        String url = "https://" + host + "/bot" + bot + "/sendMessage?";
-        String message = title + "\n" + body.replaceAll("<br/>", "\n");
 
         ObjectNode node = new ObjectMapper().createObjectNode();
         node.put("chat_id", Long.parseLong(to));

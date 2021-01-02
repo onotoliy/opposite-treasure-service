@@ -71,7 +71,11 @@ public class NotificationService {
             String message = new EventNotificationConvector(executor.isHTML())
                 .toNotification(event, cashbox.get());
 
-            executor.notify("Событие", message, parameters);
+            try {
+                executor.notify("Событие", message, parameters);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         });
     }
 
@@ -101,7 +105,11 @@ public class NotificationService {
                 new TransactionNotificationConvector(executor.isHTML())
                     .toNotification(transaction, cashbox.get());
 
-            executor.notify("Транзакция", message, parameters);
+            try {
+                executor.notify("Транзакция", message, parameters);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         });
     }
 
