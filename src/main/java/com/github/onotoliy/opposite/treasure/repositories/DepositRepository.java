@@ -239,6 +239,7 @@ public class DepositRepository {
         DSL.using(configuration)
            .update(TREASURE_VERSION)
            .set(TREASURE_VERSION.VERSION, version)
-           .where(TREASURE_VERSION.NAME.eq(TREASURE_DEPOSIT.getName()));
+           .where(TREASURE_VERSION.NAME.eq(TREASURE_DEPOSIT.getName()))
+           .execute();
     }
 }
