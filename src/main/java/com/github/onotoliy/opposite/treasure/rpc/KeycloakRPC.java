@@ -8,6 +8,7 @@ import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -76,6 +77,11 @@ public class KeycloakRPC {
      * Роль по умолчанию.
      */
     private final String role;
+
+    /**
+     * Cache пользователь.
+     */
+    private static Map<UUID, Option> cache = new HashMap<>();
 
     /**
      * Конструктор.
@@ -165,12 +171,23 @@ public class KeycloakRPC {
      */
     public Optional<Option> findOption(final UUID uuid) {
         try {
-            return Optional.of(keycloak().realm(realm)
-                                         .users()
-                                         .get(GUIDs.format(uuid))
-                                         .toRepresentation())
-                           .map(this::toDTO)
-                           .map(e -> new Option(e.getUuid(), e.getName()));
+            Option user = cache.get(uuid);
+
+            if (Objects.nonEmpty(user)) {
+                return Optional.of(user);
+            }
+
+            Optional<Option> optional = Optional
+                .of(keycloak().realm(realm)
+                              .users()
+                              .get(GUIDs.format(uuid))
+                              .toRepresentation())
+                .map(this::toDTO)
+                .map(e -> new Option(e.getUuid(), e.getName()));
+
+            cache.put(uuid, optional.get());
+
+            return optional;
         } catch (Exception e) {
             return Optional.of(emptyDTO(uuid));
         }
