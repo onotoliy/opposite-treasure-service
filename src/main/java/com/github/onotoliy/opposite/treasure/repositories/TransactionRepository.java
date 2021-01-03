@@ -104,6 +104,8 @@ extends AbstractModifierRepository<
             final Transaction dto) {
         return super.insertQuery(configuration, dto)
                     .set(table.CASH, Numbers.parse(dto.getCash()))
+                    .set(table.TRANSACTION_DATE,
+                         Dates.parse(dto.getTransactionDate()))
                     .set(table.USER_GUID, GUIDs.parse(dto.getPerson()))
                     .set(table.EVENT_GUID, GUIDs.parse(dto.getEvent()))
                     .set(table.TYPE, Strings.parse(dto.getType().name()));
@@ -115,6 +117,8 @@ extends AbstractModifierRepository<
             final Transaction dto) {
         return super.updateQuery(configuration, dto)
                     .set(table.CASH, Numbers.parse(dto.getCash()))
+                    .set(table.TRANSACTION_DATE,
+                         Dates.parse(dto.getTransactionDate()))
                     .set(table.USER_GUID, GUIDs.parse(dto.getPerson()))
                     .set(table.EVENT_GUID, GUIDs.parse(dto.getEvent()))
                     .set(table.TYPE, Strings.parse(dto.getType().name()));
