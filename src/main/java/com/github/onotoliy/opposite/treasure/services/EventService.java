@@ -78,13 +78,14 @@ implements IEventService {
     protected void create(final Configuration configuration, final Event dto) {
         repository.create(configuration, dto);
 
+        notification.notify(dto);
+
         if (isEmpty(dto.getContribution()) && isEmpty(dto.getTotal())) {
             return;
         }
 
         user.getAll().forEach(e ->
             debt.cost(configuration, GUIDs.parse(e), GUIDs.parse(dto)));
-        notification.notify(dto);
     }
 
     @Override
