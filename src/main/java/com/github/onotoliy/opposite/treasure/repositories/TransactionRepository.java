@@ -14,6 +14,8 @@ import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +23,7 @@ import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
+import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.UpdateSetMoreStep;
@@ -125,6 +128,12 @@ extends AbstractModifierRepository<
     }
 
     @Override
+    protected List<? extends OrderField<?>> orderBy() {
+        return new LinkedList<>(
+            Collections.singleton(table.TRANSACTION_DATE.asc()));
+    }
+
+    @Override
     protected Transaction toDTO(final Record record) {
         Option person = record.getValue(table.USER_GUID, UUID.class) == null
             ? null
@@ -140,7 +149,7 @@ extends AbstractModifierRepository<
             person,
             EventRepository.toOption(record),
             Dates.format(record, table.TRANSACTION_DATE),
-            Dates.format(record, creationDate),
+            Dates.format(record, table.TRANSACTION_DATE),
             formatUser(record, author),
             deletionDate.equals("—") ? null : deletionDate
         );
