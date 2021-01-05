@@ -139,7 +139,7 @@ extends AbstractModifierRepository<
             TransactionType.valueOf(Strings.format(record, table.TYPE)),
             person,
             EventRepository.toOption(record),
-            Dates.format(record, creationDate),
+            Dates.format(record, table.TRANSACTION_DATE),
             Dates.format(record, creationDate),
             formatUser(record, author),
             deletionDate.equals("—") ? null : deletionDate
