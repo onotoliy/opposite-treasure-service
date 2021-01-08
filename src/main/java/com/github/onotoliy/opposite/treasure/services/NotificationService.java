@@ -8,11 +8,12 @@ import com.github.onotoliy.opposite.treasure.services.notifications.Notification
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -43,7 +44,7 @@ public class NotificationService {
      * Конструктор.
      *
      * @param executors Сервисы описывающие бизнес логику тразакций.
-     * @param cashbox Сервис чтения данных о кассе.
+     * @param cashbox   Сервис чтения данных о кассе.
      */
     @Autowired
     public NotificationService(final List<NotificationExecutor> executors,
@@ -57,7 +58,36 @@ public class NotificationService {
      *
      * @param event Событие.
      */
-    @Async
+    public void asyncNotify(final Event event) {
+        try {
+            CompletableFuture
+                .runAsync(() -> NotificationService.this.notify(event))
+                .get();
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Отправка push уведомления транзакции.
+     *
+     * @param transaction Транзакция.
+     */
+    public void asyncNotify(final Transaction transaction) {
+        try {
+            CompletableFuture
+                .runAsync(() -> NotificationService.this.notify(transaction))
+                .get();
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Отправка push уведомления события.
+     *
+     * @param event Событие.
+     */
     public void notify(final Event event) {
         Map<String, String> parameters = Map.of(
             "uuid", event.getUuid(),
@@ -84,7 +114,6 @@ public class NotificationService {
      *
      * @param transaction Транзакция.
      */
-    @Async
     public void notify(final Transaction transaction) {
         LOGGER.info("Transaction notify {}", transaction);
 
