@@ -13,6 +13,7 @@ import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -118,6 +119,7 @@ public class DebtRepository {
             .join(TREASURE_EVENT)
             .on(TREASURE_EVENT.GUID.eq(TREASURE_DEBT.EVENT_GUID))
             .where(TREASURE_DEBT.USER_UUID.eq(person))
+            .orderBy(Collections.singleton(TREASURE_EVENT.DEADLINE.desc()))
             .fetch(record -> EventRepository.toDTO(
                 record, user.find(record.getValue(TREASURE_EVENT.AUTHOR))));
 
