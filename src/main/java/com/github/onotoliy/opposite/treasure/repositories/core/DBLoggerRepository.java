@@ -138,6 +138,6 @@ public class DBLoggerRepository {
            .set(TREASURE_LOG.MESSAGE, message)
            .set(TREASURE_LOG.CREATION_DATE, Dates.now())
            .set(TREASURE_LOG.STACK_TRACE, Throwables.format(throwable))
-           .newRecord();
+           .execute();
     }
 }
