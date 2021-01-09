@@ -9,6 +9,7 @@ import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -82,6 +83,11 @@ public class KeycloakRPC {
      * Cache пользователь.
      */
     private static Map<UUID, Option> cache = new HashMap<>();
+
+    /**
+     * Cache списка пользователей.
+     */
+    private static List<User> users = new LinkedList<>();
 
     /**
      * Конструктор.
@@ -199,14 +205,21 @@ public class KeycloakRPC {
      * @return Пользователи
      */
     public List<User> getAll() {
-        return keycloak().realm(realm)
-                         .roles()
-                         .get(role)
-                         .getRoleUserMembers()
-                         .stream()
-                         .map(this::toDTO)
-                         .sorted(Comparator.comparing(User::getName))
-                         .collect(Collectors.toList());
+        if (users.isEmpty()) {
+            users.addAll(
+                keycloak()
+                    .realm(realm)
+                    .roles()
+                    .get(role)
+                    .getRoleUserMembers()
+                    .stream()
+                    .map(this::toDTO)
+                    .sorted(Comparator.comparing(User::getName))
+                    .collect(Collectors.toList())
+            );
+        }
+
+        return users;
     }
 
     /**

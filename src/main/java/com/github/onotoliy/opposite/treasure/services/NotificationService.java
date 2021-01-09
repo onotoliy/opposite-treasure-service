@@ -2,14 +2,19 @@ package com.github.onotoliy.opposite.treasure.services;
 
 import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Transaction;
+import com.github.onotoliy.opposite.treasure.convectors.DebtNotificationConvector;
+import com.github.onotoliy.opposite.treasure.convectors.DepositNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.EventNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.TransactionNotificationConvector;
+import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
+import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.notifications.NotificationExecutor;
+import com.github.onotoliy.opposite.treasure.utils.Dates;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,46 +46,40 @@ public class NotificationService {
     private final ICashboxService cashbox;
 
     /**
+     * Сервис чтения депозитов.
+     */
+    private final DepositService deposit;
+
+    /**
+     * Сервис чтения данных о пользвателях из Keycloak.
+     */
+    private final KeycloakRPC users;
+
+    /**
+     * Сервис чтения долгов.
+     */
+    private final DebtService debt;
+
+    /**
      * Конструктор.
      *
      * @param executors Сервисы описывающие бизнес логику тразакций.
      * @param cashbox   Сервис чтения данных о кассе.
+     * @param deposit   Сервис чтения депозитов.
+     * @param users     Сервис чтения данных о пользвателях из Keycloak.
+     * @param debt      Сервис чтения долгов.
      */
     @Autowired
     public NotificationService(final List<NotificationExecutor> executors,
-                               final ICashboxService cashbox) {
+                               final ICashboxService cashbox,
+                               final DepositService deposit,
+                               final KeycloakRPC users,
+                               final DebtService debt) {
         this.executors = executors;
         this.cashbox = cashbox;
-    }
-
-    /**
-     * Отправка push уведомления события.
-     *
-     * @param event Событие.
-     */
-    public void asyncNotify(final Event event) {
-        try {
-            CompletableFuture
-                .runAsync(() -> NotificationService.this.notify(event))
-                .get();
-        } catch (InterruptedException | ExecutionException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Отправка push уведомления транзакции.
-     *
-     * @param transaction Транзакция.
-     */
-    public void asyncNotify(final Transaction transaction) {
-        try {
-            CompletableFuture
-                .runAsync(() -> NotificationService.this.notify(transaction))
-                .get();
-        } catch (InterruptedException | ExecutionException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        this.deposit = deposit;
+        this.users = users;
+        this.debt = debt;
     }
 
     /**
@@ -142,4 +141,53 @@ public class NotificationService {
         });
     }
 
+    /**
+     * Отправка push уведомления по долгам.
+     */
+    public void debts() {
+        DebtNotificationConvector convector =
+            new DebtNotificationConvector(true);
+
+        users.getAll().forEach(u ->
+            convector.append(u, debt.getDebts(GUIDs.parse(u)).getContext()));
+
+        String title = "Долги на " + Dates.format(Dates.format(Dates.now()));
+        String message = convector.toNotification(cashbox.get());
+
+        executors.forEach(
+            executor -> {
+                try {
+                    executor.notify(title, message, new HashMap<>());
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
+        );
+    }
+
+    /**
+     * Отправка push уведомления по долгам.
+     */
+    public void deposit() {
+        DepositNotificationConvector convector =
+            new DepositNotificationConvector(true);
+
+        String title =
+            "Переплата на " + Dates.format(Dates.format(Dates.now()));
+        String message = convector.toNotification(
+            deposit.getAll(new DepositSearchParameter(0, Integer.MAX_VALUE))
+                   .getContext(),
+            cashbox.get()
+        );
+
+        executors.forEach(
+            executor -> {
+                try {
+                    executor.notify(title, message, new HashMap<>());
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
+        );
+    }
 }

@@ -59,9 +59,10 @@ public final class Dates {
      * @param value Значение в формате {@link String}.
      * @return Значение в формате {@link Timestamp}.
      */
+    @NotNull
     public static Timestamp parse(final String value) {
         if (Strings.isEmpty(value)) {
-            return null;
+            return now();
         }
 
         String v = value.endsWith("Z")

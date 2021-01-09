@@ -14,12 +14,12 @@ public abstract class AbstractNotificationConvector<T> {
     /**
      * Использовать HTML верстку.
      */
-    private final boolean html;
+    protected final boolean html;
 
     /**
      * Текстовое сообщение.
      */
-    private final StringBuilder message;
+    protected final StringBuilder message;
 
     /**
      * Конструктор.
@@ -74,6 +74,13 @@ public abstract class AbstractNotificationConvector<T> {
 
         message.append(": ").append(value).append(".");
 
+        newLine();
+    }
+
+    /**
+     * Переход на новую строку.
+     */
+    protected void newLine() {
         if (html) {
             message.append("<br/>");
         } else {
