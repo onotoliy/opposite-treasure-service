@@ -1,7 +1,9 @@
 package com.github.onotoliy.opposite.treasure.services;
 
+import com.github.onotoliy.opposite.data.Cashbox;
 import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Transaction;
+import com.github.onotoliy.opposite.data.User;
 import com.github.onotoliy.opposite.treasure.convectors.DebtNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.DepositNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.EventNotificationConvector;
@@ -145,21 +147,31 @@ public class NotificationService {
      * Отправка push уведомления по долгам.
      */
     public void debts() {
-        DebtNotificationConvector convector =
-            new DebtNotificationConvector(true);
-
-        users.getAll().forEach(u ->
-            convector.append(u, debt.getDebts(GUIDs.parse(u)).getContext()));
-
         String title = "Долги на " + Dates.format(Dates.format(Dates.now()));
-        String message = convector.toNotification(cashbox.get());
+        Map<String, String> parameters = new HashMap<>();
+        Cashbox cb = this.cashbox.get();
 
         executors.forEach(
             executor -> {
-                try {
-                    executor.notify(title, message, new HashMap<>());
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                DebtNotificationConvector convector =
+                    new DebtNotificationConvector(executor.isHTML());
+
+                for (User user : users.getAll()) {
+                    List<Event> debts =
+                        debt.getDebts(GUIDs.parse(user)).getContext();
+
+                    if (debts.isEmpty()) {
+                        continue;
+                    }
+
+                    try {
+                        String message = convector
+                            .toNotification(user, debts, cb);
+
+                        executor.notify(title, message, parameters);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
                 }
             }
         );
@@ -169,20 +181,22 @@ public class NotificationService {
      * Отправка push уведомления по долгам.
      */
     public void deposit() {
-        DepositNotificationConvector convector =
-            new DepositNotificationConvector(true);
-
+        DepositSearchParameter parameter =
+            new DepositSearchParameter(0, Integer.MAX_VALUE);
         String title =
             "Переплата на " + Dates.format(Dates.format(Dates.now()));
-        String message = convector.toNotification(
-            deposit.getAll(new DepositSearchParameter(0, Integer.MAX_VALUE))
-                   .getContext(),
-            cashbox.get()
-        );
 
         executors.forEach(
             executor -> {
                 try {
+                    DepositNotificationConvector convector =
+                        new DepositNotificationConvector(executor.isHTML());
+
+                    String message = convector.toNotification(
+                        deposit.getAll(parameter).getContext(),
+                        cashbox.get()
+                    );
+
                     executor.notify(title, message, new HashMap<>());
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);

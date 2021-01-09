@@ -44,52 +44,35 @@ extends AbstractNotificationConvector<Debt> {
     /**
      * Преобразование объекта в текстовое уведомление.
      *
+     * @param user Пользователь.
+     * @param events Долги.
      * @param cashbox Данные о кассе.
      * @return Текстовое уведомление.
      */
-    public String toNotification(final Cashbox cashbox) {
+    public String toNotification(final User user,
+                                 final List<Event> events,
+                                 final Cashbox cashbox) {
+        append("Пользователь", user.getName());
+        append("Долги", events
+            .stream()
+            .map(this::toNotification)
+            .collect(Collectors.joining(", ")));
+        append("Итого", events
+            .stream()
+            .map(Event::getContribution)
+            .map(Numbers::parse)
+            .filter(Objects::nonNull)
+            .reduce(BigDecimal::add)
+            .orElse(BigDecimal.ZERO)
+            .toString());
         append("В кассе", cashbox.getDeposit());
 
         return message.toString();
     }
 
-    /**
-     * Преобразование объекта в текстовое уведомление.
-     *
-     * @param user Пользователь.
-     * @param events События.
-     */
-    public void append(final User user, final List<Event> events) {
-        if (events.isEmpty()) {
-            return;
-        }
-
-        append(user.getName(), toNotification(events));
-    }
-
     @Override
     protected void append(final Debt dto) {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Преобразование объекта в текстовое уведомление.
-     *
-     * @param events События.
-     * @return Текстовое уведомление.
-     */
-    private String toNotification(final List<Event> events) {
-        return String.format(
-            "%s - <i>Итого</i>: %s",
-            events.stream()
-                  .map(this::toNotification)
-                  .collect(Collectors.joining(", ")),
-            events.stream()
-                  .map(Event::getContribution)
-                  .map(Numbers::parse)
-                  .filter(Objects::nonNull)
-                  .reduce(BigDecimal::add)
-        );
     }
 
     /**
