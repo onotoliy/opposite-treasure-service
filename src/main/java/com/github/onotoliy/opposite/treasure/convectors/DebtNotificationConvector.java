@@ -52,6 +52,8 @@ extends AbstractNotificationConvector<Debt> {
     public String toNotification(final User user,
                                  final List<Event> events,
                                  final Cashbox cashbox) {
+        message.setLength(0);
+
         append("Пользователь", user.getName());
         append("Долги", events
             .stream()
