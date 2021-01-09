@@ -58,12 +58,15 @@ extends AbstractNotificationConvector<Debt> {
         append("Долги", events
             .stream()
             .filter(event ->
-                Dates.now().compareTo(Dates.parse(event.getDeadline())) <= 0
+                Dates.now().compareTo(Dates.parse(event.getDeadline())) >= 0
             )
             .map(this::toNotification)
             .collect(Collectors.joining(", ")));
         append("Итого", events
             .stream()
+            .filter(event ->
+                Dates.now().compareTo(Dates.parse(event.getDeadline())) >= 0
+            )
             .map(Event::getContribution)
             .map(Numbers::parse)
             .filter(Objects::nonNull)
