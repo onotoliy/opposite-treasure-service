@@ -55,6 +55,9 @@ extends AbstractNotificationConvector<Debt> {
         append("Пользователь", user.getName());
         append("Долги", events
             .stream()
+            .filter(event ->
+                Dates.now().compareTo(Dates.parse(event.getDeadline())) <= 0
+            )
             .map(this::toNotification)
             .collect(Collectors.joining(", ")));
         append("Итого", events
