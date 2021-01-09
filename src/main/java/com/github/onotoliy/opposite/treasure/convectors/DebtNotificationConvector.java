@@ -99,7 +99,7 @@ extends AbstractNotificationConvector<Debt> {
      * @return Текстовое уведомление.
      */
     private String toNotification(final Event event) {
-        if (event.getName().toLowerCase().startsWith("Взносы")) {
+        if (event.getName().toLowerCase().startsWith("взносы")) {
             return String.format(
                 "%s (%s)",
                 event.getContribution(),

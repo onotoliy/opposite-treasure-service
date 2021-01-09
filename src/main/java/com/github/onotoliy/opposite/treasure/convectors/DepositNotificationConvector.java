@@ -66,6 +66,8 @@ extends AbstractNotificationConvector<List<Deposit>> {
 
         message.append(
             "Можете докинуть до 1 000 руб. я месяц взносов закрою.");
+
+        newLine();
     }
 
 }
