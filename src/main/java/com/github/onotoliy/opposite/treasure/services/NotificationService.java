@@ -17,6 +17,7 @@ import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,6 +151,7 @@ public class NotificationService {
         String title = "Долги на " + Dates.format(Dates.format(Dates.now()));
         Map<String, String> parameters = new HashMap<>();
         Cashbox cb = this.cashbox.get();
+        long now = Dates.now().getTime();
 
         executors.forEach(
             executor -> {
@@ -157,8 +159,23 @@ public class NotificationService {
                     new DebtNotificationConvector(executor.isHTML());
 
                 for (User user : users.getAll()) {
-                    List<Event> debts =
-                        debt.getDebts(GUIDs.parse(user)).getContext();
+                    List<Event> debts = debt
+                        .getDebts(GUIDs.parse(user))
+                        .getContext()
+                        .stream()
+                        .filter(event -> {
+                            LOGGER.info(
+                                "Now {}, Deadline {}, Check {}",
+                                now,
+                                Dates.parse(event.getDeadline()).getTime(),
+                                now >= Dates.parse(event.getDeadline())
+                                            .getTime()
+                            );
+
+                            return now >= Dates.parse(event.getDeadline())
+                                               .getTime();
+                        })
+                        .collect(Collectors.toList());
 
                     if (debts.isEmpty()) {
                         continue;
