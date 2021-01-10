@@ -163,18 +163,9 @@ public class NotificationService {
                         .getDebts(GUIDs.parse(user))
                         .getContext()
                         .stream()
-                        .filter(event -> {
-                            LOGGER.info(
-                                "Now {}, Deadline {}, Check {}",
-                                now,
-                                Dates.parse(event.getDeadline()).getTime(),
-                                now >= Dates.parse(event.getDeadline())
-                                            .getTime()
-                            );
-
-                            return now >= Dates.parse(event.getDeadline())
-                                               .getTime();
-                        })
+                        .filter(event ->
+                            now >= Dates.parse(event.getDeadline())
+                                        .getTime())
                         .collect(Collectors.toList());
 
                     if (debts.isEmpty()) {
