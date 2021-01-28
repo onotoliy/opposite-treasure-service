@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -90,6 +91,7 @@ public class NotificationService {
      *
      * @param event Событие.
      */
+    @Async("threadPoolTaskExecutor")
     public void notify(final Event event) {
         Map<String, String> parameters = Map.of(
             "uuid", event.getUuid(),
@@ -103,11 +105,7 @@ public class NotificationService {
             String message = new EventNotificationConvector(executor.isHTML())
                 .toNotification(event, cashbox.get());
 
-            try {
-                executor.notify("Событие", message, parameters);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+            runAsync(() -> executor.notify("Событие", message, parameters));
         });
     }
 
@@ -116,6 +114,7 @@ public class NotificationService {
      *
      * @param transaction Транзакция.
      */
+    @Async("threadPoolTaskExecutor")
     public void notify(final Transaction transaction) {
         LOGGER.info("Transaction notify {}", transaction);
 
@@ -136,17 +135,27 @@ public class NotificationService {
                 new TransactionNotificationConvector(executor.isHTML())
                     .toNotification(transaction, cashbox.get());
 
-            try {
-                executor.notify("Транзакция", message, parameters);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+            runAsync(() -> executor.notify("Транзакция", message, parameters));
         });
+    }
+
+    /**
+     * Запуск ассинхронной задачи.
+     *
+     * @param runnable Задача
+     */
+    private void runAsync(final Runnable runnable) {
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     /**
      * Отправка push уведомления по долгам.
      */
+    @Async("threadPoolTaskExecutor")
     public void debts() {
         String title = "Долги на " + Dates.format(Dates.format(Dates.now()));
         Map<String, String> parameters = new HashMap<>();
@@ -188,6 +197,7 @@ public class NotificationService {
     /**
      * Отправка push уведомления по долгам.
      */
+    @Async("threadPoolTaskExecutor")
     public void deposit() {
         DepositSearchParameter parameter =
             new DepositSearchParameter(0, Integer.MAX_VALUE);
