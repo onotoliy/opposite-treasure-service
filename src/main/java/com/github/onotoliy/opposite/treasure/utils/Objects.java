@@ -101,6 +101,28 @@ public final class Objects {
     }
 
     /**
+     * Проверяет массив объектов на пустоту.
+     *
+     * @param value Список объектов.
+     * @param <T> Тип объекта.
+     * @return Результат проверки.
+     */
+    public static <T> boolean isEmpty(final T[] value) {
+        return value == null || value.length == 0;
+    }
+
+    /**
+     * Проверка содержит ли массив объектов какое-либо значение.
+     *
+     * @param value Список объектов.
+     * @param <T> Тип объекта.
+     * @return Результат проверки.
+     */
+    public static <T> boolean nonEmpty(final T[] value) {
+        return !isEmpty(value);
+    }
+
+    /**
      * Проверяет список объектов на пустоту.
      *
      * @param value Список объектов.

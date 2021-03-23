@@ -88,9 +88,17 @@ public class LogInvocationHandler implements InvocationHandler {
             }
         }
 
-        Log annotation = obc
-            .getMethod(method.getName(), method.getParameterTypes())
-            .getAnnotation(Log.class);
+        Log annotation = getLogAnnotation(obc, method);
+
+        if (annotation == null && Objects.nonEmpty(obc.getInterfaces())) {
+            for (Class<?> i : obc.getInterfaces()) {
+                annotation = getLogAnnotation(i, method);
+
+                if (Objects.nonEmpty(annotation)) {
+                    break;
+                }
+            }
+        }
 
         if (annotation == null) {
             annotation = obc.getAnnotation(Log.class);
@@ -100,13 +108,14 @@ public class LogInvocationHandler implements InvocationHandler {
             return method.invoke(bean, args);
         }
 
-        String arguments = Arrays
-            .stream(args)
-            .map(Object::toString)
-            .collect(Collectors.joining(", "));
+        String arguments = Objects.nonEmpty(args)
+            ? Arrays.stream(args)
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "))
+            : "empty or null";
 
         String message = String.format(
-            "Author: %s. Service: %s. Method: %s. Arguments %s.",
+            "Author: %s. Service: %s. Method: %s. Arguments: %s.",
             author, obc.getCanonicalName(), method.getName(), arguments
         );
 
@@ -174,6 +183,33 @@ public class LogInvocationHandler implements InvocationHandler {
                 }
 
                 break;
+        }
+    }
+
+    /**
+     * Получение аннотации @Log.
+     *
+     * @param clazz Класс.
+     * @param method Метод.
+     * @return Аннотация @Log если она есть, в противном случае null.
+     */
+    private Log getLogAnnotation(final Class<?> clazz, final Method method) {
+        try {
+            Method m = clazz
+                .getMethod(method.getName(), method.getParameterTypes());
+
+            if (m == null) {
+                return null;
+            }
+
+            return m.getAnnotation(Log.class);
+        } catch (NoSuchMethodException | SecurityException exc) {
+            logger.debug(
+                "Not found method {} in class {}",
+                method.getName(), clazz.getCanonicalName()
+            );
+
+            return null;
         }
     }
 }
