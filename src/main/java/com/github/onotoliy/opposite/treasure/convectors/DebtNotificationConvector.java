@@ -54,7 +54,7 @@ extends AbstractNotificationConvector<Debt> {
                                  final Cashbox cashbox) {
         message.setLength(0);
 
-        append("Пользователь", user.getName());
+        append("Член клуба", user.getName());
         append("Долги", events
             .stream()
             .filter(event ->

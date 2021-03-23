@@ -33,7 +33,7 @@ extends AbstractNotificationConvector<Transaction> {
         }
 
         if (Objects.nonEmpty(dto.getPerson())) {
-            append("Пользователь", dto.getPerson().getName());
+            append("Член клуба", dto.getPerson().getName());
         }
     }
 
