@@ -108,4 +108,11 @@
       update treasure_transaction set transaction_date = creation_date where transaction_date is null;
     </sql>
   </changeSet>
+
+  <changeSet id="2021-03-30-1-treasure-init" author="onotoliy">
+    <modifyDataType tableName="treasure_log" columnName="level" newDataType="varchar"/>
+    <modifyDataType tableName="treasure_log" columnName="message" newDataType="varchar"/>
+    <modifyDataType tableName="treasure_log" columnName="bean_name" newDataType="varchar"/>
+    <modifyDataType tableName="treasure_log" columnName="stack_trace" newDataType="varchar"/>
+  </changeSet>
 </databaseChangeLog>
