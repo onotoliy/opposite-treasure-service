@@ -141,8 +141,7 @@ implements ModifierRepository<E, P> {
                   .insertInto(table)
                   .set(uuid, GUIDs.parse(dto))
                   .set(name, Strings.parse(dto.getName()))
-                  .set(creationDate, Dates.parse(dto.getCreationDate()) == null
-                      ? Dates.now() : Dates.parse(dto.getCreationDate()))
+                  .set(creationDate, Dates.parse(dto.getCreationDate()))
                   .set(author, GUIDs.parse(dto.getAuthor()));
     }
 
@@ -162,8 +161,7 @@ implements ModifierRepository<E, P> {
         return DSL.using(configuration)
                   .update(table)
                   .set(name, Strings.parse(dto.getName()))
-                  .set(creationDate, Dates.parse(dto.getCreationDate()) == null
-                      ? Dates.now() : Dates.parse(dto.getCreationDate()))
+                  .set(creationDate, Dates.parse(dto.getCreationDate()))
                   .set(author, GUIDs.parse(dto.getAuthor()));
     }
 
@@ -241,8 +239,7 @@ implements ModifierRepository<E, P> {
         final Configuration configuration,
         final E dto
     ) {
-        Timestamp timestamp = Dates.parse(dto.getCreationDate()) == null
-            ? Dates.now() : Dates.parse(dto.getCreationDate());
+        Timestamp timestamp = Dates.parse(dto.getCreationDate());
 
         BigDecimal version = BigDecimal.valueOf(
             Objects.requireNonNull(timestamp).getTime());
