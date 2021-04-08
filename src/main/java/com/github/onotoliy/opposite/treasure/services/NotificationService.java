@@ -17,6 +17,7 @@ import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -199,12 +200,16 @@ public class NotificationService {
             new DepositSearchParameter(0, Integer.MAX_VALUE);
         String title =
             "Переплата на " + Dates.format(Dates.format(Dates.now()));
+        Set<String> members = users.getAll()
+                                   .stream()
+                                   .map(User::getUuid)
+                                   .collect(Collectors.toSet());
 
         executors.forEach(
             executor -> {
                 try {
                     DepositNotificationConvector convector =
-                        new DepositNotificationConvector(executor.isHTML());
+                        new DepositNotificationConvector(members, executor.isHTML());
 
                     String message = convector.toNotification(
                         deposit.getAll(parameter).getContext(),

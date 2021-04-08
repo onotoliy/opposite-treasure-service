@@ -6,6 +6,7 @@ import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Класс описывающий логику преобразования депозитов в текстовое уведомление.
@@ -21,12 +22,21 @@ extends AbstractNotificationConvector<List<Deposit>> {
     private static final BigDecimal THOUSAND = new BigDecimal("1000");
 
     /**
+     * Действующие члены клуба.
+     */
+    private final Set<String> members;
+
+    /**
      * Конструктор.
      *
+     * @param members Действующие члены клуба.
      * @param html Использовать HTML верстку.
      */
-    public DepositNotificationConvector(final boolean html) {
+    public DepositNotificationConvector(final Set<String> members,
+                                        final boolean html) {
         super(html);
+
+        this.members = members;
     }
 
     @Override
@@ -44,6 +54,10 @@ extends AbstractNotificationConvector<List<Deposit>> {
         newLine();
 
         for (Deposit deposit: dto) {
+            if (!members.contains(deposit.getUuid())) {
+                continue;
+            }
+
             if (Numbers.isEmpty(deposit.getDeposit())) {
                 continue;
             }
