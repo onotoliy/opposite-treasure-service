@@ -143,6 +143,11 @@ public class TelegramNotificationExecutor implements NotificationExecutor {
             HttpResponse<String> response = client
                 .send(request, HttpResponse.BodyHandlers.ofString());
 
+            LOGGER.info(
+                "Telegram notification. Response code: {}, Body: {}. {}",
+                response.statusCode(), response.body(), response
+            );
+
             if (response.statusCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
                 throw new NotificationException(String.format(
                     "Ошибка при отправки уведомления в Telegram. %s",
