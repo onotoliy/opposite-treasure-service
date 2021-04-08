@@ -130,7 +130,7 @@ extends AbstractModifierRepository<
     @Override
     protected List<? extends OrderField<?>> orderBy() {
         return new LinkedList<>(
-            Collections.singleton(table.TRANSACTION_DATE.asc()));
+            Collections.singleton(table.TRANSACTION_DATE.desc()));
     }
 
     @Override
