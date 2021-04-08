@@ -209,7 +209,8 @@ public class NotificationService {
             executor -> {
                 try {
                     DepositNotificationConvector convector =
-                        new DepositNotificationConvector(members, executor.isHTML());
+                        new DepositNotificationConvector(members,
+                                                         executor.isHTML());
 
                     String message = convector.toNotification(
                         deposit.getAll(parameter).getContext(),
