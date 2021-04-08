@@ -54,7 +54,7 @@ extends AbstractNotificationConvector<List<Deposit>> {
                 continue;
             }
 
-            if (THOUSAND.compareTo(money) >= -1) {
+            if (THOUSAND.compareTo(money) > 0) {
                 append(deposit.getName(), deposit.getDeposit());
             }
         }
