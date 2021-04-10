@@ -101,12 +101,12 @@ public class NotificationService {
             "type", "event"
         );
 
-        executors.forEach(executor -> {
+        runAsync(() -> executors.forEach(executor -> {
             String message = new EventNotificationConvector(executor.isHTML())
                 .toNotification(event, cashbox.get());
 
-            runAsync(() -> executor.notify("Событие", message, parameters));
-        });
+            executor.notify("Событие", message, parameters);
+        }));
     }
 
     /**
@@ -129,13 +129,13 @@ public class NotificationService {
             "type", "event"
         );
 
-        executors.forEach(executor -> {
+        runAsync(() -> executors.forEach(executor -> {
             String message =
                 new TransactionNotificationConvector(executor.isHTML())
                     .toNotification(transaction, cashbox.get());
 
-            runAsync(() -> executor.notify("Транзакция", message, parameters));
-        });
+            executor.notify("Транзакция", message, parameters);
+        }));
     }
 
     /**
