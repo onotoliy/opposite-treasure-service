@@ -13,6 +13,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,11 @@ public class TelegramNotificationExecutor implements NotificationExecutor {
      * Duration.
      */
     private static final int DURATION = 10;
+
+    /**
+     * Sleep.
+     */
+    private static final int SLEEP = 5;
 
     /**
      * Host.
@@ -125,6 +131,12 @@ public class TelegramNotificationExecutor implements NotificationExecutor {
         LOGGER.info(
             "Telegram notify. To {}. Title {}. Body {}", to, title, body
         );
+
+        try {
+            TimeUnit.SECONDS.sleep(SLEEP);
+        } catch (InterruptedException e) {
+            LOGGER.error("InterruptedException for sleep {}", e.getMessage());
+        }
 
         ObjectNode node = new ObjectMapper().createObjectNode();
         node.put("chat_id", Long.parseLong(to));
