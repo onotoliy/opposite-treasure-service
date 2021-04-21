@@ -44,7 +44,7 @@ public class TelegramNotificationExecutor implements NotificationExecutor {
     /**
      * Sleep.
      */
-    private static final int SLEEP = 5;
+    private static final int SLEEP = 1;
 
     /**
      * Host.
