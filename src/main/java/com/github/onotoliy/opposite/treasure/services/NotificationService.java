@@ -14,7 +14,8 @@ import com.github.onotoliy.opposite.treasure.services.notifications.Notification
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
-import java.util.HashMap;
+import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -139,23 +140,26 @@ public class NotificationService {
     }
 
     /**
-     * Отправка push уведомления по долгам.
+     * Отправка полного отчета.
+     */
+    @Async
+    public void reports() {
+        debts();
+        statistic();
+        deposit();
+    }
+
+    /**
+     * Отправка отчета по долгам.
      */
     @Async
     public void debts() {
-        String title = "Долги на " + Dates.format(Dates.format(Dates.now()));
-        Map<String, String> parameters = new HashMap<>();
-        Cashbox cb = this.cashbox.get();
-        long now = Dates.now().getTime();
+        final String title = "Долги на " + Dates.toShortFormat(Dates.now());
+        final Cashbox cb = this.cashbox.get();
+        final Timestamp now = Dates.now();
 
         for (User user : users.getAll()) {
-            List<Event> debts = debt
-                .getDebts(GUIDs.parse(user))
-                .getContext()
-                .stream()
-                .filter(event -> now >= Dates.parse(event.getDeadline())
-                                             .getTime())
-                .collect(Collectors.toList());
+            List<Event> debts = getDebts(now, user);
 
             if (debts.isEmpty()) {
                 continue;
@@ -165,31 +169,67 @@ public class NotificationService {
                 new DebtNotificationConvector(isHTML)
                     .toNotification(user, debts, cb);
 
-            notify(title, toMessage, parameters);
+            notify(title, toMessage, Collections.emptyMap());
         }
     }
 
     /**
-     * Отправка push уведомления по долгам.
+     * Отправка статистики должников.
+     */
+    @Async
+    public void statistic() {
+        final Cashbox cb = this.cashbox.get();
+        final Timestamp now = Dates.now();
+
+        notify(
+            "Итого долгов на " + Dates.toShortFormat(Dates.now()),
+            isHTML -> new DebtNotificationConvector(isHTML)
+                .toNotification(
+                    users.getAll(),
+                    user -> getDebts(now, user),
+                    cb
+                ),
+            Collections.emptyMap()
+        );
+    }
+
+    /**
+     * Отправка отчета депозитов.
      */
     @Async
     public void deposit() {
-        DepositSearchParameter parameter =
+        final DepositSearchParameter parameter =
             new DepositSearchParameter(0, Integer.MAX_VALUE);
-        String title =
-            "Переплата на " + Dates.format(Dates.format(Dates.now()));
-        Set<String> members = users.getAll()
-                                   .stream()
-                                   .map(User::getUuid)
-                                   .collect(Collectors.toSet());
-        Function<Boolean, String> toMessage = isHTML ->
-            new DepositNotificationConvector(members, isHTML)
-                .toNotification(
-                    deposit.getAll(parameter).getContext(),
-                    cashbox.get()
-                );
+        final Set<String> members = users.getAll()
+                                         .stream()
+                                         .map(User::getUuid)
+                                         .collect(Collectors.toSet());
 
-        notify(title, toMessage, new HashMap<>());
+        notify(
+            "Переплата на " + Dates.toShortFormat(Dates.now()),
+            isHTML ->
+                new DepositNotificationConvector(members, isHTML)
+                    .toNotification(
+                        deposit.getAll(parameter).getContext(),
+                        cashbox.get()
+                    ),
+            Collections.emptyMap());
+    }
+
+    /**
+     * Получение долгов пользователя на текущей момент.
+     *
+     * @param now Текущей момент.
+     * @param user Пользваотель.
+     * @return Списко долгов пользователя.
+     */
+    private List<Event> getDebts(final Timestamp now, final User user) {
+        return debt
+            .getDebts(GUIDs.parse(user))
+            .getContext()
+            .stream()
+            .filter(dto -> now.compareTo(Dates.parse(dto.getDeadline())) >= 0)
+            .collect(Collectors.toList());
     }
 
     /**

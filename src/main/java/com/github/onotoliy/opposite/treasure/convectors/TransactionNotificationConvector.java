@@ -26,7 +26,7 @@ extends AbstractNotificationConvector<Transaction> {
         append("Тип", dto.getType().getLabel());
         append("Название", dto.getName());
         append("Сумма", dto.getCash());
-        append("Дата транзации", Dates.format(dto.getTransactionDate()));
+        append("Дата транзации", Dates.toShortFormat(dto.getTransactionDate()));
 
         if (Objects.nonEmpty(dto.getEvent())) {
             append("Событие", dto.getEvent().getName());

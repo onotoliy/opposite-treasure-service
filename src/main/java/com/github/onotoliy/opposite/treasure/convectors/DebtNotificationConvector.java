@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -57,26 +58,14 @@ extends AbstractNotificationConvector<Debt> {
         append("Член клуба", user.getName());
         append("Долги", events
             .stream()
-            .filter(event ->
-                Dates.now().compareTo(Dates.parse(event.getDeadline())) >= 0
-            )
             .map(this::toNotification)
             .collect(Collectors.joining(", ")));
-        append("Итого", events
-            .stream()
-            .filter(event ->
-                Dates.now().compareTo(Dates.parse(event.getDeadline())) >= 0
-            )
-            .map(Event::getContribution)
-            .map(Numbers::parse)
-            .filter(Objects::nonNull)
-            .reduce(BigDecimal::add)
-            .orElse(BigDecimal.ZERO)
-            .toString());
+        append("Итого", Numbers.format(toTotal(events)));
         append("В кассе", cashbox.getDeposit());
 
         return message.toString();
     }
+
 
     @Override
     protected void append(final Debt dto) {
@@ -100,5 +89,59 @@ extends AbstractNotificationConvector<Debt> {
             return String
                 .format("%s (%s)", event.getContribution(), event.getName());
         }
+    }
+
+    /**
+     * Преобразование объекта в текстовое уведомление.
+     *
+     * @param users Пользователи.
+     * @param toEvents Функция получения событий.
+     * @param cashbox Касса.
+     * @return Текстовое уведомление.
+     */
+    public String toNotification(final List<User> users,
+                                 final Function<User, List<Event>> toEvents,
+                                 final Cashbox cashbox) {
+        message.setLength(0);
+
+        int numberOfDebtors = 0;
+        BigDecimal totalDebts = BigDecimal.ZERO;
+
+        for (User user : users) {
+            BigDecimal debts = toTotal(toEvents.apply(user));
+
+            if (debts.equals(BigDecimal.ZERO)) {
+                continue;
+            }
+
+            numberOfDebtors++;
+            totalDebts = totalDebts.add(debts);
+
+            append(user.getName(), Numbers.format(debts));
+        }
+
+        newLine();
+
+        append("Всего должников", String.valueOf(numberOfDebtors));
+        append("Всего долгов на сумму", Numbers.format(totalDebts));
+        append("В кассе", cashbox.getDeposit());
+
+        return message.toString();
+    }
+
+    /**
+     * Сумма долгов на данный момент.
+     *
+     * @param events События.
+     * @return Сумма долгов.
+     */
+    private BigDecimal toTotal(final List<Event> events) {
+        return events
+            .stream()
+            .map(Event::getContribution)
+            .map(Numbers::parse)
+            .filter(Objects::nonNull)
+            .reduce(BigDecimal::add)
+            .orElse(BigDecimal.ZERO);
     }
 }

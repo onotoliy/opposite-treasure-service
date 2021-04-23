@@ -95,7 +95,6 @@ public class UserResource {
      */
     @PostMapping(value = "/notification")
     public void notification() {
-        notification.debts();
-        notification.deposit();
+        notification.reports();
     }
 }

@@ -128,7 +128,29 @@ public final class Dates {
      * @param value Дата в ISO формате.
      * @return Дата в коротком формате.
      */
-    public static String format(final String value) {
+    public static String toShortFormat(final String value) {
         return Strings.isEmpty(value) ? "" : SHORT.format(parse(value));
+    }
+
+    /**
+     * Преобразование даты из ISO формата в которкий формат даты.
+     *
+     * @param value Дата.
+     * @return Дата в коротком формате.
+     */
+    public static String toShortFormat(final Timestamp value) {
+        return format(value, SHORT);
+    }
+
+    /**
+     * Преобразование даты в определенный формат даты.
+     *
+     * @param value Дата.
+     * @param format Фотмат даты.
+     * @return Дата в коротком формате.
+     */
+    public static String format(final Timestamp value,
+                                final SimpleDateFormat format) {
+        return format.format(value);
     }
 }

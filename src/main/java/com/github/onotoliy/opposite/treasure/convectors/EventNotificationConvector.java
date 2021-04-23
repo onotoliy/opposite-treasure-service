@@ -24,7 +24,7 @@ extends AbstractNotificationConvector<Event> {
     protected void append(final Event dto) {
         append("Мероприятие", dto.getName());
         append("Сумма взноса", dto.getContribution());
-        append("Сдать до", Dates.format(dto.getDeadline()));
+        append("Сдать до", Dates.toShortFormat(dto.getDeadline()));
     }
 
 }
