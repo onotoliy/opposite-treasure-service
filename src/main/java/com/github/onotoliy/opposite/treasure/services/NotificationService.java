@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -102,12 +103,11 @@ public class NotificationService {
             "type", "event"
         );
 
-        executors.forEach(executor -> {
-            String message = new EventNotificationConvector(executor.isHTML())
+        Function<Boolean, String> toMessage = isHTML ->
+            new EventNotificationConvector(isHTML)
                 .toNotification(event, cashbox.get());
 
-            executor.notify("Событие", message, parameters);
-        });
+        notify("Событие", toMessage, parameters);
     }
 
     /**
@@ -131,13 +131,11 @@ public class NotificationService {
             "type", "event"
         );
 
-        executors.forEach(executor -> {
-            String message =
-                new TransactionNotificationConvector(executor.isHTML())
-                    .toNotification(transaction, cashbox.get());
+        Function<Boolean, String> toMessage = isHTML ->
+            new TransactionNotificationConvector(isHTML)
+                .toNotification(transaction, cashbox.get());
 
-            executor.notify("Транзакция", message, parameters);
-        });
+        notify("Транзакция", toMessage, parameters);
     }
 
     /**
@@ -150,36 +148,25 @@ public class NotificationService {
         Cashbox cb = this.cashbox.get();
         long now = Dates.now().getTime();
 
-        executors.forEach(
-            executor -> {
-                DebtNotificationConvector convector =
-                    new DebtNotificationConvector(executor.isHTML());
+        for (User user : users.getAll()) {
+            List<Event> debts = debt
+                .getDebts(GUIDs.parse(user))
+                .getContext()
+                .stream()
+                .filter(event -> now >= Dates.parse(event.getDeadline())
+                                             .getTime())
+                .collect(Collectors.toList());
 
-                for (User user : users.getAll()) {
-                    List<Event> debts = debt
-                        .getDebts(GUIDs.parse(user))
-                        .getContext()
-                        .stream()
-                        .filter(event ->
-                            now >= Dates.parse(event.getDeadline())
-                                        .getTime())
-                        .collect(Collectors.toList());
-
-                    if (debts.isEmpty()) {
-                        continue;
-                    }
-
-                    try {
-                        String message = convector
-                            .toNotification(user, debts, cb);
-
-                        executor.notify(title, message, parameters);
-                    } catch (Exception e) {
-                        LOGGER.error(e.getMessage(), e);
-                    }
-                }
+            if (debts.isEmpty()) {
+                continue;
             }
-        );
+
+            Function<Boolean, String> toMessage = isHTML ->
+                new DebtNotificationConvector(isHTML)
+                    .toNotification(user, debts, cb);
+
+            notify(title, toMessage, parameters);
+        }
     }
 
     /**
@@ -195,24 +182,43 @@ public class NotificationService {
                                    .stream()
                                    .map(User::getUuid)
                                    .collect(Collectors.toSet());
+        Function<Boolean, String> toMessage = isHTML ->
+            new DepositNotificationConvector(members, isHTML)
+                .toNotification(
+                    deposit.getAll(parameter).getContext(),
+                    cashbox.get()
+                );
 
-        executors.forEach(
-            executor -> {
-                try {
-                    DepositNotificationConvector convector =
-                        new DepositNotificationConvector(members,
-                                                         executor.isHTML());
+        notify(title, toMessage, new HashMap<>());
+    }
 
-                    String message = convector.toNotification(
-                        deposit.getAll(parameter).getContext(),
-                        cashbox.get()
-                    );
-
-                    executor.notify(title, message, new HashMap<>());
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
+    /**
+     * Оправка уведомлений.
+     *
+     * @param title Заголовок.
+     * @param message Сообщение.
+     * @param parameters Дополнительные параметры
+     */
+    private void notify(
+        final String title,
+        final Function<Boolean, String> message,
+        final Map<String, String> parameters
+    ) {
+        executors.forEach(executor -> {
+            try {
+                executor.notify(
+                    title, message.apply(executor.isHTML()), parameters
+                );
+            } catch (Exception e) {
+                LOGGER.error(
+                    "Executor {}. Title {}. Message {}. Parameters {}.",
+                    executor.getClass().getSimpleName(),
+                    title,
+                    message,
+                    parameters
+                );
+                LOGGER.error(e.getMessage(), e);
             }
-        );
+        });
     }
 }
