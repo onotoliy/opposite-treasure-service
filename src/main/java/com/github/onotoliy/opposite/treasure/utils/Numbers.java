@@ -90,7 +90,7 @@ public final class Numbers {
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
         df.setMinimumFractionDigits(0);
-        df.setGroupingUsed(false);
+        df.setGroupingUsed(true);
 
         return df.format(value.setScale(2, RoundingMode.HALF_DOWN));
     }

@@ -104,6 +104,8 @@ extends AbstractNotificationConvector<Debt> {
                                  final Cashbox cashbox) {
         message.setLength(0);
 
+        newLine();
+
         int numberOfDebtors = 0;
         BigDecimal totalDebts = BigDecimal.ZERO;
 
@@ -124,6 +126,9 @@ extends AbstractNotificationConvector<Debt> {
 
         append("Всего должников", String.valueOf(numberOfDebtors));
         append("Всего долгов на сумму", Numbers.format(totalDebts));
+
+        newLine();
+
         append("В кассе", cashbox.getDeposit());
 
         return message.toString();
