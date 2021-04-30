@@ -65,7 +65,10 @@ public class NotificationPublisher {
     public void publish(final NotificationType type, final UUID uuid) {
         LOGGER.info("Sending message. Type {}, Object UUID {}", type, uuid);
 
-        template.convertAndSend(queue, new NotificationObject(type, uuid));
+        template.convertAndSend(
+            queue,
+            NotificationObject.toJSON(new NotificationObject(type, uuid))
+        );
     }
 
 }

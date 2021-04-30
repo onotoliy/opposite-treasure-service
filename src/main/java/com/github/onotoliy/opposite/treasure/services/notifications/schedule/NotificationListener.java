@@ -58,10 +58,12 @@ public class NotificationListener {
     /**
      * Получение запроса на отправку уведомления.
      *
-     * @param object Запрос на отправку уведомления.
+     * @param message Запрос на отправку уведомления.
      */
     @JmsListener(destination = "inmemory.queue")
-    public void listener(final NotificationObject object) {
+    public void listener(final String message) {
+        final NotificationObject object = NotificationObject.fromJSON(message);
+
         LOGGER.info(
             "Reading message. Type {}, Object UUID {}",
             object.getType(),

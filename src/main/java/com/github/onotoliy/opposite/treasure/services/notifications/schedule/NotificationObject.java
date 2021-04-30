@@ -1,5 +1,8 @@
 package com.github.onotoliy.opposite.treasure.services.notifications.schedule;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.UUID;
 
 /**
@@ -46,5 +49,33 @@ public class NotificationObject {
      */
     public UUID getObject() {
         return object;
+    }
+
+    /**
+     * Преобразование объекта в Json.
+     *
+     * @param object Объект уведомления.
+     * @return Объект уведомления в формате JSON.
+     */
+    public static String toJSON(final NotificationObject object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Преобразование объекта в объект.
+     *
+     * @param json Объект уведомления в формате JSON.
+     * @return Объект уведомления.
+     */
+    public static NotificationObject fromJSON(final String json) {
+        try {
+            return new ObjectMapper().readValue(json, NotificationObject.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 }
