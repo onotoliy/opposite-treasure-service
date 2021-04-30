@@ -3,7 +3,8 @@ package com.github.onotoliy.opposite.treasure.web;
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.User;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.services.NotificationService;
+import com.github.onotoliy.opposite.treasure.services.notifications.schedule.NotificationPublisher;
+import com.github.onotoliy.opposite.treasure.services.notifications.schedule.NotificationType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,19 +33,19 @@ public class UserResource {
     /**
      * Сервис уведомлений.
      */
-    private final NotificationService notification;
+    private final NotificationPublisher publisher;
 
     /**
      * Конструктор.
      *
      * @param user Сервис чтения пользователей системы.
-     * @param notification Сервис уведомлений.
+     * @param publisher Сервис уведомлений.
      */
     @Autowired
     public UserResource(final KeycloakRPC user,
-                        final NotificationService notification) {
+                        final NotificationPublisher publisher) {
         this.user = user;
-        this.notification = notification;
+        this.publisher = publisher;
     }
 
     /**
@@ -95,6 +96,8 @@ public class UserResource {
      */
     @PostMapping(value = "/notification")
     public void notification() {
-        notification.reports();
+        publisher.publish(NotificationType.DEBTS);
+        publisher.publish(NotificationType.STATISTIC_DEBTS);
+        publisher.publish(NotificationType.DEPOSITS);
     }
 }

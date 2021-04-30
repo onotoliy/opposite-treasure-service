@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -94,7 +93,6 @@ public class NotificationService {
      *
      * @param event Событие.
      */
-    @Async
     public void notify(final Event event) {
         Map<String, String> parameters = Map.of(
             "uuid", event.getUuid(),
@@ -116,7 +114,6 @@ public class NotificationService {
      *
      * @param transaction Транзакция.
      */
-    @Async
     public void notify(final Transaction transaction) {
         LOGGER.info("Transaction notify {}", transaction);
 
@@ -140,19 +137,8 @@ public class NotificationService {
     }
 
     /**
-     * Отправка полного отчета.
-     */
-    @Async
-    public void reports() {
-        debts();
-        statistic();
-        deposit();
-    }
-
-    /**
      * Отправка отчета по долгам.
      */
-    @Async
     public void debts() {
         final String title = "Долги на " + Dates.toShortFormat(Dates.now());
         final Cashbox cb = this.cashbox.get();
@@ -176,7 +162,6 @@ public class NotificationService {
     /**
      * Отправка статистики должников.
      */
-    @Async
     public void statistic() {
         final Cashbox cb = this.cashbox.get();
         final Timestamp now = Dates.now();
@@ -196,7 +181,6 @@ public class NotificationService {
     /**
      * Отправка отчета депозитов.
      */
-    @Async
     public void deposit() {
         final DepositSearchParameter parameter =
             new DepositSearchParameter(0, Integer.MAX_VALUE);

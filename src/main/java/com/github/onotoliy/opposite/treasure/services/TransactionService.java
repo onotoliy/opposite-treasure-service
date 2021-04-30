@@ -8,6 +8,8 @@ import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
 import com.github.onotoliy.opposite.treasure.repositories.TransactionRepository;
 import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
+import com.github.onotoliy.opposite.treasure.services.notifications.schedule.NotificationPublisher;
+import com.github.onotoliy.opposite.treasure.services.notifications.schedule.NotificationType;
 import com.github.onotoliy.opposite.treasure.services.transactions.TransactionExecutor;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
@@ -45,7 +47,7 @@ implements ITransactionService {
     /**
      * Сервис уведомлений.
      */
-    private final NotificationService notification;
+    private final NotificationPublisher publisher;
 
     /**
      * Сервисы описывающие бизнес логику тразакций.
@@ -57,17 +59,17 @@ implements ITransactionService {
      *
      * @param repository Репозиторий транзакций.
      * @param event Репозиторий событий.
-     * @param notification Сервис уведомлений.
+     * @param publisher Сервис уведомлений.
      * @param executors Список сервисов описывающие бизнес логику тразакций.
      */
     @Autowired
     public TransactionService(final TransactionRepository repository,
                               final EventRepository event,
-                              final NotificationService notification,
+                              final NotificationPublisher publisher,
                               final List<TransactionExecutor> executors) {
         super(repository);
         this.event = event;
-        this.notification = notification;
+        this.publisher = publisher;
         this.executors = executors
             .stream()
             .collect(Collectors.toMap(TransactionExecutor::type,
@@ -82,7 +84,7 @@ implements ITransactionService {
         execute(dto, executor -> executor.create(configuration, dto));
 
         repository.create(configuration, dto);
-        notification.notify(get(GUIDs.parse(dto)));
+        publisher.publish(NotificationType.TRANSACTION, GUIDs.parse(dto));
     }
 
     @Override
@@ -109,7 +111,7 @@ implements ITransactionService {
         validation(dto);
 
         repository.update(configuration, dto);
-        notification.notify(get(GUIDs.parse(dto)));
+        publisher.publish(NotificationType.TRANSACTION, GUIDs.parse(dto));
     }
 
     @Override

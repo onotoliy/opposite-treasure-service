@@ -1,8 +1,13 @@
 package com.github.onotoliy.opposite.treasure;
 
+import javax.jms.Queue;
+
+import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jms.annotation.EnableJms;
 
 /**
  * Главный класс приложения.
@@ -10,6 +15,7 @@ import org.springframework.cache.annotation.EnableCaching;
  * @author Anatoliy Pokhresnyi
  */
 @SpringBootApplication
+@EnableJms
 @EnableCaching(proxyTargetClass = true)
 public class TreasureApplication {
 
@@ -27,6 +33,16 @@ public class TreasureApplication {
      */
     public static void main(final String[] args) {
         SpringApplication.run(TreasureApplication.class, args);
+    }
+
+    /**
+     * Создание очереди.
+     *
+     * @return Очередь.
+     */
+    @Bean
+    public Queue queue() {
+        return new ActiveMQQueue("inmemory.queue");
     }
 
     /**
