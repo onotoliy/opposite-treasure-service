@@ -1,5 +1,7 @@
 package com.github.onotoliy.opposite.treasure.services.notifications.schedule;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,9 +28,10 @@ public class NotificationObject {
      * @param type Тип.
      * @param object Уникальный идентификатор объекта.
      */
+    @JsonCreator
     public NotificationObject(
-        final NotificationType type,
-        final UUID object
+        final @JsonProperty("type") NotificationType type,
+        final @JsonProperty("object") UUID object
     ) {
         this.type = type;
         this.object = object;
