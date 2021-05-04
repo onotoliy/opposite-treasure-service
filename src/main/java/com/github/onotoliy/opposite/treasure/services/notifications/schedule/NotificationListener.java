@@ -62,8 +62,20 @@ public class NotificationListener {
      */
     @JmsListener(destination = "inmemory.queue")
     public void listener(final String message) {
-        final NotificationObject object = NotificationObject.fromJSON(message);
+        try {
+            listener(NotificationObject.fromJSON(message));
+        } catch (Exception exception) {
+            LOGGER.error("Exception to process message {}", message);
+            LOGGER.error(exception.getMessage(), exception);
+        }
+    }
 
+    /**
+     * Получение запроса на отправку уведомления.
+     *
+     * @param object Запрос на отправку уведомления.
+     */
+    private void listener(final NotificationObject object) {
         LOGGER.info(
             "Reading message. Type {}, Object UUID {}",
             object.getType(),
