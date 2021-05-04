@@ -228,7 +228,7 @@ public class NotificationService {
         final Function<Boolean, String> message,
         final Map<String, String> parameters
     ) {
-        executors.forEach(executor -> {
+        for (NotificationExecutor executor : executors) {
             try {
                 executor.notify(
                     title, message.apply(executor.isHTML()), parameters
@@ -243,6 +243,6 @@ public class NotificationService {
                 );
                 LOGGER.error(e.getMessage(), e);
             }
-        });
+        }
     }
 }
