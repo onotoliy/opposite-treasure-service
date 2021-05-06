@@ -10,6 +10,8 @@ import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DebtService {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(DebtService.class);
 
     /**
      * Репозиторий.
@@ -72,8 +80,9 @@ public class DebtService {
      * @param numberOfRows Размер страницы.
      * @return Данные, которые необходимо синхронизировать.
      */
-    @Log(db = true)
     public Page<Debt> sync(final int offset, final int numberOfRows) {
+        LOGGER.info("Sync offset {} numberOfRows {}", offset, numberOfRows);
+
         return repository.sync(offset, numberOfRows);
     }
 }
