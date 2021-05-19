@@ -1,11 +1,6 @@
 package com.github.onotoliy.opposite.treasure.services.notifications.schedule;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.UUID;
+import com.github.onotoliy.opposite.data.core.HasUUID;
 
 /**
  * Объект уведомления.
@@ -18,9 +13,9 @@ public class NotificationObject {
     private final NotificationType type;
 
     /**
-     * Уникальный идентификатор объекта.
+     * Объект.
      */
-    private final UUID object;
+    private final HasUUID object;
 
     /**
      * Конструктор.
@@ -28,10 +23,9 @@ public class NotificationObject {
      * @param type Тип.
      * @param object Уникальный идентификатор объекта.
      */
-    @JsonCreator
     public NotificationObject(
-        final @JsonProperty("type") NotificationType type,
-        final @JsonProperty("object") UUID object
+        final NotificationType type,
+        final HasUUID object
     ) {
         this.type = type;
         this.object = object;
@@ -50,35 +44,8 @@ public class NotificationObject {
      * Получение уникального идентификатора объекта.
      * @return Уникальный идентификатор объекта.
      */
-    public UUID getObject() {
+    public HasUUID getObject() {
         return object;
     }
 
-    /**
-     * Преобразование объекта в Json.
-     *
-     * @param object Объект уведомления.
-     * @return Объект уведомления в формате JSON.
-     */
-    public static String toJSON(final NotificationObject object) {
-        try {
-            return new ObjectMapper().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Преобразование объекта в объект.
-     *
-     * @param json Объект уведомления в формате JSON.
-     * @return Объект уведомления.
-     */
-    public static NotificationObject fromJSON(final String json) {
-        try {
-            return new ObjectMapper().readValue(json, NotificationObject.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
 }

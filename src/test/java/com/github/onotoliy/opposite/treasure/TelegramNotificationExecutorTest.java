@@ -21,9 +21,4 @@ public class TelegramNotificationExecutorTest {
         ).notify("Title", "<b>Body</b>", new HashMap<>());
     }
 
-    @Test
-    public void n() {
-        System.out.println(NotificationObject.fromJSON("{\"type\":\"DEBTS\",\"object\":null}"));
-    }
-
 }

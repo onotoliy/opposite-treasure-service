@@ -11,7 +11,6 @@ import com.github.onotoliy.opposite.treasure.convectors.TransactionNotificationC
 import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.notifications.NotificationExecutor;
-import com.github.onotoliy.opposite.treasure.services.notifications.schedule.NotificationObject;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
@@ -68,16 +67,6 @@ public class NotificationService {
     private final DebtService debt;
 
     /**
-     * Сервис управления событиями.
-     */
-    private final IEventService events;
-
-    /**
-     * Сервис управления транзакциями.
-     */
-    private final ITransactionService transactions;
-
-    /**
      * Конструктор.
      *
      * @param executors    Сервисы описывающие бизнес логику тразакций.
@@ -85,51 +74,18 @@ public class NotificationService {
      * @param deposit      Сервис чтения депозитов.
      * @param users        Сервис чтения данных о пользвателях из Keycloak.
      * @param debt         Сервис чтения долгов.
-     * @param events       Сервис управления событиями.
-     * @param transactions Сервис управления транзакциями.
      */
     @Autowired
     public NotificationService(final List<NotificationExecutor> executors,
                                final ICashboxService cashbox,
                                final DepositService deposit,
                                final KeycloakRPC users,
-                               final DebtService debt,
-                               final IEventService events,
-                               final ITransactionService transactions) {
+                               final DebtService debt) {
         this.executors = executors;
         this.cashbox = cashbox;
         this.deposit = deposit;
         this.users = users;
         this.debt = debt;
-        this.events = events;
-        this.transactions = transactions;
-    }
-
-    /**
-     * Отправку уведомления.
-     *
-     * @param object Уведомление.
-     */
-    public void notify(final NotificationObject object) {
-        switch (object.getType()) {
-            case EVENT:
-                notify(events.get(object.getObject()));
-                break;
-            case TRANSACTION:
-                notify(transactions.get(object.getObject()));
-                break;
-            case DEPOSITS:
-                deposit();
-                break;
-            case DEBTS:
-                debts();
-                break;
-            case STATISTIC_DEBTS:
-                statistic();
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
     }
 
     /**
