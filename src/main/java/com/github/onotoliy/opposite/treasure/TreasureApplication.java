@@ -1,13 +1,16 @@
 package com.github.onotoliy.opposite.treasure;
 
-import javax.jms.Queue;
-
-import org.apache.activemq.command.ActiveMQQueue;
+import com.github.onotoliy.opposite.treasure.services.notifications.schedule.NotificationObject;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.jms.annotation.EnableJms;
+import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Главный класс приложения.
@@ -15,7 +18,7 @@ import org.springframework.jms.annotation.EnableJms;
  * @author Anatoliy Pokhresnyi
  */
 @SpringBootApplication
-@EnableJms
+@EnableScheduling
 @EnableCaching(proxyTargetClass = true)
 public class TreasureApplication {
 
@@ -41,8 +44,9 @@ public class TreasureApplication {
      * @return Очередь.
      */
     @Bean
-    public Queue queue() {
-        return new ActiveMQQueue("inmemory.queue");
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public Deque<NotificationObject> deque() {
+        return new ArrayDeque<>();
     }
 
     /**
