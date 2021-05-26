@@ -92,6 +92,10 @@ public class NotificationPublisher {
             LOGGER.error("Exception to process message {}", deque);
             LOGGER.error(exception.getMessage(), exception);
         }
+
+        if (!deque.isEmpty()) {
+            listener();
+        }
     }
 
     /**

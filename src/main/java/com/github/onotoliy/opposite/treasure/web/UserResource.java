@@ -99,5 +99,7 @@ public class UserResource {
         publisher.publish(NotificationType.DEBTS);
         publisher.publish(NotificationType.STATISTIC_DEBTS);
         publisher.publish(NotificationType.DEPOSITS);
+
+        publisher.listener();
     }
 }
