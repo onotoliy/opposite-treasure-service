@@ -11,8 +11,6 @@ import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
 import com.github.onotoliy.opposite.treasure.repositories.TransactionRepository;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
-import com.github.onotoliy.opposite.treasure.services.notifications.schedule.NotificationPublisher;
-import com.github.onotoliy.opposite.treasure.services.notifications.schedule.NotificationType;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
 
@@ -37,7 +35,7 @@ implements IEventService {
     /**
      * Сервис уведомлений.
      */
-    private final NotificationPublisher publisher;
+    private final NotificationService publisher;
 
     /**
      * Репозиторий транзакций.
@@ -66,7 +64,7 @@ implements IEventService {
     @Autowired
     public EventService(final EventRepository repository,
                         final TransactionRepository transaction,
-                        final NotificationPublisher publisher,
+                        final NotificationService publisher,
                         final DebtRepository debt,
                         final KeycloakRPC user) {
         super(repository);
@@ -80,7 +78,7 @@ implements IEventService {
     protected void create(final Configuration configuration, final Event dto) {
         repository.create(configuration, dto);
 
-        publisher.publish(NotificationType.EVENT, dto);
+        publisher.notify(dto);
 
         if (isEmpty(dto.getContribution()) && isEmpty(dto.getTotal())) {
             return;
@@ -105,7 +103,7 @@ implements IEventService {
         }
 
         repository.update(configuration, dto);
-        publisher.publish(NotificationType.EVENT, dto);
+        publisher.notify(dto);
     }
 
     @Override

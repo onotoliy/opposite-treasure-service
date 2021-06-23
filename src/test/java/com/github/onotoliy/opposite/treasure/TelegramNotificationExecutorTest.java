@@ -1,13 +1,11 @@
 package com.github.onotoliy.opposite.treasure;
 
 import com.github.onotoliy.opposite.treasure.services.notifications.TelegramNotificationExecutor;
-import com.github.onotoliy.opposite.treasure.services.notifications.schedule.NotificationObject;
 
 import java.util.HashMap;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TelegramNotificationExecutorTest {
 
