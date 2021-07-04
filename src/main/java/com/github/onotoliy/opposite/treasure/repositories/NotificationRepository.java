@@ -117,7 +117,8 @@ extends AbstractModifierRepository<
                     )
                     .set(
                         table.DELIVERY_DATE,
-                        Dates.parse(dto.getDeliveryDate())
+                        Strings.isEmpty(dto.getDeliveryDate())
+                            ? null : Dates.parse(dto.getDeliveryDate())
                     );
     }
 
@@ -134,7 +135,8 @@ extends AbstractModifierRepository<
                     )
                     .set(
                         table.DELIVERY_DATE,
-                        Dates.parse(dto.getDeliveryDate())
+                        Strings.isEmpty(dto.getDeliveryDate())
+                            ? null : Dates.parse(dto.getDeliveryDate())
                     );
     }
 
