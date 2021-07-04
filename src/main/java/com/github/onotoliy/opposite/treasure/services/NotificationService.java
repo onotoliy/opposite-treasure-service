@@ -219,9 +219,8 @@ implements INotificationService {
     private void notify(final Notification notification) {
         executors
             .stream()
-            .filter(executor -> executor
-                    .getExecutor()
-                    .equals(notification.getExecutor())
+            .filter(executor ->
+                executor.getExecutor().equals(notification.getExecutor())
             )
             .findFirst()
             .ifPresentOrElse(
@@ -242,6 +241,10 @@ implements INotificationService {
     private void notify(final NotificationExecutor executor,
                         final Notification notification) {
         try {
+            LOGGER.info(
+                "Executor {}. Send message.", executor.getExecutor()
+            );
+
             executor.notify(
                 notification.getName(), notification.getMessage(), Map.of()
             );
