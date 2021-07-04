@@ -83,6 +83,11 @@ public class TwilioNotificationExecutor implements NotificationExecutor {
              .forEach(to -> notify(to, title, body));
     }
 
+    @Override
+    public String getExecutor() {
+        return TwilioNotificationExecutor.class.getSimpleName();
+    }
+
     /**
      * Отправка текстового уведомления.
      *

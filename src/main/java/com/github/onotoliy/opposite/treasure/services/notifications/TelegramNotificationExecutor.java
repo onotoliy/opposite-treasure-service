@@ -108,6 +108,11 @@ public class TelegramNotificationExecutor implements NotificationExecutor {
         return true;
     }
 
+    @Override
+    public String getExecutor() {
+        return TelegramNotificationExecutor.class.getSimpleName();
+    }
+
     /**
      * Отправка текстового уведомления.
      *

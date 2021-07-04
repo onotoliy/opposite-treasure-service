@@ -65,6 +65,11 @@ public class MailNotificationExecutor implements NotificationExecutor {
     }
 
     @Override
+    public String getExecutor() {
+        return MailNotificationExecutor.class.getSimpleName();
+    }
+
+    @Override
     public void notify(final String title,
                        final String body,
                        final Map<String, String> parameters) {

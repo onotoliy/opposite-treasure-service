@@ -115,4 +115,9 @@ public class FirebaseNotificationExecutor implements NotificationExecutor {
             throw new NotificationException(e);
         }
     }
+
+    @Override
+    public String getExecutor() {
+        return FirebaseNotificationExecutor.class.getSimpleName();
+    }
 }

@@ -220,8 +220,7 @@ implements INotificationService {
         executors
             .stream()
             .filter(executor -> executor
-                    .getClass()
-                    .getSimpleName()
+                    .getExecutor()
                     .equals(notification.getExecutor())
             )
             .findFirst()
@@ -251,7 +250,7 @@ implements INotificationService {
         } catch (Exception e) {
             LOGGER.error(
                 "Executor {}. Title {}. Message {}.",
-                executor.getClass().getSimpleName(),
+                executor.getExecutor(),
                 notification.getName(),
                 notification.getMessage()
             );
@@ -292,7 +291,7 @@ implements INotificationService {
                 title,
                 message.apply(executor.isHTML()),
                 notificationType,
-                executor.getClass().getSimpleName(),
+                executor.getExecutor(),
                 null,
                 Dates.format(Dates.now()),
                 null,

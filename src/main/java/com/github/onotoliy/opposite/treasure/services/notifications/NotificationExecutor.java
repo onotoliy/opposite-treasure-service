@@ -44,4 +44,11 @@ public interface NotificationExecutor {
     default boolean isHTML() {
         return false;
     }
+
+    /**
+     * Получение типа класса.
+     *
+     * @return Тип класса.
+     */
+    String getExecutor();
 }
