@@ -31,7 +31,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TreasureNotificationRecord extends UpdatableRecordImpl<TreasureNotificationRecord> implements Record10<UUID, String, String, String, String, UUID, Timestamp, UUID, Timestamp, Timestamp> {
 
-    private static final long serialVersionUID = -1328629810;
+    private static final long serialVersionUID = -877739273;
 
     /**
      * Setter for <code>public.treasure_notification.guid</code>. Уникальный идентификатор
@@ -90,16 +90,16 @@ public class TreasureNotificationRecord extends UpdatableRecordImpl<TreasureNoti
     }
 
     /**
-     * Setter for <code>public.treasure_notification.delivery_type</code>. Тип доставки
+     * Setter for <code>public.treasure_notification.executor</code>. Тип доставщика
      */
-    public void setDeliveryType(String value) {
+    public void setExecutor(String value) {
         set(4, value);
     }
 
     /**
-     * Getter for <code>public.treasure_notification.delivery_type</code>. Тип доставки
+     * Getter for <code>public.treasure_notification.executor</code>. Тип доставщика
      */
-    public String getDeliveryType() {
+    public String getExecutor() {
         return (String) get(4);
     }
 
@@ -242,7 +242,7 @@ public class TreasureNotificationRecord extends UpdatableRecordImpl<TreasureNoti
      */
     @Override
     public Field<String> field5() {
-        return TreasureNotification.TREASURE_NOTIFICATION.DELIVERY_TYPE;
+        return TreasureNotification.TREASURE_NOTIFICATION.EXECUTOR;
     }
 
     /**
@@ -322,7 +322,7 @@ public class TreasureNotificationRecord extends UpdatableRecordImpl<TreasureNoti
      */
     @Override
     public String component5() {
-        return getDeliveryType();
+        return getExecutor();
     }
 
     /**
@@ -402,7 +402,7 @@ public class TreasureNotificationRecord extends UpdatableRecordImpl<TreasureNoti
      */
     @Override
     public String value5() {
-        return getDeliveryType();
+        return getExecutor();
     }
 
     /**
@@ -486,7 +486,7 @@ public class TreasureNotificationRecord extends UpdatableRecordImpl<TreasureNoti
      */
     @Override
     public TreasureNotificationRecord value5(String value) {
-        setDeliveryType(value);
+        setExecutor(value);
         return this;
     }
 
@@ -567,14 +567,14 @@ public class TreasureNotificationRecord extends UpdatableRecordImpl<TreasureNoti
     /**
      * Create a detached, initialised TreasureNotificationRecord
      */
-    public TreasureNotificationRecord(UUID guid, String name, String message, String notificationType, String deliveryType, UUID objectUuid, Timestamp deliveryDate, UUID author, Timestamp creationDate, Timestamp deletionDate) {
+    public TreasureNotificationRecord(UUID guid, String name, String message, String notificationType, String executor, UUID objectUuid, Timestamp deliveryDate, UUID author, Timestamp creationDate, Timestamp deletionDate) {
         super(TreasureNotification.TREASURE_NOTIFICATION);
 
         set(0, guid);
         set(1, name);
         set(2, message);
         set(3, notificationType);
-        set(4, deliveryType);
+        set(4, executor);
         set(5, objectUuid);
         set(6, deliveryDate);
         set(7, author);

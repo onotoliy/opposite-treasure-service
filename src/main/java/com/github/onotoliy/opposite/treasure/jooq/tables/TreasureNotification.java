@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TreasureNotification extends TableImpl<TreasureNotificationRecord> {
 
-    private static final long serialVersionUID = 280430468;
+    private static final long serialVersionUID = -1601176670;
 
     /**
      * The reference instance of <code>public.treasure_notification</code>
@@ -78,9 +78,9 @@ public class TreasureNotification extends TableImpl<TreasureNotificationRecord> 
     public final TableField<TreasureNotificationRecord, String> NOTIFICATION_TYPE = createField("notification_type", org.jooq.impl.SQLDataType.VARCHAR, this, "Тип уведомления");
 
     /**
-     * The column <code>public.treasure_notification.delivery_type</code>. Тип доставки
+     * The column <code>public.treasure_notification.executor</code>. Тип доставщика
      */
-    public final TableField<TreasureNotificationRecord, String> DELIVERY_TYPE = createField("delivery_type", org.jooq.impl.SQLDataType.VARCHAR, this, "Тип доставки");
+    public final TableField<TreasureNotificationRecord, String> EXECUTOR = createField("executor", org.jooq.impl.SQLDataType.VARCHAR, this, "Тип доставщика");
 
     /**
      * The column <code>public.treasure_notification.object_uuid</code>. Уникальный идентификатор объекта

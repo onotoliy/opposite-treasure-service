@@ -130,7 +130,7 @@ extends AbstractModifierRepository<
                         table.NOTIFICATION_TYPE,
                         Strings.parse(dto.getNotificationType().name())
                     )
-                    .set(table.DELIVERY_TYPE, Strings.parse(dto.getExecutor()))
+                    .set(table.EXECUTOR, Strings.parse(dto.getExecutor()))
                     .set(
                         table.DELIVERY_DATE,
                         Dates.parse(dto.getDeliveryDate())
@@ -165,7 +165,7 @@ extends AbstractModifierRepository<
             NotificationType.valueOf(
                 Strings.format(record, TREASURE_NOTIFICATION.NOTIFICATION_TYPE)
             ),
-            Strings.format(record, TREASURE_NOTIFICATION.DELIVERY_TYPE),
+            Strings.format(record, TREASURE_NOTIFICATION.EXECUTOR),
             Dates.format(record, TREASURE_NOTIFICATION.DELIVERY_DATE),
             Dates.format(record, TREASURE_NOTIFICATION.CREATION_DATE),
             author,
