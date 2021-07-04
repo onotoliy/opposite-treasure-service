@@ -110,6 +110,7 @@ extends AbstractModifierRepository<
         final Notification dto) {
         return super.insertQuery(configuration, dto)
                     .set(table.MESSAGE, Strings.parse(dto.getMessage()))
+                    .set(table.EXECUTOR, Strings.parse(dto.getExecutor()))
                     .set(
                         table.NOTIFICATION_TYPE,
                         Strings.parse(dto.getNotificationType().name())
@@ -126,11 +127,11 @@ extends AbstractModifierRepository<
         final Notification dto) {
         return super.updateQuery(configuration, dto)
                     .set(table.MESSAGE, Strings.parse(dto.getMessage()))
+                    .set(table.EXECUTOR, Strings.parse(dto.getExecutor()))
                     .set(
                         table.NOTIFICATION_TYPE,
                         Strings.parse(dto.getNotificationType().name())
                     )
-                    .set(table.EXECUTOR, Strings.parse(dto.getExecutor()))
                     .set(
                         table.DELIVERY_DATE,
                         Dates.parse(dto.getDeliveryDate())
