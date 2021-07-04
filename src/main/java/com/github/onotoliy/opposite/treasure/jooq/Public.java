@@ -9,6 +9,7 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDebt;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDeposit;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog;
+import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureNotification;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureVersion;
 
@@ -36,7 +37,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = -425365713;
+    private static final long serialVersionUID = 1477448567;
 
     /**
      * The reference instance of <code>public</code>
@@ -67,6 +68,11 @@ public class Public extends SchemaImpl {
      * Логи
      */
     public final TreasureLog TREASURE_LOG = com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog.TREASURE_LOG;
+
+    /**
+     * Транзакции
+     */
+    public final TreasureNotification TREASURE_NOTIFICATION = com.github.onotoliy.opposite.treasure.jooq.tables.TreasureNotification.TREASURE_NOTIFICATION;
 
     /**
      * Транзакции
@@ -108,6 +114,7 @@ public class Public extends SchemaImpl {
             TreasureDeposit.TREASURE_DEPOSIT,
             TreasureEvent.TREASURE_EVENT,
             TreasureLog.TREASURE_LOG,
+            TreasureNotification.TREASURE_NOTIFICATION,
             TreasureTransaction.TREASURE_TRANSACTION,
             TreasureVersion.TREASURE_VERSION);
     }

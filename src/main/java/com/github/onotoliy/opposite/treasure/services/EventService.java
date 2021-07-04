@@ -35,7 +35,7 @@ implements IEventService {
     /**
      * Сервис уведомлений.
      */
-    private final NotificationService publisher;
+    private final INotificationService publisher;
 
     /**
      * Репозиторий транзакций.
@@ -64,7 +64,7 @@ implements IEventService {
     @Autowired
     public EventService(final EventRepository repository,
                         final TransactionRepository transaction,
-                        final NotificationService publisher,
+                        final INotificationService publisher,
                         final DebtRepository debt,
                         final KeycloakRPC user) {
         super(repository);
@@ -78,7 +78,7 @@ implements IEventService {
     protected void create(final Configuration configuration, final Event dto) {
         repository.create(configuration, dto);
 
-        publisher.notify(dto);
+        publisher.notify(configuration, dto);
 
         if (isEmpty(dto.getContribution()) && isEmpty(dto.getTotal())) {
             return;
@@ -103,7 +103,7 @@ implements IEventService {
         }
 
         repository.update(configuration, dto);
-        publisher.notify(dto);
+        publisher.notify(configuration, dto);
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDebt;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDeposit;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog;
+import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureNotification;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureVersion;
 
@@ -39,6 +40,7 @@ public class Indexes {
     public static final Index TREASURE_DEPOSIT_PKEY = Indexes0.TREASURE_DEPOSIT_PKEY;
     public static final Index TREASURE_EVENT_PKEY = Indexes0.TREASURE_EVENT_PKEY;
     public static final Index TREASURE_LOG_PKEY = Indexes0.TREASURE_LOG_PKEY;
+    public static final Index TREASURE_NOTIFICATION_PKEY = Indexes0.TREASURE_NOTIFICATION_PKEY;
     public static final Index TREASURE_TRANSACTION_PKEY = Indexes0.TREASURE_TRANSACTION_PKEY;
     public static final Index TREASURE_VERSION_PKEY = Indexes0.TREASURE_VERSION_PKEY;
 
@@ -51,6 +53,7 @@ public class Indexes {
         public static Index TREASURE_DEPOSIT_PKEY = Internal.createIndex("treasure_deposit_pkey", TreasureDeposit.TREASURE_DEPOSIT, new OrderField[] { TreasureDeposit.TREASURE_DEPOSIT.USER_UUID }, true);
         public static Index TREASURE_EVENT_PKEY = Internal.createIndex("treasure_event_pkey", TreasureEvent.TREASURE_EVENT, new OrderField[] { TreasureEvent.TREASURE_EVENT.GUID }, true);
         public static Index TREASURE_LOG_PKEY = Internal.createIndex("treasure_log_pkey", TreasureLog.TREASURE_LOG, new OrderField[] { TreasureLog.TREASURE_LOG.GUID }, true);
+        public static Index TREASURE_NOTIFICATION_PKEY = Internal.createIndex("treasure_notification_pkey", TreasureNotification.TREASURE_NOTIFICATION, new OrderField[] { TreasureNotification.TREASURE_NOTIFICATION.GUID }, true);
         public static Index TREASURE_TRANSACTION_PKEY = Internal.createIndex("treasure_transaction_pkey", TreasureTransaction.TREASURE_TRANSACTION, new OrderField[] { TreasureTransaction.TREASURE_TRANSACTION.GUID }, true);
         public static Index TREASURE_VERSION_PKEY = Internal.createIndex("treasure_version_pkey", TreasureVersion.TREASURE_VERSION, new OrderField[] { TreasureVersion.TREASURE_VERSION.NAME }, true);
     }

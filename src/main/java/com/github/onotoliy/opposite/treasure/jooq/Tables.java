@@ -9,6 +9,7 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDebt;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureDeposit;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog;
+import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureNotification;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureVersion;
 
@@ -52,6 +53,11 @@ public class Tables {
      * Логи
      */
     public static final TreasureLog TREASURE_LOG = com.github.onotoliy.opposite.treasure.jooq.tables.TreasureLog.TREASURE_LOG;
+
+    /**
+     * Транзакции
+     */
+    public static final TreasureNotification TREASURE_NOTIFICATION = com.github.onotoliy.opposite.treasure.jooq.tables.TreasureNotification.TREASURE_NOTIFICATION;
 
     /**
      * Транзакции

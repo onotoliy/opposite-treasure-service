@@ -115,4 +115,22 @@
     <modifyDataType tableName="treasure_log" columnName="bean_name" newDataType="varchar"/>
     <modifyDataType tableName="treasure_log" columnName="stack_trace" newDataType="varchar"/>
   </changeSet>
+
+  <changeSet id="2021-06-28-1-treasure-init" author="onotoliy">
+    <createTable tableName="treasure_notification" remarks="Транзакции">
+      <column name="guid" type="uuid" remarks="Уникальный идентификатор">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar" remarks="Заголовок"/>
+      <column name="message" type="varchar" remarks="Сообщение"/>
+      <column name="notification_type" type="varchar" remarks="Тип уведомления"/>
+      <column name="executor" type="varchar" remarks="Тип доставщика"/>
+      <column name="object_uuid" type="uuid" remarks="Уникальный идентификатор объекта"/>
+      <column name="delivery_date" type="datetime" remarks="Дата доставки"/>
+      <column name="author" type="uuid" remarks="Автор"/>
+      <column name="creation_date" type="datetime" remarks="Дата создания записи"/>
+      <column name="deletion_date" type="datetime" remarks="Дата удаления записи"/>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>

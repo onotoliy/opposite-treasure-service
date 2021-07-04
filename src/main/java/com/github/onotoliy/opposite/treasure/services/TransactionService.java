@@ -45,7 +45,7 @@ implements ITransactionService {
     /**
      * Сервис уведомлений.
      */
-    private final NotificationService publisher;
+    private final INotificationService publisher;
 
     /**
      * Сервисы описывающие бизнес логику тразакций.
@@ -63,7 +63,7 @@ implements ITransactionService {
     @Autowired
     public TransactionService(final TransactionRepository repository,
                               final EventRepository event,
-                              final NotificationService publisher,
+                              final INotificationService publisher,
                               final List<TransactionExecutor> executors) {
         super(repository);
         this.event = event;
@@ -82,7 +82,7 @@ implements ITransactionService {
         execute(dto, executor -> executor.create(configuration, dto));
 
         repository.create(configuration, dto);
-        publisher.notify(dto);
+        publisher.notify(configuration, dto);
     }
 
     @Override
@@ -109,7 +109,7 @@ implements ITransactionService {
         validation(dto);
 
         repository.update(configuration, dto);
-        publisher.notify(dto);
+        publisher.notify(configuration, dto);
     }
 
     @Override

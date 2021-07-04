@@ -8,24 +8,30 @@ import com.github.onotoliy.opposite.treasure.convectors.DebtNotificationConvecto
 import com.github.onotoliy.opposite.treasure.convectors.DepositNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.EventNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.TransactionNotificationConvector;
+import com.github.onotoliy.opposite.treasure.dto.Delivery;
 import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
+import com.github.onotoliy.opposite.treasure.dto.Notification;
+import com.github.onotoliy.opposite.treasure.dto.NotificationSearchParameter;
+import com.github.onotoliy.opposite.treasure.dto.NotificationType;
+import com.github.onotoliy.opposite.treasure.repositories.NotificationRepository;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
+import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
 import com.github.onotoliy.opposite.treasure.services.notifications.NotificationExecutor;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
+import org.jooq.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.sql.Timestamp;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * Сервис уведомлений.
@@ -33,7 +39,12 @@ import org.springframework.stereotype.Service;
  * @author Anatoliy Pokhresnyi
  */
 @Service
-public class NotificationService {
+public class NotificationService
+extends AbstractModifierService<
+    Notification,
+    NotificationSearchParameter,
+    NotificationRepository>
+implements INotificationService {
 
     /**
      * Logger.
@@ -69,6 +80,7 @@ public class NotificationService {
     /**
      * Конструктор.
      *
+     * @param repository   Репозиторий управления уведомлениями.
      * @param executors    Сервисы описывающие бизнес логику тразакций.
      * @param cashbox      Сервис чтения данных о кассе.
      * @param deposit      Сервис чтения депозитов.
@@ -76,11 +88,14 @@ public class NotificationService {
      * @param debt         Сервис чтения долгов.
      */
     @Autowired
-    public NotificationService(final List<NotificationExecutor> executors,
+    public NotificationService(final NotificationRepository repository,
+                               final List<NotificationExecutor> executors,
                                final ICashboxService cashbox,
                                final DepositService deposit,
                                final KeycloakRPC users,
                                final DebtService debt) {
+        super(repository);
+
         this.executors = executors;
         this.cashbox = cashbox;
         this.deposit = deposit;
@@ -88,57 +103,41 @@ public class NotificationService {
         this.debt = debt;
     }
 
-    /**
-     * Отправка push уведомления события.
-     *
-     * @param event Событие.
-     */
-    public void notify(final Event event) {
-        Map<String, String> parameters = Map.of(
-            "uuid", event.getUuid(),
-            "title", event.getName(),
-            "contribution", event.getContribution(),
-            "deadline", event.getDeadline(),
-            "type", "event"
-        );
 
-        Function<Boolean, String> toMessage = isHTML ->
-            new EventNotificationConvector(isHTML)
-                .toNotification(event, cashbox.get());
+    @Override
+    public void publish() {
+        final NotificationSearchParameter parameter =
+            new NotificationSearchParameter(
+                null, Delivery.ONLY_NOT_DELIVERED, 0, Integer.MAX_VALUE
+            );
 
-        notify("Событие", toMessage, parameters);
+        repository.getAll(parameter).getContext().forEach(this::notify);
     }
 
-    /**
-     * Отправка push уведомления транзакции.
-     *
-     * @param transaction Транзакция.
-     */
-    public void notify(final Transaction transaction) {
-        LOGGER.info("Transaction notify {}", transaction);
-
-        Map<String, String> parameters = Map.of(
-            "uuid", transaction.getUuid(),
-            "title", transaction.getName(),
-            "cash", transaction.getCash(),
-            "event", transaction.getEvent() == null
-                ? "" : transaction.getEvent().getName(),
-            "person", transaction.getPerson() == null
-                ? "" : transaction.getPerson().getName(),
-            "transaction", transaction.getType().getLabel(),
-            "type", "event"
+    @Override
+    public void notify(final Configuration configuration, final Event event) {
+        notify(
+            configuration,
+            "Событие",
+            isHTML -> new EventNotificationConvector(isHTML)
+                .toNotification(event, cashbox.get()),
+            NotificationType.EVENT
         );
-
-        Function<Boolean, String> toMessage = isHTML ->
-            new TransactionNotificationConvector(isHTML)
-                .toNotification(transaction, cashbox.get());
-
-        notify("Транзакция", toMessage, parameters);
     }
 
-    /**
-     * Отправка отчета по долгам.
-     */
+    @Override
+    public void notify(final Configuration configuration,
+                       final Transaction transaction) {
+        notify(
+            configuration,
+            "Транзакция",
+            isHTML -> new TransactionNotificationConvector(isHTML)
+                .toNotification(transaction, cashbox.get()),
+            NotificationType.TRANSACTION
+        );
+    }
+
+    @Override
     public void debts() {
         final String title = "Долги на " + Dates.toShortFormat(Dates.now());
         final Cashbox cb = this.cashbox.get();
@@ -155,13 +154,11 @@ public class NotificationService {
                 new DebtNotificationConvector(isHTML)
                     .toNotification(user, debts, cb);
 
-            notify(title, toMessage, Collections.emptyMap());
+            notify(title, toMessage, NotificationType.DEBTS);
         }
     }
 
-    /**
-     * Отправка статистики должников.
-     */
+    @Override
     public void statistic() {
         final Cashbox cb = this.cashbox.get();
         final Timestamp now = Dates.now();
@@ -174,13 +171,11 @@ public class NotificationService {
                     user -> getDebts(now, user),
                     cb
                 ),
-            Collections.emptyMap()
+            NotificationType.STATISTIC
         );
     }
 
-    /**
-     * Отправка отчета депозитов.
-     */
+    @Override
     public void deposit() {
         final DepositSearchParameter parameter =
             new DepositSearchParameter(0, Integer.MAX_VALUE);
@@ -197,7 +192,7 @@ public class NotificationService {
                         deposit.getAll(parameter).getContext(),
                         cashbox.get()
                     ),
-            Collections.emptyMap());
+            NotificationType.DEPOSITS);
     }
 
     /**
@@ -219,30 +214,92 @@ public class NotificationService {
     /**
      * Оправка уведомлений.
      *
+     * @param notification Уведомление.
+     */
+    private void notify(final Notification notification) {
+        executors
+            .stream()
+            .filter(executor -> executor
+                    .getClass()
+                    .getSimpleName()
+                    .equals(notification.getExecutor())
+            )
+            .findFirst()
+            .ifPresentOrElse(
+                executor -> notify(executor, notification),
+                () -> LOGGER.info(
+                    "Executor not found. Delivery type {}",
+                    notification.getExecutor()
+                )
+            );
+    }
+
+    /**
+     * Оправка уведомлений.
+     *
+     * @param executor Описание бизнес логики отправки уведомлений.
+     * @param notification Уведомление.
+     */
+    private void notify(final NotificationExecutor executor,
+                        final Notification notification) {
+        try {
+            executor.notify(
+                notification.getName(), notification.getMessage(), Map.of()
+            );
+
+            repository.delivered(GUIDs.parse(notification));
+        } catch (Exception e) {
+            LOGGER.error(
+                "Executor {}. Title {}. Message {}.",
+                executor.getClass().getSimpleName(),
+                notification.getName(),
+                notification.getMessage()
+            );
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Оправка уведомлений.
+     *
      * @param title Заголовок.
      * @param message Сообщение.
-     * @param parameters Дополнительные параметры
+     * @param type Тип уведомления.
      */
-    private void notify(
-        final String title,
-        final Function<Boolean, String> message,
-        final Map<String, String> parameters
-    ) {
+    private void notify(final String title,
+                        final Function<Boolean, String> message,
+                        final NotificationType type) {
+        repository.transaction(configuration ->
+            notify(configuration, title, message, type)
+        );
+    }
+
+    /**
+     * Оправка уведомлений.
+     *
+     * @param configuration Настройки транзакции.
+     * @param title Заголовок.
+     * @param message Сообщение.
+     * @param notificationType Тип уведомления.
+     */
+    private void notify(final Configuration configuration,
+                        final String title,
+                        final Function<Boolean, String> message,
+                        final NotificationType notificationType) {
         for (NotificationExecutor executor : executors) {
-            try {
-                executor.notify(
-                    title, message.apply(executor.isHTML()), parameters
-                );
-            } catch (Exception e) {
-                LOGGER.error(
-                    "Executor {}. Title {}. Message {}. Parameters {}.",
-                    executor.getClass().getSimpleName(),
-                    title,
-                    message,
-                    parameters
-                );
-                LOGGER.error(e.getMessage(), e);
-            }
+            Notification notification = new Notification(
+                GUIDs.random().toString(),
+                title,
+                message.apply(executor.isHTML()),
+                notificationType,
+                executor.getClass().getSimpleName(),
+                null,
+                Dates.format(Dates.now()),
+                null,
+                null
+            );
+
+            repository.create(configuration, notification);
         }
     }
 }

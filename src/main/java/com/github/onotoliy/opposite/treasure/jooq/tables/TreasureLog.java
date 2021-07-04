@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class TreasureLog extends TableImpl<TreasureLogRecord> {
 
-    private static final long serialVersionUID = 319579040;
+    private static final long serialVersionUID = 1901114434;
 
     /**
      * The reference instance of <code>public.treasure_log</code>
@@ -70,7 +70,7 @@ public class TreasureLog extends TableImpl<TreasureLogRecord> {
     /**
      * The column <code>public.treasure_log.level</code>. Уровень логирования
      */
-    public final TableField<TreasureLogRecord, String> LEVEL = createField("level", org.jooq.impl.SQLDataType.VARCHAR(255), this, "Уровень логирования");
+    public final TableField<TreasureLogRecord, String> LEVEL = createField("level", org.jooq.impl.SQLDataType.VARCHAR, this, "Уровень логирования");
 
     /**
      * The column <code>public.treasure_log.creation_date</code>. Дата создания записи
@@ -80,17 +80,17 @@ public class TreasureLog extends TableImpl<TreasureLogRecord> {
     /**
      * The column <code>public.treasure_log.message</code>. Сообщение
      */
-    public final TableField<TreasureLogRecord, String> MESSAGE = createField("message", org.jooq.impl.SQLDataType.VARCHAR(255), this, "Сообщение");
+    public final TableField<TreasureLogRecord, String> MESSAGE = createField("message", org.jooq.impl.SQLDataType.VARCHAR, this, "Сообщение");
 
     /**
      * The column <code>public.treasure_log.bean_name</code>. Название класса
      */
-    public final TableField<TreasureLogRecord, String> BEAN_NAME = createField("bean_name", org.jooq.impl.SQLDataType.VARCHAR(255), this, "Название класса");
+    public final TableField<TreasureLogRecord, String> BEAN_NAME = createField("bean_name", org.jooq.impl.SQLDataType.VARCHAR, this, "Название класса");
 
     /**
      * The column <code>public.treasure_log.stack_trace</code>. Stack Trace
      */
-    public final TableField<TreasureLogRecord, String> STACK_TRACE = createField("stack_trace", org.jooq.impl.SQLDataType.VARCHAR(255), this, "Stack Trace");
+    public final TableField<TreasureLogRecord, String> STACK_TRACE = createField("stack_trace", org.jooq.impl.SQLDataType.VARCHAR, this, "Stack Trace");
 
     /**
      * Create a <code>public.treasure_log</code> table reference
