@@ -72,7 +72,8 @@ extends AbstractModifierRepository<
     public void delivered(final UUID uuid) {
         dsl.update(TREASURE_NOTIFICATION)
            .set(TREASURE_NOTIFICATION.DELIVERY_DATE, Dates.now())
-           .where(TREASURE_NOTIFICATION.GUID.eq(uuid));
+           .where(TREASURE_NOTIFICATION.GUID.eq(uuid))
+           .execute();
     }
 
     @Override
