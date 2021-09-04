@@ -42,22 +42,30 @@ public class FirebaseNotificationExecutor implements NotificationExecutor {
     private final String icon;
 
     /**
+     * Отправка Firebase отключена.
+     */
+    private final boolean off;
+
+    /**
      * Конструктор.
      *
      * @param path Путь к файлу подключения Firebase.
      * @param topic Название топика.
      * @param icon URL к иконке.
+     * @param off Отправка Firebase отключена.
      * @throws IOException Ошибка чтения файла подключения Firebase.
      */
     @Autowired
     public FirebaseNotificationExecutor(
         @Value("${treasure.firebase.config.path}") final String path,
         @Value("${treasure.firebase.topic}") final String topic,
-        @Value("${treasure.firebase.icon}") final String icon
+        @Value("${treasure.firebase.icon}") final String icon,
+        @Value("${treasure.firebase.off}") final boolean off
     ) throws IOException {
 
         this.topic = topic;
         this.icon = icon;
+        this.off = off;
 
         GoogleCredentials credentials =
             GoogleCredentials.fromStream(new FileInputStream(path));
@@ -83,6 +91,10 @@ public class FirebaseNotificationExecutor implements NotificationExecutor {
     public void notify(final String title,
                        final String body,
                        final Map<String, String> parameters) {
+        if (off) {
+            return;
+        }
+
         AndroidConfig android = AndroidConfig
                 .builder()
                 .setTtl(Duration.ofMinutes(2).toMillis())
