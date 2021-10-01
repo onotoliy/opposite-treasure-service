@@ -95,6 +95,7 @@ extends KeycloakWebSecurityConfigurerAdapter {
         http.cors();
         http.csrf().disable();
         http.authorizeRequests()
+            .antMatchers("/user/register/exception").permitAll()
             .antMatchers(HttpMethod.POST).hasAnyRole(modification)
             .antMatchers(HttpMethod.PUT).hasAnyRole(modification)
             .antMatchers(HttpMethod.DELETE).hasAnyRole(modification)

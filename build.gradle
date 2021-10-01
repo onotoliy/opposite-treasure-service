@@ -23,22 +23,18 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
-    mavenLocal()
     maven {
-        url "https://dl.bintray.com/kotlin/kotlinx/"
-    }
-    maven {
-        url  "https://dl.bintray.com/a-k-pohresniy/onotoliy"
-    }
-    maven {
-        url "https://plugins.gradle.org/m2/"
+        url "http://185.12.95.242:8088/repository/onotoliy-maven-group/"
+        credentials {
+            username = property('onotoliy.nexus.username')
+            password = property('onotoliy.nexus.password')
+        }
     }
 }
 
 dependencies {
 
-    implementation 'com.github.onotoliy.opposite:treasure-data-jvm:1.0.14'
+    implementation 'com.github.onotoliy.opposite:treasure-data-jvm:1.0.15'
 
     /**
      * Push Notification

@@ -2,12 +2,15 @@ package com.github.onotoliy.opposite.treasure.web;
 
 import com.github.onotoliy.opposite.data.Option;
 import com.github.onotoliy.opposite.data.User;
+import com.github.onotoliy.opposite.data.core.ExceptionDevice;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
+import com.github.onotoliy.opposite.treasure.services.IExceptionService;
 import com.github.onotoliy.opposite.treasure.services.INotificationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +28,11 @@ import java.util.stream.Collectors;
 public class UserResource {
 
     /**
+     * Сервис ошибок устройств.
+     */
+    private final IExceptionService exception;
+
+    /**
      * Сервис чтения пользователей системы.
      */
     private final KeycloakRPC user;
@@ -39,12 +47,15 @@ public class UserResource {
      *
      * @param user Сервис чтения пользователей системы.
      * @param publisher Сервис уведомлений.
+     * @param exception Сервис ошибок устройств.
      */
     @Autowired
     public UserResource(final KeycloakRPC user,
-                        final INotificationService publisher) {
+                        final INotificationService publisher,
+                        final IExceptionService exception) {
         this.user = user;
         this.publisher = publisher;
+        this.exception = exception;
     }
 
     /**
@@ -100,5 +111,15 @@ public class UserResource {
         publisher.deposit();
 
         publisher.publish();
+    }
+
+    /**
+     * Регистрация ошибки на клиенте.
+     *
+     * @param exception Описание ошибки устройства.
+     */
+    @PostMapping(value = "/register/exception")
+    public void registration(@RequestBody final ExceptionDevice exception) {
+        this.exception.registration(exception);
     }
 }

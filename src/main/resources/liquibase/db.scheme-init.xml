@@ -133,4 +133,17 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="2021-09-15-1-treasure-init" author="onotoliy">
+    <createTable tableName="treasure_exception" remarks="Описание ошибки устройства">
+      <column name="guid" type="uuid" remarks="Уникальный идентификатор">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="device" type="varchar" remarks="Устройство"/>
+      <column name="agent" type="varchar" remarks="Агент"/>
+      <column name="message" type="varchar" remarks="Сообщение об ошибки"/>
+      <column name="localized_message" type="varchar" remarks="Локализированое сообщение об ошибки"/>
+      <column name="stack_trace" type="varchar" remarks="StackTrace"/>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>
