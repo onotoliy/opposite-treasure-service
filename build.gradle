@@ -24,8 +24,12 @@ version '1.0.0'
 sourceCompatibility = 1.8
 
 repositories {
+    jcenter()
     mavenCentral()
     mavenLocal()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
     maven {
         url "http://185.12.95.242:8088/repository/onotoliy-maven-group/"
         credentials {
