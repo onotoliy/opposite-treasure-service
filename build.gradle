@@ -14,15 +14,18 @@ apply plugin: 'pmd'
 apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'checkstyle'
+apply plugin: 'maven-publish'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group 'com.github.onotoliy.opposite'
-version '1.0-SNAPSHOT'
+version '1.0.0'
 
 sourceCompatibility = 1.8
 
 repositories {
+    mavenCentral()
+    mavenLocal()
     maven {
         url "http://185.12.95.242:8088/repository/onotoliy-maven-group/"
         credentials {
@@ -169,6 +172,26 @@ artifacts {
 }
 
 check.dependsOn jacocoTestCoverageVerification
+
+publishing {
+    repositories {
+        maven {
+            url = 'http://185.12.95.242:8088/repository/maven-releases/'
+            credentials {
+                username = property('onotoliy.nexus.username')
+                password = property('onotoliy.nexus.password')
+            }
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            artifact("build/libs/treasure-service-$version\\.jar") {
+                extension "jar"
+            }
+        }
+    }
+}
 
 task jooqGen(dependsOn: 'classes', type: JavaExec) {
     main = 'com.github.onotoliy.opposite.treasure.JooqGenerator'
