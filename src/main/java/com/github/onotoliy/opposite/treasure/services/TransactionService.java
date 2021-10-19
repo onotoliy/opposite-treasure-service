@@ -82,7 +82,7 @@ implements ITransactionService {
         execute(dto, executor -> executor.create(configuration, dto));
 
         repository.create(configuration, dto);
-        publisher.notify(configuration, dto);
+        publisher.notify(configuration, repository.get(GUIDs.parse(dto)));
     }
 
     @Override
@@ -109,7 +109,7 @@ implements ITransactionService {
         validation(dto);
 
         repository.update(configuration, dto);
-        publisher.notify(configuration, dto);
+        publisher.notify(configuration, repository.get(GUIDs.parse(dto)));
     }
 
     @Override

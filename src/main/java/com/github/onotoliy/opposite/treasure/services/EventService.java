@@ -78,7 +78,7 @@ implements IEventService {
     protected void create(final Configuration configuration, final Event dto) {
         repository.create(configuration, dto);
 
-        publisher.notify(configuration, dto);
+        publisher.notify(configuration, repository.get(GUIDs.parse(dto)));
 
         if (isEmpty(dto.getContribution()) && isEmpty(dto.getTotal())) {
             return;
@@ -103,7 +103,7 @@ implements IEventService {
         }
 
         repository.update(configuration, dto);
-        publisher.notify(configuration, dto);
+        publisher.notify(configuration, repository.get(GUIDs.parse(dto)));
     }
 
     @Override
