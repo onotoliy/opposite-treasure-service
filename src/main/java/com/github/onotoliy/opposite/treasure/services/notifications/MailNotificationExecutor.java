@@ -40,20 +40,28 @@ public class MailNotificationExecutor implements NotificationExecutor {
     private final KeycloakRPC users;
 
     /**
+     * Отправка на электронную почту отключена.
+     */
+    private final boolean off;
+
+    /**
      * Конструктор.
      *
      * @param sender Отправитель сообщений.
      * @param users  Сервис чтения данных о пользвателях из Keycloak.
      * @param from   Mail от имени которого отправляются сообщения.
+     * @param off    Отправка на электронную почту отключена.
      * @throws UnsupportedEncodingException Ошибка чтения электронного адреса.
      */
     @Autowired
     public MailNotificationExecutor(
         final JavaMailSender sender,
         final KeycloakRPC users,
-        @Value("${spring.mail.username}") final String from
+        @Value("${spring.mail.username}") final String from,
+        @Value("${treasure.mail.off}") final boolean off
     ) throws UnsupportedEncodingException {
 
+        this.off = off;
         this.users = users;
         this.sender = sender;
         this.from = new InternetAddress(from, "Оппозит МК");
@@ -108,6 +116,10 @@ public class MailNotificationExecutor implements NotificationExecutor {
     private void notify(final String to,
                         final String title,
                         final String body) {
+        if (off) {
+            return;
+        }
+
         sender.send(message -> {
             MimeMessageHelper helper = new MimeMessageHelper(message);
             helper.setFrom(from);

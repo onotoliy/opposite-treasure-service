@@ -7,6 +7,8 @@ import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.IExceptionService;
 import com.github.onotoliy.opposite.treasure.services.INotificationService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,14 +30,20 @@ import java.util.stream.Collectors;
 public class UserResource {
 
     /**
-     * Сервис ошибок устройств.
+     * Logger.
      */
-    private final IExceptionService exception;
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(UserResource.class);
 
     /**
      * Сервис чтения пользователей системы.
      */
     private final KeycloakRPC user;
+
+    /**
+     * Сервис ошибок устройств.
+     */
+    private final IExceptionService exception;
 
     /**
      * Сервис уведомлений.
@@ -106,6 +114,8 @@ public class UserResource {
      */
     @PostMapping(value = "/notification")
     public void notification() {
+        LOGGER.info("Request to send notifications received.");
+
         publisher.debts();
         publisher.statistic();
         publisher.deposit();

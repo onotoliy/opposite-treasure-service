@@ -35,20 +35,28 @@ public class TwilioNotificationExecutor implements NotificationExecutor {
     private final PhoneNumber from;
 
     /**
+     * Отправка СМС сообщений отключена.
+     */
+    private final boolean off;
+
+    /**
      * Конструктор.
      *
      * @param username Имя пользователя.
      * @param password Пароль
      * @param from От кого отправляется сообщение.
+     * @param off Отправка СМС сообщений отключена.
      * @param users Сервис чтения данных о пользвателях из Keycloak.
      */
     @Autowired
     public TwilioNotificationExecutor(
-        @Value("treasure.twilio.username") final String username,
-        @Value("treasure.twilio.password") final String password,
-        @Value("treasure.twilio.from") final String from,
+        @Value("${treasure.twilio.username}") final String username,
+        @Value("${treasure.twilio.password}") final String password,
+        @Value("${treasure.twilio.from}") final String from,
+        @Value("${treasure.twilio.off}") final boolean off,
         final KeycloakRPC users
     ) {
+        this.off = off;
         this.users = users;
         this.from = new PhoneNumber(from);
 
@@ -98,6 +106,10 @@ public class TwilioNotificationExecutor implements NotificationExecutor {
     private void notify(final String to,
                         final String title,
                         final String body) {
+        if (off) {
+            return;
+        }
+
         Message.creator(new PhoneNumber(to), from, title + "\n" + body)
                .create();
     }
