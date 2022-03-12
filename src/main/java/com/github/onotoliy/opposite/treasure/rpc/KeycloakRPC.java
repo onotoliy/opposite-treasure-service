@@ -7,6 +7,7 @@ import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -83,6 +84,11 @@ public class KeycloakRPC {
      * Cache пользователь.
      */
     private static Map<UUID, Option> cache = new HashMap<>();
+
+    /**
+     * Cache пользователей.
+     */
+    private static Map<String, User> telegram = new HashMap<>();
 
     /**
      * Cache списка пользователей.
@@ -200,18 +206,46 @@ public class KeycloakRPC {
     }
 
     /**
+     * Получение Username-ов в телеграмме.
+     *
+     * @return Username-ы в телеграмме.
+     */
+    public Set<String> getTelegramUsernames() {
+        if (users.isEmpty()) {
+            getAll();
+        }
+
+        return telegram.keySet();
+    }
+
+    /**
      * Получение всех пользователей зарегистрированных в системе.
      *
      * @return Пользователи
      */
     public List<User> getAll() {
         if (users.isEmpty()) {
+            final Set<UserRepresentation> representations = keycloak()
+                .realm(realm)
+                .roles()
+                .get(role)
+                .getRoleUserMembers();
+
+            for (UserRepresentation representation: representations) {
+                Map<String, List<String>> attributes =
+                    representation.getAttributes() == null
+                        ? Collections.emptyMap()
+                        : representation.getAttributes();
+                List<String> values = attributes
+                    .getOrDefault("telegram", Collections.emptyList());
+
+                if (!values.isEmpty()) {
+                    telegram.put(values.get(0), toDTO(representation));
+                }
+            }
+
             users.addAll(
-                keycloak()
-                    .realm(realm)
-                    .roles()
-                    .get(role)
-                    .getRoleUserMembers()
+                representations
                     .stream()
                     .map(this::toDTO)
                     .sorted(Comparator.comparing(User::getName))

@@ -1,6 +1,5 @@
 package com.github.onotoliy.opposite.treasure.services.notifications;
 
-import com.github.onotoliy.opposite.treasure.bpp.log.Log;
 import com.github.onotoliy.opposite.treasure.dto.Contact;
 
 import java.util.Map;
@@ -20,7 +19,6 @@ public interface NotificationExecutor {
      * @param body Сообщение.
      * @param parameters Дополнительный параметры.
      */
-    @Log(db = true)
     void notify(Contact to,
                 String title,
                 String body,
@@ -33,7 +31,6 @@ public interface NotificationExecutor {
      * @param body Сообщение.
      * @param parameters Дополнительный параметры.
      */
-    @Log(db = true)
     void notify(String title, String body, Map<String, String> parameters);
 
     /**

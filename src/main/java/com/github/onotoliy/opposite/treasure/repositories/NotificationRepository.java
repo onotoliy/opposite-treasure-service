@@ -76,6 +76,23 @@ extends AbstractModifierRepository<
            .execute();
     }
 
+    /**
+     * Сброс уведомлений по указанному типу которые еще не доставленны.
+     *
+     * @param type Тип уведомления.
+     */
+    public void discharge(final NotificationType type) {
+        dsl.update(TREASURE_NOTIFICATION)
+           .set(TREASURE_NOTIFICATION.DELETION_DATE, Dates.now())
+           .set(TREASURE_NOTIFICATION.DELIVERY_DATE, Dates.now())
+           .where(
+                   TREASURE_NOTIFICATION.DELETION_DATE.isNull(),
+                   TREASURE_NOTIFICATION.DELIVERY_DATE.isNull(),
+                   TREASURE_NOTIFICATION.NOTIFICATION_TYPE.eq(type.name())
+                )
+           .execute();
+    }
+
     @Override
     public List<Condition> where(final NotificationSearchParameter parameter) {
         List<Condition> conditions = super.where(parameter);

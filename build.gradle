@@ -48,6 +48,7 @@ dependencies {
      */
     implementation 'com.google.firebase:firebase-admin:7.0.0'
     implementation 'com.twilio.sdk:twilio:7.20.0'
+    implementation 'org.telegram:telegrambots:5.7.1'
 
     /**
      * Spring Boot

@@ -108,10 +108,20 @@ implements INotificationService {
     public void publish() {
         final NotificationSearchParameter parameter =
             new NotificationSearchParameter(
-                null, Delivery.ONLY_NOT_DELIVERED, 0, Integer.MAX_VALUE
+                null, Delivery.ONLY_NOT_DELIVERED, 0, 10
             );
 
-        repository.getAll(parameter).getContext().forEach(this::notify);
+        while (true) {
+            final List<Notification> context = repository
+                .getAll(parameter)
+                .getContext();
+
+            if (context.isEmpty()) {
+                return;
+            }
+
+            context.forEach(this::notify);
+        }
     }
 
     @Override
@@ -139,6 +149,8 @@ implements INotificationService {
 
     @Override
     public void debts() {
+        repository.discharge(NotificationType.DEBTS);
+
         final String title = "Долги на " + Dates.toShortFormat(Dates.now());
         final Cashbox cb = this.cashbox.get();
         final Timestamp now = Dates.now();
@@ -160,6 +172,8 @@ implements INotificationService {
 
     @Override
     public void statistic() {
+        repository.discharge(NotificationType.STATISTIC);
+
         final Cashbox cb = this.cashbox.get();
         final Timestamp now = Dates.now();
 
@@ -177,6 +191,8 @@ implements INotificationService {
 
     @Override
     public void deposit() {
+        repository.discharge(NotificationType.DEPOSITS);
+
         final DepositSearchParameter parameter =
             new DepositSearchParameter(0, Integer.MAX_VALUE);
         final Set<String> members = users.getAll()
