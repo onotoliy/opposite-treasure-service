@@ -3,7 +3,6 @@ package com.github.onotoliy.opposite.treasure.telegram;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.telegram.actions.TelegramAction;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
-import com.sun.jna.platform.unix.solaris.LibKstat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,18 +35,34 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final KeycloakRPC users;
 
     /**
+     * Название Telegram бота.
+     */
+    private final String bot;
+
+    /**
+     * Токен для Telegram бота.
+     */
+    private final String token;
+
+    /**
      * Конструктор.
      *
+     * @param bot Название Telegram бота.
+     * @param token Токен для Telegram бота.
      * @param actions Список Action-ов.
      * @param users Сервис чтения данных о пользвателях из Keycloak.
      */
     @Autowired
-    public TelegramBot(@Value("${treasure.telegram.bot}")final String username,
-                       @Value("${treasure.telegram.bot-api-key}")final String token,
-                       final List<TelegramAction> actions,
-                       final KeycloakRPC users) {
+    public TelegramBot(
+        @Value("${treasure.telegram.bot}") final String bot,
+        @Value("${treasure.telegram.bot-api-key}") final String token,
+        final List<TelegramAction> actions,
+        final KeycloakRPC users
+    ) {
         this.actions = actions;
         this.users = users;
+        this.bot = bot;
+        this.token = token;
     }
 
     @Override
@@ -61,12 +76,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "OppositeTreasureBot";
+        return bot;
     }
 
     @Override
     public String getBotToken() {
-        return "1328298814:AAEbyE9Zn8wz1l_niGZ3DivzxveYHw6cZbc";
+        return token;
     }
 
     /**
