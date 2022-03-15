@@ -50,18 +50,13 @@ public class NotificationTelegramAction extends AbstractTelegramAction {
                 .of(
                     InlineKeyboardButton
                         .builder()
-                        .text("Полный список")
+                        .text("Все уведомления")
                         .callbackData("notify-all")
                         .build(),
                     InlineKeyboardButton
                         .builder()
-                        .text("Без статистики")
+                        .text("Только существующие")
                         .callbackData("notify-without-statistic")
-                        .build(),
-                    InlineKeyboardButton
-                        .builder()
-                        .text("Статистика")
-                        .callbackData("notify-statistic")
                         .build(),
                     InlineKeyboardButton
                         .builder()
@@ -86,7 +81,6 @@ public class NotificationTelegramAction extends AbstractTelegramAction {
         } else {
             switch (action) {
                 case "notify-all":
-                case "notify-statistic":
                     publisher.debts();
                     publisher.statistic();
                     publisher.deposit();
