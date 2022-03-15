@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Action Telegram bot-а на запрос уведомлений в Telegram канал.
@@ -44,8 +46,8 @@ public class NotificationTelegramAction extends AbstractTelegramAction {
         final String action = update.getCallbackQuery().getData();
 
         if (action.equalsIgnoreCase(this.action)) {
-            return List.of(
-                List.of(
+            return List
+                .of(
                     InlineKeyboardButton
                         .builder()
                         .text("Полный список")
@@ -66,7 +68,10 @@ public class NotificationTelegramAction extends AbstractTelegramAction {
                         .text("Назад")
                         .callbackData("notify-back")
                         .build()
-                ));
+                )
+                .stream()
+                .map(Collections::singletonList)
+                .collect(Collectors.toList());
         } else {
             return TelegramUtils.TOP_MENU;
         }
