@@ -211,6 +211,11 @@ implements INotificationService {
             NotificationType.DEPOSITS);
     }
 
+    @Override
+    public void discharge(final NotificationType type) {
+        repository.discharge(type);
+    }
+
     /**
      * Получение долгов пользователя на текущей момент.
      *

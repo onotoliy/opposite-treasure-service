@@ -4,6 +4,7 @@ import com.github.onotoliy.opposite.data.Event;
 import com.github.onotoliy.opposite.data.Transaction;
 import com.github.onotoliy.opposite.treasure.dto.Notification;
 import com.github.onotoliy.opposite.treasure.dto.NotificationSearchParameter;
+import com.github.onotoliy.opposite.treasure.dto.NotificationType;
 import com.github.onotoliy.opposite.treasure.services.core.ModifierService;
 import org.jooq.Configuration;
 
@@ -52,4 +53,11 @@ extends ModifierService<Notification, NotificationSearchParameter> {
      * Отправка отчета депозитов.
      */
     void deposit();
+
+    /**
+     * Сброс уведомлений по указанному типу которые еще не доставленны.
+     *
+     * @param type Тип уведомления.
+     */
+    void discharge(NotificationType type);
 }

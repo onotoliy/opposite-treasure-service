@@ -1,9 +1,14 @@
 package com.github.onotoliy.opposite.treasure.telegram.actions;
 
+import com.github.onotoliy.opposite.treasure.dto.NotificationType;
 import com.github.onotoliy.opposite.treasure.services.INotificationService;
+import com.github.onotoliy.opposite.treasure.telegram.TelegramUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.util.List;
 
 /**
  * Action Telegram bot-а на запрос уведомлений в Telegram канал.
@@ -33,13 +38,67 @@ public class NotificationTelegramAction extends AbstractTelegramAction {
     }
 
     @Override
+    protected List<List<InlineKeyboardButton>> getKeyboard(
+        final Update update
+    ) {
+        final String action = update.getCallbackQuery().getData();
+
+        if (action.equalsIgnoreCase(this.action)) {
+            return List.of(
+                List.of(
+                    InlineKeyboardButton
+                        .builder()
+                        .text("Полный список")
+                        .callbackData("notify-all")
+                        .build(),
+                    InlineKeyboardButton
+                        .builder()
+                        .text("Без статистики")
+                        .callbackData("notify-without-statistic")
+                        .build(),
+                    InlineKeyboardButton
+                        .builder()
+                        .text("Статистика")
+                        .callbackData("notify-statistic")
+                        .build(),
+                    InlineKeyboardButton
+                        .builder()
+                        .text("Назад")
+                        .callbackData("notify-back")
+                        .build()
+                ));
+        } else {
+            return TelegramUtils.TOP_MENU;
+        }
+    }
+
+    @Override
     protected String getText(final Update update) {
-        publisher.debts();
-        publisher.statistic();
-        publisher.deposit();
+        final String action = update.getCallbackQuery().getData();
 
-        publisher.publish();
+        if (action.equalsIgnoreCase(this.action)) {
+            return "Выберите действие!";
+        } else {
+            switch (action) {
+                case "notify-all":
+                case "notify-statistic":
+                    publisher.debts();
+                    publisher.statistic();
+                    publisher.deposit();
+                    break;
+                case "notify-without-statistic":
+                    publisher.discharge(NotificationType.DEBTS);
+                    publisher.discharge(NotificationType.STATISTIC);
+                    publisher.discharge(NotificationType.DEPOSITS);
+                    break;
+                case "notify-back":
+                default:
+                    break;
+            }
 
-        return "Сообщения отправленны!";
+            publisher.publish();
+
+            return "Сообщения отправленны!";
+        }
     }
 }
