@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.services;
 
-import com.github.onotoliy.opposite.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
 import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.services.core.ModifierService;
 

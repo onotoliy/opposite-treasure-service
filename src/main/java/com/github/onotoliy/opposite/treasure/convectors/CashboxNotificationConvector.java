@@ -1,6 +1,7 @@
 package com.github.onotoliy.opposite.treasure.convectors;
 
-import com.github.onotoliy.opposite.data.Cashbox;
+
+import com.github.onotoliy.opposite.treasure.data.Cashbox;
 
 /**
  * Класс описывающий логику преобразования кассы в текстовое уведомление.

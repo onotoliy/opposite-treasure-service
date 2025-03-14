@@ -1,13 +1,10 @@
 package com.github.onotoliy.opposite.treasure.services;
 
-import com.github.onotoliy.opposite.data.Cashbox;
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.User;
 import com.github.onotoliy.opposite.treasure.convectors.DebtNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.DepositNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.EventNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.TransactionNotificationConvector;
+import com.github.onotoliy.opposite.treasure.data.Event;
 import com.github.onotoliy.opposite.treasure.dto.Delivery;
 import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.dto.Notification;
@@ -114,7 +111,7 @@ implements INotificationService {
         while (true) {
             final List<Notification> context = repository
                 .getAll(parameter)
-                .getContext();
+                .context();
 
             if (context.isEmpty()) {
                 return;

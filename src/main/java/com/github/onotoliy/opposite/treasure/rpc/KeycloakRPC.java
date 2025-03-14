@@ -1,7 +1,7 @@
 package com.github.onotoliy.opposite.treasure.rpc;
 
-import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.User;
+import com.github.onotoliy.opposite.treasure.data.Option;
+import com.github.onotoliy.opposite.treasure.data.User;
 import com.github.onotoliy.opposite.treasure.dto.Contact;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Objects;

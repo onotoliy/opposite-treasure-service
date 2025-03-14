@@ -1,7 +1,7 @@
 package com.github.onotoliy.opposite.treasure;
 
-import com.github.onotoliy.opposite.data.core.ExceptionInformation;
-import com.github.onotoliy.opposite.data.core.HTTPStatus;
+import com.github.onotoliy.opposite.treasure.data.core.ExceptionInformation;
+import com.github.onotoliy.opposite.treasure.data.core.HTTPStatus;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;

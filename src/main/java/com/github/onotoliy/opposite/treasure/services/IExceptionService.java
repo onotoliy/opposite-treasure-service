@@ -1,6 +1,7 @@
 package com.github.onotoliy.opposite.treasure.services;
 
-import com.github.onotoliy.opposite.data.core.ExceptionDevice;
+
+import com.github.onotoliy.opposite.treasure.data.core.ExceptionDevice;
 
 /**
  * Сервис управления ошибками устройства.

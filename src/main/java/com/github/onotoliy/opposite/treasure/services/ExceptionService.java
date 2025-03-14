@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.services;
 
-import com.github.onotoliy.opposite.data.core.ExceptionDevice;
+import com.github.onotoliy.opposite.treasure.data.core.ExceptionDevice;
 import com.github.onotoliy.opposite.treasure.repositories.ExceptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

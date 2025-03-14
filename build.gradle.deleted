@@ -30,13 +30,6 @@ repositories {
     maven {
         url "https://plugins.gradle.org/m2/"
     }
-    maven {
-        url "http://185.12.95.242:8088/repository/onotoliy-maven-group/"
-        credentials {
-            username = property('onotoliy.nexus.username')
-            password = property('onotoliy.nexus.password')
-        }
-    }
 }
 
 dependencies {
@@ -177,26 +170,6 @@ artifacts {
 }
 
 check.dependsOn jacocoTestCoverageVerification
-
-publishing {
-    repositories {
-        maven {
-            url = 'http://185.12.95.242:8088/repository/maven-releases/'
-            credentials {
-                username = property('onotoliy.nexus.username')
-                password = property('onotoliy.nexus.password')
-            }
-        }
-    }
-
-    publications {
-        maven(MavenPublication) {
-            artifact("build/libs/treasure-service-$version\\.jar") {
-                extension "jar"
-            }
-        }
-    }
-}
 
 task jooqGen(dependsOn: 'classes', type: JavaExec) {
     main = 'com.github.onotoliy.opposite.treasure.JooqGenerator'

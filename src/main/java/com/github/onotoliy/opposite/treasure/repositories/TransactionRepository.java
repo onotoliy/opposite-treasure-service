@@ -1,36 +1,25 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
-import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.TransactionType;
+import com.github.onotoliy.opposite.treasure.data.Option;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.jooq.Tables;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureTransactionRecord;
 import com.github.onotoliy.opposite.treasure.repositories.core.AbstractModifierRepository;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
+import org.jooq.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import org.jooq.Condition;
-import org.jooq.Configuration;
-import org.jooq.DSLContext;
-import org.jooq.InsertSetMoreStep;
-import org.jooq.OrderField;
-import org.jooq.Record;
-import org.jooq.SelectJoinStep;
-import org.jooq.UpdateSetMoreStep;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_EVENT;
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_TRANSACTION;
 
 /**
@@ -41,7 +30,7 @@ import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_TRANSAC
 @Repository
 public class TransactionRepository
 extends AbstractModifierRepository<
-    Transaction,
+        Transaction,
     TransactionSearchParameter,
     TreasureTransactionRecord,
     TreasureTransaction> {
@@ -106,12 +95,11 @@ extends AbstractModifierRepository<
             final Configuration configuration,
             final Transaction dto) {
         return super.insertQuery(configuration, dto)
-                    .set(table.CASH, Numbers.parse(dto.getCash()))
-                    .set(table.TRANSACTION_DATE,
-                         Dates.parse(dto.getTransactionDate()))
-                    .set(table.USER_GUID, GUIDs.parse(dto.getPerson()))
-                    .set(table.EVENT_GUID, GUIDs.parse(dto.getEvent()))
-                    .set(table.TYPE, Strings.parse(dto.getType().name()));
+                    .set(table.CASH, dto.cash())
+                    .set(table.TRANSACTION_DATE,dto.transactionDate())
+                    .set(table.USER_GUID, GUIDs.parse(dto.person()))
+                    .set(table.EVENT_GUID, GUIDs.parse(dto.event()))
+                    .set(table.TYPE, Strings.parse(dto.type().name()));
     }
 
     @Override
@@ -119,12 +107,11 @@ extends AbstractModifierRepository<
             final Configuration configuration,
             final Transaction dto) {
         return super.updateQuery(configuration, dto)
-                    .set(table.CASH, Numbers.parse(dto.getCash()))
-                    .set(table.TRANSACTION_DATE,
-                         Dates.parse(dto.getTransactionDate()))
-                    .set(table.USER_GUID, GUIDs.parse(dto.getPerson()))
-                    .set(table.EVENT_GUID, GUIDs.parse(dto.getEvent()))
-                    .set(table.TYPE, Strings.parse(dto.getType().name()));
+                    .set(table.CASH, dto.cash())
+                    .set(table.TRANSACTION_DATE, dto.transactionDate())
+                    .set(table.USER_GUID, GUIDs.parse(dto.person()))
+                    .set(table.EVENT_GUID, GUIDs.parse(dto.event()))
+                    .set(table.TYPE, Strings.parse(dto.type().name()));
     }
 
     @Override
@@ -138,20 +125,18 @@ extends AbstractModifierRepository<
         Option person = record.getValue(table.USER_GUID, UUID.class) == null
             ? null
             : formatUser(record, table.USER_GUID);
-        String deletionDate =
-            Dates.format(record, TREASURE_EVENT.DELETION_DATE);
 
         return new Transaction(
-            GUIDs.format(record, uuid),
+                record.getValue(uuid),
             Strings.format(record, name),
-            Numbers.format(record, table.CASH),
+                record.getValue(table.CASH),
             TransactionType.valueOf(Strings.format(record, table.TYPE)),
             person,
             EventRepository.toOption(record),
-            Dates.format(record, table.TRANSACTION_DATE),
-            Dates.format(record, table.TRANSACTION_DATE),
+                record.getValue(table.TRANSACTION_DATE),
+                record.getValue(table.TRANSACTION_DATE),
             formatUser(record, author),
-            deletionDate.equals("—") ? null : deletionDate
+            record.getValue(table.DELETION_DATE)
         );
     }
 }

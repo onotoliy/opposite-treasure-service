@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.convectors;
 
-import com.github.onotoliy.opposite.data.Cashbox;
+import com.github.onotoliy.opposite.treasure.data.Cashbox;
 
 /**
  * Базовый класс описывающий логику преобразования объекта в текстовое
@@ -43,7 +43,7 @@ public abstract class AbstractNotificationConvector<T> {
 
         append(dto);
 
-        append("В кассе", cashbox.getDeposit());
+        append("В кассе", cashbox.deposit());
 
         return message.toString();
     }

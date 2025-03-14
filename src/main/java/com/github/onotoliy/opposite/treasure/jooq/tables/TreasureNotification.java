@@ -10,6 +10,7 @@ import com.github.onotoliy.opposite.treasure.jooq.Public;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureNotificationRecord;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -90,7 +91,7 @@ public class TreasureNotification extends TableImpl<TreasureNotificationRecord> 
     /**
      * The column <code>public.treasure_notification.delivery_date</code>. Дата доставки
      */
-    public final TableField<TreasureNotificationRecord, Timestamp> DELIVERY_DATE = createField("delivery_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата доставки");
+    public final TableField<TreasureNotificationRecord, Instant> DELIVERY_DATE = createField("delivery_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата доставки");
 
     /**
      * The column <code>public.treasure_notification.author</code>. Автор
@@ -100,12 +101,12 @@ public class TreasureNotification extends TableImpl<TreasureNotificationRecord> 
     /**
      * The column <code>public.treasure_notification.creation_date</code>. Дата создания записи
      */
-    public final TableField<TreasureNotificationRecord, Timestamp> CREATION_DATE = createField("creation_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата создания записи");
+    public final TableField<TreasureNotificationRecord, Instant> CREATION_DATE = createField("creation_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата создания записи");
 
     /**
      * The column <code>public.treasure_notification.deletion_date</code>. Дата удаления записи
      */
-    public final TableField<TreasureNotificationRecord, Timestamp> DELETION_DATE = createField("deletion_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата удаления записи");
+    public final TableField<TreasureNotificationRecord, Instant> DELETION_DATE = createField("deletion_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата удаления записи");
 
     /**
      * Create a <code>public.treasure_notification</code> table reference

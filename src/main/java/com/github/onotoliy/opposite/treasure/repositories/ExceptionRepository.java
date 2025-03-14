@@ -1,7 +1,7 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
+import com.github.onotoliy.opposite.treasure.data.core.ExceptionDevice;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import com.github.onotoliy.opposite.data.core.ExceptionDevice;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -39,12 +39,12 @@ public class ExceptionRepository {
     public void registration(final ExceptionDevice exception) {
         dsl.insertInto(TREASURE_EXCEPTION)
            .set(TREASURE_EXCEPTION.GUID, GUIDs.random())
-           .set(TREASURE_EXCEPTION.AGENT, exception.getAgent())
-           .set(TREASURE_EXCEPTION.DEVICE, exception.getDevice())
-           .set(TREASURE_EXCEPTION.MESSAGE, exception.getMessage())
+           .set(TREASURE_EXCEPTION.AGENT, exception.agent())
+           .set(TREASURE_EXCEPTION.DEVICE, exception.device())
+           .set(TREASURE_EXCEPTION.MESSAGE, exception.message())
            .set(TREASURE_EXCEPTION.LOCALIZED_MESSAGE,
-                exception.getLocalizedMessage())
-           .set(TREASURE_EXCEPTION.STACK_TRACE, exception.getStackTrace())
+                exception.localizedMessage())
+           .set(TREASURE_EXCEPTION.STACK_TRACE, exception.stackTrace())
            .execute();
     }
 

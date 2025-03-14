@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.convectors;
 
-import com.github.onotoliy.opposite.data.Deposit;
+import com.github.onotoliy.opposite.treasure.data.Deposit;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
 
 import java.math.BigDecimal;

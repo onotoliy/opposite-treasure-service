@@ -11,6 +11,7 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureEventRe
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -81,7 +82,7 @@ public class TreasureEvent extends TableImpl<TreasureEventRecord> {
     /**
      * The column <code>public.treasure_event.deadline</code>. Конечный срок сдачи
      */
-    public final TableField<TreasureEventRecord, Timestamp> DEADLINE = createField("deadline", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Конечный срок сдачи");
+    public final TableField<TreasureEventRecord, Instant> DEADLINE = createField("deadline", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Конечный срок сдачи");
 
     /**
      * The column <code>public.treasure_event.author</code>. Автор
@@ -91,12 +92,12 @@ public class TreasureEvent extends TableImpl<TreasureEventRecord> {
     /**
      * The column <code>public.treasure_event.creation_date</code>. Дата создания записи
      */
-    public final TableField<TreasureEventRecord, Timestamp> CREATION_DATE = createField("creation_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата создания записи");
+    public final TableField<TreasureEventRecord, Instant> CREATION_DATE = createField("creation_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата создания записи");
 
     /**
      * The column <code>public.treasure_event.deletion_date</code>. Дата удаления записи
      */
-    public final TableField<TreasureEventRecord, Timestamp> DELETION_DATE = createField("deletion_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата удаления записи");
+    public final TableField<TreasureEventRecord, Instant> DELETION_DATE = createField("deletion_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата удаления записи");
 
     /**
      * Create a <code>public.treasure_event</code> table reference

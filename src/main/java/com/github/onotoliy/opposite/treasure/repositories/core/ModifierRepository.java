@@ -1,9 +1,9 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
-import com.github.onotoliy.opposite.data.core.HasAuthor;
-import com.github.onotoliy.opposite.data.core.HasCreationDate;
-import com.github.onotoliy.opposite.data.core.HasName;
-import com.github.onotoliy.opposite.data.core.HasUUID;
+import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
+import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
+import com.github.onotoliy.opposite.treasure.data.core.HasName;
+import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import org.jooq.Configuration;
 

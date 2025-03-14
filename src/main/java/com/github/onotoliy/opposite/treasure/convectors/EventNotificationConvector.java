@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.convectors;
 
-import com.github.onotoliy.opposite.data.Event;
+import com.github.onotoliy.opposite.treasure.data.Event;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 
 /**
@@ -22,9 +22,9 @@ extends AbstractNotificationConvector<Event> {
 
     @Override
     protected void append(final Event dto) {
-        append("Мероприятие", dto.getName());
-        append("Сумма взноса", dto.getContribution());
-        append("Сдать до", Dates.toShortFormat(dto.getDeadline()));
+        append("Мероприятие", dto.name());
+        append("Сумма взноса", dto.contribution());
+        append("Сдать до", Dates.toShortFormat(dto.deadline()));
     }
 
 }

@@ -9,6 +9,7 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureCashbox
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.Instant;
 
 import javax.annotation.Generated;
 
@@ -54,7 +55,7 @@ public class TreasureCashbox extends TableImpl<TreasureCashboxRecord> {
     /**
      * The column <code>public.treasure_cashbox.last_update_date</code>. Дата последненго изменения
      */
-    public final TableField<TreasureCashboxRecord, Timestamp> LAST_UPDATE_DATE = createField("last_update_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата последненго изменения");
+    public final TableField<TreasureCashboxRecord, Instant> LAST_UPDATE_DATE = createField("last_update_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата последненго изменения");
 
     /**
      * The column <code>public.treasure_cashbox.deposit</code>. Сумма в кассе

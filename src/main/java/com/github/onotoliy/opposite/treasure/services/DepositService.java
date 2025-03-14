@@ -1,8 +1,8 @@
 package com.github.onotoliy.opposite.treasure.services;
 
-import com.github.onotoliy.opposite.data.Deposit;
-import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.Deposit;
+import com.github.onotoliy.opposite.treasure.data.Option;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.repositories.DepositRepository;
 import org.springframework.beans.factory.annotation.Autowired;

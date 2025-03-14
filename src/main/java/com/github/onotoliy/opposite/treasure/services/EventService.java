@@ -1,8 +1,8 @@
 package com.github.onotoliy.opposite.treasure.services;
 
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
 import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
@@ -80,7 +80,7 @@ implements IEventService {
 
         publisher.notify(configuration, repository.get(GUIDs.parse(dto)));
 
-        if (isEmpty(dto.getContribution()) && isEmpty(dto.getTotal())) {
+        if (isEmpty(dto.contribution()) && isEmpty(dtototal())) {
             return;
         }
 
@@ -92,13 +92,13 @@ implements IEventService {
     protected void update(final Configuration configuration, final Event dto) {
         Event previous = get(GUIDs.parse(dto));
 
-        if (Numbers.nonEqually(dto.getContribution(),
-                               previous.getContribution())) {
+        if (Numbers.nonEqually(dto.contribution(),
+                               previous.contribution())) {
             throw new ModificationException(
                 "Нельзя менять сумму взноса с одного человека");
         }
 
-        if (Numbers.nonEqually(dto.getTotal(), previous.getTotal())) {
+        if (Numbers.nonEqually(dto.total(), previous.total())) {
             throw new ModificationException("Нельзя менять общую сумму");
         }
 
@@ -111,7 +111,7 @@ implements IEventService {
         Page<Transaction> page = transaction.getAll(
             new TransactionSearchParameter(null, null, uuid, null, 0, 1));
 
-        if (page.getMeta().getTotal() > 0) {
+        if (page.meta().total() > 0) {
             throw new ModificationException(
                 String.format("К событию %s привязаны транзакции", uuid));
         }

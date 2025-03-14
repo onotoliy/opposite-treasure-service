@@ -1,38 +1,21 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
-import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.core.HasAuthor;
-import com.github.onotoliy.opposite.data.core.HasCreationDate;
-import com.github.onotoliy.opposite.data.core.HasName;
-import com.github.onotoliy.opposite.data.core.HasUUID;
-import com.github.onotoliy.opposite.data.page.Meta;
-import com.github.onotoliy.opposite.data.page.Page;
-import com.github.onotoliy.opposite.data.page.Paging;
+import com.github.onotoliy.opposite.treasure.data.Option;
+import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
+import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
+import com.github.onotoliy.opposite.treasure.data.core.HasName;
+import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
+import com.github.onotoliy.opposite.treasure.data.page.Meta;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
+import org.jooq.*;
 
-import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.OrderField;
-import org.jooq.Record;
-import org.jooq.SelectJoinStep;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.impl.DSL;
-
-import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_VERSION;
+import java.time.Instant;
+import java.util.*;
 
 /**
  * Базовый репозиторий чтения записей из БД.
@@ -73,12 +56,12 @@ implements ReaderRepository<E, P> {
     /**
      * Дата создания.
      */
-    protected final TableField<R, Timestamp> creationDate;
+    protected final TableField<R, Instant> creationDate;
 
     /**
      * Дата удаления.
      */
-    protected final TableField<R, Timestamp> deletionDate;
+    protected final TableField<R, Instant> deletionDate;
 
     /**
      * Контекст подключения к БД.
@@ -107,8 +90,8 @@ implements ReaderRepository<E, P> {
             final TableField<R, UUID> uuid,
             final TableField<R, String> name,
             final TableField<R, UUID> author,
-            final TableField<R, Timestamp> creationDate,
-            final TableField<R, Timestamp> deletionDate,
+            final TableField<R, Instant> creationDate,
+            final TableField<R, Instant> deletionDate,
             final DSLContext dsl,
             final KeycloakRPC user) {
         this.table = table;
@@ -153,43 +136,7 @@ implements ReaderRepository<E, P> {
     public List<Option> getAll() {
         return findQuery().where(deletionDate.isNull())
                           .fetch(record ->
-                              new Option(GUIDs.format(record, uuid),
-                                  Strings.format(record, name)));
-    }
-
-    @Override
-    public Option version() {
-        return dsl.select()
-           .from(TREASURE_VERSION)
-           .where(TREASURE_VERSION.NAME.eq(table.getName()))
-           .fetchOptional(record -> new Option(
-               Strings.format(record, TREASURE_VERSION.NAME),
-               Numbers.format(record, TREASURE_VERSION.VERSION)
-           ))
-           .orElse(new Option(table.getName(), "0"));
-    }
-
-    @Override
-    public Page<E> sync(final long version,
-                        final int offset,
-                        final int numberOfRows) {
-       Condition condition = version == 0
-           ? DSL.noCondition()
-           : creationDate.greaterOrEqual(new Timestamp(version));
-
-        return new Page<>(
-            new Meta(
-                dsl.selectCount()
-                   .from(table)
-                   .where(condition)
-                   .fetchOptional(0, int.class)
-                   .orElse(0),
-                new Paging(offset, numberOfRows)),
-            findQuery().where(condition)
-                       .orderBy(orderBy())
-                       .offset(offset)
-                       .limit(numberOfRows)
-                       .fetch(this::toDTO));
+                              new Option(record.getValue(uuid), Strings.format(record, name)));
     }
 
     @Override

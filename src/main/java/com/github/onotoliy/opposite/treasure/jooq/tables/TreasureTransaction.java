@@ -11,6 +11,7 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureTransac
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -96,17 +97,17 @@ public class TreasureTransaction extends TableImpl<TreasureTransactionRecord> {
     /**
      * The column <code>public.treasure_transaction.creation_date</code>. Дата создания записи
      */
-    public final TableField<TreasureTransactionRecord, Timestamp> CREATION_DATE = createField("creation_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата создания записи");
+    public final TableField<TreasureTransactionRecord, Instant> CREATION_DATE = createField("creation_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата создания записи");
 
     /**
      * The column <code>public.treasure_transaction.deletion_date</code>. Дата удаления записи
      */
-    public final TableField<TreasureTransactionRecord, Timestamp> DELETION_DATE = createField("deletion_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата удаления записи");
+    public final TableField<TreasureTransactionRecord, Instant> DELETION_DATE = createField("deletion_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата удаления записи");
 
     /**
      * The column <code>public.treasure_transaction.transaction_date</code>. Дата совершения транзации
      */
-    public final TableField<TreasureTransactionRecord, Timestamp> TRANSACTION_DATE = createField("transaction_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата совершения транзации");
+    public final TableField<TreasureTransactionRecord, Instant> TRANSACTION_DATE = createField("transaction_date", org.jooq.impl.SQLDataType.TIMESTAMP, this, "Дата совершения транзации");
 
     /**
      * Create a <code>public.treasure_transaction</code> table reference

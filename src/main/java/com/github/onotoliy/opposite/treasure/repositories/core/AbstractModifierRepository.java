@@ -1,33 +1,23 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
-import com.github.onotoliy.opposite.data.core.HasAuthor;
-import com.github.onotoliy.opposite.data.core.HasCreationDate;
-import com.github.onotoliy.opposite.data.core.HasName;
-import com.github.onotoliy.opposite.data.core.HasUUID;
+import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
+import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
+import com.github.onotoliy.opposite.treasure.data.core.HasName;
+import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import com.github.onotoliy.opposite.treasure.utils.Strings;
+import org.jooq.*;
+import org.jooq.impl.DSL;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
-
-import org.jooq.Configuration;
-import org.jooq.DSLContext;
-import org.jooq.InsertSetMoreStep;
-import org.jooq.Query;
-import org.jooq.Record;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UpdateConditionStep;
-import org.jooq.UpdateSetMoreStep;
-import org.jooq.impl.DSL;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_VERSION;
 
@@ -65,8 +55,8 @@ implements ModifierRepository<E, P> {
             final TableField<R, UUID> uuid,
             final TableField<R, String> name,
             final TableField<R, UUID> author,
-            final  TableField<R, Timestamp> creationDate,
-            final TableField<R, Timestamp> deletionDate,
+            final  TableField<R, Instant> creationDate,
+            final TableField<R, Instant> deletionDate,
             final DSLContext dsl,
             final KeycloakRPC user) {
         super(table, uuid, name, author, creationDate, deletionDate, dsl, user);
@@ -140,9 +130,9 @@ implements ModifierRepository<E, P> {
         return DSL.using(configuration)
                   .insertInto(table)
                   .set(uuid, GUIDs.parse(dto))
-                  .set(name, Strings.parse(dto.getName()))
-                  .set(creationDate, Dates.parse(dto.getCreationDate()))
-                  .set(author, GUIDs.parse(dto.getAuthor()));
+                  .set(name, dto.name())
+                  .set(creationDate, dto.creationDate())
+                  .set(author, GUIDs.parse(dto.author()));
     }
 
     /**
@@ -160,9 +150,9 @@ implements ModifierRepository<E, P> {
 
         return DSL.using(configuration)
                   .update(table)
-                  .set(name, Strings.parse(dto.getName()))
-                  .set(creationDate, Dates.parse(dto.getCreationDate()))
-                  .set(author, GUIDs.parse(dto.getAuthor()));
+                  .set(name, dto.name())
+                  .set(creationDate, dto.creationDate())
+                  .set(author, GUIDs.parse(dto.author()));
     }
 
     /**
@@ -239,10 +229,9 @@ implements ModifierRepository<E, P> {
         final Configuration configuration,
         final E dto
     ) {
-        Timestamp timestamp = Dates.parse(dto.getCreationDate());
 
         BigDecimal version = BigDecimal.valueOf(
-            Objects.requireNonNull(timestamp).getTime());
+            Objects.requireNonNull(dto.creationDate()).getEpochSecond());
 
         DSL.using(configuration)
            .update(TREASURE_VERSION)

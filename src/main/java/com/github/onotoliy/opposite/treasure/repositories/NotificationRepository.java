@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
-import com.github.onotoliy.opposite.data.Option;
+import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.dto.Delivery;
 import com.github.onotoliy.opposite.treasure.dto.Notification;
 import com.github.onotoliy.opposite.treasure.dto.NotificationSearchParameter;
@@ -10,16 +10,8 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureNotific
 import com.github.onotoliy.opposite.treasure.repositories.core.AbstractModifierRepository;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
-import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
-
-import org.jooq.Condition;
-import org.jooq.Configuration;
-import org.jooq.DSLContext;
-import org.jooq.InsertSetMoreStep;
-import org.jooq.OrderField;
-import org.jooq.Record;
-import org.jooq.UpdateSetMoreStep;
+import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -126,16 +118,15 @@ extends AbstractModifierRepository<
         final Configuration configuration,
         final Notification dto) {
         return super.insertQuery(configuration, dto)
-                    .set(table.MESSAGE, Strings.parse(dto.getMessage()))
-                    .set(table.EXECUTOR, Strings.parse(dto.getExecutor()))
+                    .set(table.MESSAGE, Strings.parse(dto.message()))
+                    .set(table.EXECUTOR, Strings.parse(dto.executor()))
                     .set(
                         table.NOTIFICATION_TYPE,
-                        Strings.parse(dto.getNotificationType().name())
+                        Strings.parse(dto.notificationType().name())
                     )
                     .set(
                         table.DELIVERY_DATE,
-                        Strings.isEmpty(dto.getDeliveryDate())
-                            ? null : Dates.parse(dto.getDeliveryDate())
+                        dto.deliveryDate()
                     );
     }
 
@@ -144,16 +135,15 @@ extends AbstractModifierRepository<
         final Configuration configuration,
         final Notification dto) {
         return super.updateQuery(configuration, dto)
-                    .set(table.MESSAGE, Strings.parse(dto.getMessage()))
-                    .set(table.EXECUTOR, Strings.parse(dto.getExecutor()))
+                    .set(table.MESSAGE, Strings.parse(dto.message()))
+                    .set(table.EXECUTOR, Strings.parse(dto.executor()))
                     .set(
                         table.NOTIFICATION_TYPE,
-                        Strings.parse(dto.getNotificationType().name())
+                        Strings.parse(dto.notificationType().name())
                     )
                     .set(
                         table.DELIVERY_DATE,
-                        Strings.isEmpty(dto.getDeliveryDate())
-                            ? null : Dates.parse(dto.getDeliveryDate())
+                            dto.deliveryDate()
                     );
     }
 
@@ -175,21 +165,19 @@ extends AbstractModifierRepository<
      * @return Объект.
      */
     public static Notification toDTO(final Record record, final Option author) {
-        String deletionDate =
-            Dates.format(record, TREASURE_NOTIFICATION.DELETION_DATE);
 
         return new Notification(
-            GUIDs.format(record, TREASURE_NOTIFICATION.GUID),
+                record.getValue( TREASURE_NOTIFICATION.GUID),
             Strings.format(record, TREASURE_NOTIFICATION.NAME),
             Strings.format(record, TREASURE_NOTIFICATION.MESSAGE),
             NotificationType.valueOf(
                 Strings.format(record, TREASURE_NOTIFICATION.NOTIFICATION_TYPE)
             ),
             Strings.format(record, TREASURE_NOTIFICATION.EXECUTOR),
-            Dates.format(record, TREASURE_NOTIFICATION.DELIVERY_DATE),
-            Dates.format(record, TREASURE_NOTIFICATION.CREATION_DATE),
+                record.getValue(TREASURE_NOTIFICATION.DELIVERY_DATE),
+            record.getValue(TREASURE_NOTIFICATION.CREATION_DATE),
             author,
-            deletionDate.equals("—") ? null : deletionDate
+                record.getValue(TREASURE_NOTIFICATION.DELETION_DATE)
         );
     }
 }

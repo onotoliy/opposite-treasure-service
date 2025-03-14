@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
-import com.github.onotoliy.opposite.data.Cashbox;
+import com.github.onotoliy.opposite.treasure.data.Cashbox;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
 
@@ -111,8 +111,8 @@ public class CashboxRepository {
      */
     private Cashbox toDTO(final Record record) {
         return new Cashbox(
-            Numbers.format(record, TREASURE_CASHBOX.DEPOSIT),
-            Dates.format(record, TREASURE_CASHBOX.LAST_UPDATE_DATE));
+            record.getValue(TREASURE_CASHBOX.DEPOSIT),
+                record.getValue(TREASURE_CASHBOX.LAST_UPDATE_DATE));
     }
 
     /**

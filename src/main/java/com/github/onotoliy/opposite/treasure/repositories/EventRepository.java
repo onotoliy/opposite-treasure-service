@@ -1,7 +1,7 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Option;
+import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureEventRecord;
@@ -13,6 +13,7 @@ import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Configuration;
@@ -33,7 +34,7 @@ import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_EVENT;
 @Repository
 public class EventRepository
 extends AbstractModifierRepository<
-    Event,
+        Event,
     EventSearchParameter,
     TreasureEventRecord,
     TreasureEvent> {
@@ -74,10 +75,9 @@ extends AbstractModifierRepository<
             final Configuration configuration,
             final Event dto) {
         return super.insertQuery(configuration, dto)
-                    .set(table.CONTRIBUTION,
-                         Numbers.parse(dto.getContribution()))
-                    .set(table.TOTAL, Numbers.parse(dto.getTotal()))
-                    .set(table.DEADLINE, Dates.parse(dto.getDeadline()));
+                    .set(table.CONTRIBUTION, dto.contribution())
+                    .set(table.TOTAL, dto.total())
+                    .set(table.DEADLINE, dto.deadline());
     }
 
     @Override
@@ -85,10 +85,9 @@ extends AbstractModifierRepository<
             final Configuration configuration,
             final Event dto) {
         return super.updateQuery(configuration, dto)
-                    .set(table.CONTRIBUTION,
-                         Numbers.parse(dto.getContribution()))
-                    .set(table.TOTAL, Numbers.parse(dto.getTotal()))
-                    .set(table.DEADLINE, Dates.parse(dto.getDeadline()));
+                    .set(table.CONTRIBUTION, dto.contribution())
+                    .set(table.TOTAL, dto.total())
+                    .set(table.DEADLINE, dto.deadline());
     }
 
     @Override
@@ -104,18 +103,15 @@ extends AbstractModifierRepository<
      * @return Объект.
      */
     public static Event toDTO(final Record record, final Option author) {
-        String deletionDate =
-            Dates.format(record, TREASURE_EVENT.DELETION_DATE);
-
         return new Event(
-            GUIDs.format(record, TREASURE_EVENT.GUID),
+                record.getValue(  TREASURE_EVENT.GUID),
             Strings.format(record, TREASURE_EVENT.NAME),
-            Numbers.format(record, TREASURE_EVENT.CONTRIBUTION),
-            Numbers.format(record, TREASURE_EVENT.TOTAL),
-            Dates.format(record, TREASURE_EVENT.DEADLINE),
-            Dates.format(record, TREASURE_EVENT.CREATION_DATE),
+                record.getValue(  TREASURE_EVENT.CONTRIBUTION),
+                record.getValue( TREASURE_EVENT.TOTAL),
+            record.getValue(TREASURE_EVENT.DEADLINE),
+                record.getValue( TREASURE_EVENT.CREATION_DATE),
             author,
-            deletionDate.equals("—") ? null : deletionDate
+                record.getValue(TREASURE_EVENT.DELETION_DATE)
         );
     }
 
@@ -126,9 +122,9 @@ extends AbstractModifierRepository<
      * @return Объект.
      */
     public static Option toOption(final Record record) {
-        String uuid = GUIDs.format(record, TREASURE_EVENT.GUID);
+        UUID uuid = record.get(TREASURE_EVENT.GUID);
 
-        return Strings.isEmpty(uuid)
+        return uuid == null
             ? null
             : new Option(uuid, Strings.format(record, TREASURE_EVENT.NAME));
     }

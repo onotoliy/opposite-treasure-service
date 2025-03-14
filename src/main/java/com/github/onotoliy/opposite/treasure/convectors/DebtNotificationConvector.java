@@ -1,9 +1,9 @@
 package com.github.onotoliy.opposite.treasure.convectors;
 
-import com.github.onotoliy.opposite.data.Cashbox;
-import com.github.onotoliy.opposite.data.Debt;
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.User;
+import com.github.onotoliy.opposite.treasure.data.Cashbox;
+import com.github.onotoliy.opposite.treasure.data.Debt;
+import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.User;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
 
@@ -55,13 +55,13 @@ extends AbstractNotificationConvector<Debt> {
                                  final Cashbox cashbox) {
         message.setLength(0);
 
-        append("Член клуба", user.getName());
+        append("Член клуба", user.name());
         append("Долги", events
             .stream()
             .map(this::toNotification)
             .collect(Collectors.joining(", ")));
         append("Итого", Numbers.format(toTotal(events)));
-        append("В кассе", cashbox.getDeposit());
+        append("В кассе", cashbox.deposit());
 
         return message.toString();
     }
@@ -79,15 +79,15 @@ extends AbstractNotificationConvector<Debt> {
      * @return Текстовое уведомление.
      */
     private String toNotification(final Event event) {
-        if (event.getName().toLowerCase().startsWith("взносы")) {
+        if (event.name().toLowerCase().startsWith("взносы")) {
             return String.format(
                 "%s (%s)",
-                event.getContribution(),
-                DATE_FORMAT.format(Dates.parse(event.getDeadline()))
+                event.contribution(),
+                DATE_FORMAT.format(Dates.parse(event.deadline()))
             );
         } else {
             return String
-                .format("%s (%s)", event.getContribution(), event.getName());
+                .format("%s (%s)", event.contribution(), event.name());
         }
     }
 
@@ -119,7 +119,7 @@ extends AbstractNotificationConvector<Debt> {
             numberOfDebtors++;
             totalDebts = totalDebts.add(debts);
 
-            append(user.getName(), Numbers.format(debts));
+            append(user.name(), Numbers.format(debts));
         }
 
         newLine();
@@ -129,7 +129,7 @@ extends AbstractNotificationConvector<Debt> {
 
         newLine();
 
-        append("В кассе", cashbox.getDeposit());
+        append("В кассе", cashbox.deposit());
 
         return message.toString();
     }

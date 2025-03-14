@@ -1,9 +1,9 @@
 package com.github.onotoliy.opposite.treasure.utils;
 
-import com.github.onotoliy.opposite.data.core.HasUUID;
 
 import java.util.UUID;
 
+import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -52,7 +52,7 @@ public final class GUIDs {
      * @return Значение в формате {@link UUID}.
      */
     public static UUID parse(final HasUUID value) {
-        return value == null ? null : parse(value.getUuid());
+        return value == null ? null : parse(value.uuid());
     }
 
     /**

@@ -1,10 +1,10 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
-import com.github.onotoliy.opposite.data.Deposit;
-import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.page.Meta;
-import com.github.onotoliy.opposite.data.page.Page;
-import com.github.onotoliy.opposite.data.page.Paging;
+import com.github.onotoliy.opposite.treasure.data.Deposit;
+import com.github.onotoliy.opposite.treasure.data.Option;
+import com.github.onotoliy.opposite.treasure.data.page.Meta;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
@@ -90,41 +90,7 @@ public class DepositRepository {
                       new NotFoundException(TREASURE_DEPOSIT, uuid));
     }
 
-    /**
-     * Получение версии сущности.
-     *
-     * @return Версия сущности.
-     */
-    public Option version() {
-        return dsl.select()
-                  .from(TREASURE_VERSION)
-                  .where(TREASURE_VERSION.NAME.eq(TREASURE_DEPOSIT.getName()))
-                  .fetchOptional(record -> new Option(
-                      Strings.format(record, TREASURE_VERSION.NAME),
-                      Numbers.format(record, TREASURE_VERSION.VERSION)
-                  ))
-                  .orElse(new Option(TREASURE_DEPOSIT.getName(), "0"));
-    }
 
-    /**
-     * Данные, которые необходимо синхронизировать.
-     *
-     * @param offset Количество записей которое необходимо пропустить.
-     * @param numberOfRows Размер страницы.
-     * @return Данные, которые необходимо синхронизировать.
-     */
-    public Page<Deposit> sync(final int offset, final int numberOfRows) {
-        return new Page<>(
-            new Meta(
-                dsl.selectCount()
-                   .from(TREASURE_DEPOSIT)
-                   .fetchOptional(0, int.class)
-                   .orElse(0),
-                new Paging(offset, numberOfRows)),
-            dsl.select().from(TREASURE_DEPOSIT)
-               .limit(offset, numberOfRows)
-               .fetch(this::toDTO));
-    }
 
     /**
      * Поиск депозитов.
@@ -221,8 +187,8 @@ public class DepositRepository {
             .flatMap(user::findOption);
 
         return new Deposit(
-            person.map(Option::getUuid).orElse(""),
-            person.map(Option::getName).orElse(""),
+            person.map(Option::uuid).orElse(null),
+            person.map(Option::name).orElse(null),
             Numbers.format(record, TREASURE_DEPOSIT.DEPOSIT));
     }
 

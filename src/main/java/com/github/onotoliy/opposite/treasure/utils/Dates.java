@@ -48,7 +48,7 @@ public final class Dates {
      *
      * @return Текущая дата.
      */
-    public static Timestamp now() {
+    public static Instant now() {
         return parse(new Date());
     }
 
@@ -120,16 +120,6 @@ public final class Dates {
     public static String format(final Record record,
                                 final Field<Timestamp> field) {
         return format(record.getValue(field, Timestamp.class));
-    }
-
-    /**
-     * Преобразование даты из ISO формата в которкий формат даты.
-     *
-     * @param value Дата в ISO формате.
-     * @return Дата в коротком формате.
-     */
-    public static String toShortFormat(final String value) {
-        return Strings.isEmpty(value) ? "" : SHORT.format(parse(value));
     }
 
     /**

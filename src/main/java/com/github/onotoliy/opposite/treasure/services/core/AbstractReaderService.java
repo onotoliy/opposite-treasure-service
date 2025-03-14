@@ -1,11 +1,11 @@
 package com.github.onotoliy.opposite.treasure.services.core;
 
-import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.core.HasAuthor;
-import com.github.onotoliy.opposite.data.core.HasCreationDate;
-import com.github.onotoliy.opposite.data.core.HasName;
-import com.github.onotoliy.opposite.data.core.HasUUID;
-import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.Option;
+import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
+import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
+import com.github.onotoliy.opposite.treasure.data.core.HasName;
+import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.repositories.core.ReaderRepository;
 
@@ -55,15 +55,4 @@ implements ReaderService<E, P> {
         return repository.getAll(parameter);
     }
 
-    @Override
-    public Option version() {
-        return repository.version();
-    }
-
-    @Override
-    public Page<E> sync(final long version,
-                        final int offset,
-                        final int numberOfRows) {
-        return repository.sync(version, offset, numberOfRows);
-    }
 }

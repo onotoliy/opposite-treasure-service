@@ -1,12 +1,11 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
-import com.github.onotoliy.opposite.data.Debt;
-import com.github.onotoliy.opposite.data.Deposit;
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.page.Meta;
-import com.github.onotoliy.opposite.data.page.Page;
-import com.github.onotoliy.opposite.data.page.Paging;
+import com.github.onotoliy.opposite.treasure.data.Deposit;
+import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.Option;
+import com.github.onotoliy.opposite.treasure.data.page.Meta;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
@@ -55,55 +54,6 @@ public class DebtRepository {
     public DebtRepository(final DSLContext dsl, final KeycloakRPC user) {
         this.dsl = dsl;
         this.user = user;
-    }
-
-    /**
-     * Получение версии сущности.
-     *
-     * @return Версия сущности.
-     */
-    public Option version() {
-        return dsl.select()
-                  .from(TREASURE_VERSION)
-                  .where(TREASURE_VERSION.NAME.eq(TREASURE_DEBT.getName()))
-                  .fetchOptional(record -> new Option(
-                      Strings.format(record, TREASURE_VERSION.NAME),
-                      Numbers.format(record, TREASURE_VERSION.VERSION)
-                  ))
-                  .orElse(new Option(TREASURE_DEBT.getName(), "0"));
-    }
-
-    /**
-     * Данные, которые необходимо синхронизировать.
-     *
-     * @param offset Количество записей которое необходимо пропустить.
-     * @param numberOfRows Размер страницы.
-     * @return Данные, которые необходимо синхронизировать.
-     */
-    public Page<Debt> sync(final int offset, final int numberOfRows) {
-        return new Page<>(
-            new Meta(
-                dsl.selectCount()
-                   .from(TREASURE_DEBT)
-                   .fetchOptional(0, int.class)
-                   .orElse(0),
-                new Paging(offset, numberOfRows)),
-            dsl.select()
-               .from(TREASURE_DEBT)
-               .join(TREASURE_EVENT)
-               .on(TREASURE_EVENT.GUID.eq(TREASURE_DEBT.EVENT_GUID))
-               .join(TREASURE_DEPOSIT)
-               .on(TREASURE_DEPOSIT.USER_UUID.eq(TREASURE_DEBT.USER_UUID))
-               .orderBy(TREASURE_EVENT.DEADLINE.desc())
-               .offset(offset)
-               .limit(numberOfRows)
-               .fetch(record -> new Debt(
-                   EventRepository.toDTO(
-                       record,
-                       user.find(record.getValue(TREASURE_EVENT.AUTHOR))
-                   ),
-                   DepositRepository.toDTO(user, record)
-               )));
     }
 
     /**
