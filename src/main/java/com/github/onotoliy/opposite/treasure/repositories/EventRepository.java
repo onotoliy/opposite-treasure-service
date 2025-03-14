@@ -105,7 +105,7 @@ extends AbstractModifierRepository<
     public static Event toDTO(final Record record, final Option author) {
         return new Event(
                 record.getValue(  TREASURE_EVENT.GUID),
-            Strings.format(record, TREASURE_EVENT.NAME),
+                record.getValue( TREASURE_EVENT.NAME),
                 record.getValue(  TREASURE_EVENT.CONTRIBUTION),
                 record.getValue( TREASURE_EVENT.TOTAL),
             record.getValue(TREASURE_EVENT.DEADLINE),
@@ -126,6 +126,6 @@ extends AbstractModifierRepository<
 
         return uuid == null
             ? null
-            : new Option(uuid, Strings.format(record, TREASURE_EVENT.NAME));
+            : new Option(uuid, record.getValue(TREASURE_EVENT.NAME));
     }
 }

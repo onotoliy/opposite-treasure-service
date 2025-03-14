@@ -30,6 +30,10 @@
         <java.version>17</java.version>
         <checkstyle.version>7.8.1</checkstyle.version>
         <jacoco.version>0.8.4</jacoco.version>
+
+        <testcontainers.version>1.18.3</testcontainers.version>
+        <jooq.version>3.18.3</jooq.version>
+        <postgresql.jdbc.version>42.6.0</postgresql.jdbc.version>
     </properties>
     <dependencies>
         <!-- Spring Boot -->
@@ -102,17 +106,6 @@
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq</artifactId>
-            <version>3.11.11</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-meta</artifactId>
-            <version>3.11.11</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
-            <version>3.11.11</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -121,7 +114,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.11.3</version>
         </dependency>
 
         <!-- PostgreSQL JDBC Driver -->
@@ -146,6 +138,66 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+
+            <plugin>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-jooq-codegen-maven-plugin</artifactId>
+                <version>0.0.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.testcontainers</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>${testcontainers.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>${postgresql.jdbc.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>generate-jooq-sources</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <database>
+                                <type>POSTGRES</type>
+                                <containerImage>postgres:15-alpine</containerImage>
+                            </database>
+                            <liquibase>
+                                <changeLogDirectory>src/main/resources/liquibase</changeLogDirectory>
+                                <changeLogPath>db.changelog-master.xml</changeLogPath>
+                                <liquibaseSchemaName>public</liquibaseSchemaName>
+                                <defaultSchemaName>public</defaultSchemaName>
+                            </liquibase>
+                            <jooq>
+                                <generator>
+                                    <database>
+                                        <includes>.*</includes>
+                                        <excludes>DATABASECHANGE.*</excludes>
+                                        <inputSchema>public</inputSchema>
+                                        <forcedTypes>
+                                            <forcedType>
+                                                <name>INSTANT</name>
+                                                <includeTypes>TIMESTAMPTZ</includeTypes>
+                                            </forcedType>
+                                        </forcedTypes>
+                                    </database>
+                                    <target>
+                                        <packageName>com.github.onotoliy.opposite.treasure.jooq</packageName>
+                                        <directory>target/generated-sources/jooq</directory>
+                                    </target>
+                                </generator>
+                            </jooq>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Checkstyle Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

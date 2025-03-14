@@ -1,9 +1,9 @@
 package com.github.onotoliy.opposite.treasure.telegram.actions;
 
-import com.github.onotoliy.opposite.data.Cashbox;
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.User;
 import com.github.onotoliy.opposite.treasure.convectors.DebtNotificationConvector;
+import com.github.onotoliy.opposite.treasure.data.Cashbox;
+import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.User;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.DebtService;
 import com.github.onotoliy.opposite.treasure.services.ICashboxService;
@@ -16,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class DebtsTelegramAction extends AbstractTelegramAction {
         final Update update
     ) {
         final String action = update.getCallbackQuery().getData();
-        final Timestamp now = Dates.now();
+        final Instant now = Dates.now();
 
         if (action.equalsIgnoreCase(this.action)) {
 
@@ -78,10 +79,8 @@ public class DebtsTelegramAction extends AbstractTelegramAction {
                 .filter(user -> !getDebts(now, user).isEmpty())
                 .map(user -> InlineKeyboardButton
                     .builder()
-                    .text(user.getName())
-                    .callbackData(
-                        this.action + "-" + user
-                            .getUuid())
+                    .text(user.name())
+                    .callbackData(this.action + "-" + user.uuid())
                     .build())
                 .map(Collections::singletonList)
                 .collect(Collectors.toList());
@@ -103,7 +102,7 @@ public class DebtsTelegramAction extends AbstractTelegramAction {
     @Override
     protected String getText(final Update update) {
         final Cashbox cb = cashbox.get();
-        final Timestamp now = Dates.now();
+        final Instant now = Instant.now();
         final String action = update.getCallbackQuery().getData();
 
         if (action.equalsIgnoreCase(this.action)) {
@@ -124,7 +123,7 @@ public class DebtsTelegramAction extends AbstractTelegramAction {
             return users
                 .getAll()
                 .stream()
-                .filter(u -> u.getUuid().equals(uuid))
+                .filter(u -> u.uuid().equals(uuid))
                 .findFirst()
                 .map(user -> title + "\n" + new DebtNotificationConvector(true)
                     .toNotification(user, getDebts(now, user), cb)
@@ -141,12 +140,12 @@ public class DebtsTelegramAction extends AbstractTelegramAction {
      * @param user Пользваотель.
      * @return Списко долгов пользователя.
      */
-    private List<Event> getDebts(final Timestamp now, final User user) {
+    private List<Event> getDebts(final Instant now, final User user) {
         return debt
             .getDebts(GUIDs.parse(user))
-            .getContext()
+            .context()
             .stream()
-            .filter(dto -> now.compareTo(Dates.parse(dto.getDeadline())) >= 0)
+            .filter(dto -> now.compareTo(dto.deadline()) >= 0)
             .collect(Collectors.toList());
     }
 }

@@ -5,6 +5,7 @@ import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Throwables;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import org.jooq.DSLContext;
@@ -136,7 +137,7 @@ public class DBLoggerRepository {
            .set(TREASURE_LOG.AUTHOR, author)
            .set(TREASURE_LOG.BEAN_NAME, clazz.getCanonicalName())
            .set(TREASURE_LOG.MESSAGE, message)
-           .set(TREASURE_LOG.CREATION_DATE, Dates.now())
+           .set(TREASURE_LOG.CREATION_DATE, Instant.now())
            .set(TREASURE_LOG.STACK_TRACE, Throwables.format(throwable))
            .execute();
     }

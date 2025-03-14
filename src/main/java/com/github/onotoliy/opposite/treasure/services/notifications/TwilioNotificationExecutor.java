@@ -83,7 +83,7 @@ public class TwilioNotificationExecutor implements NotificationExecutor {
                        final Map<String, String> parameters) {
         users.getAll()
              .stream()
-             .map(user -> users.getContact(user.getUuid()))
+             .map(user -> users.getContact(user.uuid().toString()))
              .filter(Objects::nonEmpty)
              .filter(Contact::isNotifyByPhone)
              .map(Contact::getPhone)

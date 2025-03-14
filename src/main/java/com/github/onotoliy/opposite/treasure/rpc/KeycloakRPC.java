@@ -195,7 +195,7 @@ public class KeycloakRPC {
                               .get(GUIDs.format(uuid))
                               .toRepresentation())
                 .map(this::toDTO)
-                .map(e -> new Option(e.getUuid(), e.getName()));
+                .map(e -> new Option(e.uuid(), e.name()));
 
             cache.put(uuid, optional.get());
 
@@ -248,7 +248,7 @@ public class KeycloakRPC {
                 representations
                     .stream()
                     .map(this::toDTO)
-                    .sorted(Comparator.comparing(User::getName))
+                    .sorted(Comparator.comparing(User::name))
                     .collect(Collectors.toList())
             );
         }
@@ -315,7 +315,7 @@ public class KeycloakRPC {
      * @return Пользователь
      */
     private Option emptyDTO(final UUID uuid) {
-        return new Option(GUIDs.format(uuid), "Удаленный пользователь");
+        return new Option(uuid, "Удаленный пользователь");
     }
 
     /**
@@ -339,7 +339,7 @@ public class KeycloakRPC {
      */
     private User toDTO(final UserRepresentation user) {
         return new User(
-            user.getId(),
+            UUID.fromString(user.getId()),
             toName(user.getFirstName(), user.getLastName(), user.getUsername()),
             user.getUsername(),
             Strings.isEmpty(user.getEmail()) ? "" : user.getEmail(),

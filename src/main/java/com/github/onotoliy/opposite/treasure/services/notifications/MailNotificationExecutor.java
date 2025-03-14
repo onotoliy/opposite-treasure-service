@@ -4,6 +4,7 @@ import com.github.onotoliy.opposite.treasure.dto.Contact;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
+import jakarta.mail.internet.InternetAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +12,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import javax.mail.internet.InternetAddress;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -83,7 +83,7 @@ public class MailNotificationExecutor implements NotificationExecutor {
                        final Map<String, String> parameters) {
         users.getAll()
              .stream()
-             .map(user -> users.getContact(user.getUuid()))
+             .map(user -> users.getContact(user.uuid().toString()))
              .filter(Objects::nonEmpty)
              .filter(Contact::isNotifyByEmail)
              .map(Contact::getEmail)

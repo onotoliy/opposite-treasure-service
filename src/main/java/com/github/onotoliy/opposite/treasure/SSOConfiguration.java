@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
@@ -90,15 +90,16 @@ extends KeycloakWebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        super.configure(http);
 
-        http.cors();
-        http.csrf().disable();
-        http.authorizeRequests()
-            .antMatchers("/user/register/exception").permitAll()
-            .antMatchers(HttpMethod.POST).hasAnyRole(modification)
-            .antMatchers(HttpMethod.PUT).hasAnyRole(modification)
-            .antMatchers(HttpMethod.DELETE).hasAnyRole(modification)
-            .antMatchers(HttpMethod.GET).hasAnyRole(reading);
+    }
+
+    @Override
+    public void init(WebSecurity builder) throws Exception {
+
+    }
+
+    @Override
+    public void configure(WebSecurity builder) throws Exception {
+
     }
 }

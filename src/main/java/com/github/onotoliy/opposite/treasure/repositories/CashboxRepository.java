@@ -5,6 +5,7 @@ import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
@@ -98,7 +99,7 @@ public class CashboxRepository {
 
         DSL.using(configuration)
            .update(TREASURE_CASHBOX)
-           .set(TREASURE_CASHBOX.LAST_UPDATE_DATE, Dates.now())
+           .set(TREASURE_CASHBOX.LAST_UPDATE_DATE, Instant.now())
            .set(TREASURE_CASHBOX.DEPOSIT, deposit)
            .execute();
     }
@@ -123,7 +124,7 @@ public class CashboxRepository {
     private void setVersion(
         final Configuration configuration
     ) {
-        BigDecimal version = BigDecimal.valueOf(Dates.now().getTime());
+        BigDecimal version = BigDecimal.valueOf(Instant.now().toEpochMilli());
 
         DSL.using(configuration)
            .update(TREASURE_VERSION)

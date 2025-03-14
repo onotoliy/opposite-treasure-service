@@ -14,6 +14,7 @@ import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -189,7 +190,7 @@ public class DepositRepository {
         return new Deposit(
             person.map(Option::uuid).orElse(null),
             person.map(Option::name).orElse(null),
-            Numbers.format(record, TREASURE_DEPOSIT.DEPOSIT));
+                record.getValue(TREASURE_DEPOSIT.DEPOSIT));
     }
 
     /**
@@ -200,7 +201,7 @@ public class DepositRepository {
     private void setVersion(
         final Configuration configuration
     ) {
-        BigDecimal version = BigDecimal.valueOf(Dates.now().getTime());
+        BigDecimal version = BigDecimal.valueOf(Instant.now().toEpochMilli());
 
         DSL.using(configuration)
            .update(TREASURE_VERSION)

@@ -1,7 +1,7 @@
 package com.github.onotoliy.opposite.treasure.services;
 
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
 import com.github.onotoliy.opposite.treasure.dto.Notification;
 import com.github.onotoliy.opposite.treasure.dto.NotificationSearchParameter;
 import com.github.onotoliy.opposite.treasure.dto.NotificationType;

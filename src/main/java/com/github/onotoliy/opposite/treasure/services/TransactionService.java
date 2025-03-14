@@ -1,8 +1,8 @@
 package com.github.onotoliy.opposite.treasure.services;
 
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.TransactionType;
+import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TransactionService
 extends AbstractModifierService<
-    Transaction,
+        Transaction,
     TransactionSearchParameter,
     TransactionRepository>
 implements ITransactionService {
@@ -90,19 +90,19 @@ implements ITransactionService {
                           final Transaction dto) {
         Transaction previous = get(GUIDs.parse(dto));
 
-        if (Objects.nonEqually(dto.getType(), previous.getType())) {
+        if (Objects.nonEqually(dto.type(), previous.type())) {
             throw new ModificationException("Нельзя менять тип транзакции");
         }
 
-        if (Numbers.nonEqually(dto.getCash(), previous.getCash())) {
+        if (Numbers.nonEqually(dto.cash(), previous.cash())) {
             throw new ModificationException("Нельзя менять сумму транзакции");
         }
 
-        if (GUIDs.nonEqually(dto.getPerson(), previous.getPerson())) {
+        if (GUIDs.nonEqually(dto.person(), previous.person())) {
             throw new ModificationException("Нельзя менять члена клуба");
         }
 
-        if (GUIDs.nonEqually(dto.getEvent(), previous.getEvent())) {
+        if (GUIDs.nonEqually(dto.event(), previous.event())) {
             throw new ModificationException("Нельзя менять мероприятие");
         }
 
@@ -126,23 +126,23 @@ implements ITransactionService {
      * @param dto Транзакция.
      */
     private void validation(final Transaction dto) {
-        if (dto.getType() == TransactionType.NONE) {
+        if (dto.type() == TransactionType.NONE) {
             throw new ModificationException(
                 "У транзакции должен быть указан тип");
         }
 
-        if (dto.getType() != TransactionType.CONTRIBUTION) {
+        if (dto.type() != TransactionType.CONTRIBUTION) {
             return;
         }
 
-        if (GUIDs.isEmpty(dto.getPerson())) {
+        if (GUIDs.isEmpty(dto.person())) {
             throw new ModificationException(
                 "У взноса должен быть задан пользователь");
         }
 
-        if (GUIDs.nonEmpty(dto.getEvent())) {
-            Event e = event.get(GUIDs.parse(dto.getEvent()));
-            if (Numbers.nonEqually(e.getContribution(), dto.getCash())) {
+        if (GUIDs.nonEmpty(dto.event())) {
+            Event e = event.get(GUIDs.parse(dto.event()));
+            if (Numbers.nonEqually(e.contribution(), dto.cash())) {
                 throw new ModificationException(
                      "Внесенный взнос не равен взносу с человека");
             }
@@ -157,7 +157,7 @@ implements ITransactionService {
      */
     private void execute(final Transaction dto,
                          final Consumer<TransactionExecutor> consumer) {
-        TransactionExecutor executor = executors.get(dto.getType());
+        TransactionExecutor executor = executors.get(dto.type());
 
         if (executor == null) {
             throw new ModificationException(

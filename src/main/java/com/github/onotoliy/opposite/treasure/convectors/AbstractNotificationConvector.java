@@ -2,6 +2,8 @@ package com.github.onotoliy.opposite.treasure.convectors;
 
 import com.github.onotoliy.opposite.treasure.data.Cashbox;
 
+import java.math.BigDecimal;
+
 /**
  * Базовый класс описывающий логику преобразования объекта в текстовое
  * уведомление.
@@ -75,6 +77,10 @@ public abstract class AbstractNotificationConvector<T> {
         message.append(": ").append(value).append(".");
 
         newLine();
+    }
+
+    protected void append(final String title, final BigDecimal value) {
+       append(title, value.toString());
     }
 
     /**

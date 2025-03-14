@@ -4,29 +4,28 @@ import com.github.onotoliy.opposite.treasure.convectors.DebtNotificationConvecto
 import com.github.onotoliy.opposite.treasure.convectors.DepositNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.EventNotificationConvector;
 import com.github.onotoliy.opposite.treasure.convectors.TransactionNotificationConvector;
+import com.github.onotoliy.opposite.treasure.data.Cashbox;
 import com.github.onotoliy.opposite.treasure.data.Event;
-import com.github.onotoliy.opposite.treasure.dto.Delivery;
-import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
-import com.github.onotoliy.opposite.treasure.dto.Notification;
-import com.github.onotoliy.opposite.treasure.dto.NotificationSearchParameter;
-import com.github.onotoliy.opposite.treasure.dto.NotificationType;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.User;
+import com.github.onotoliy.opposite.treasure.dto.*;
 import com.github.onotoliy.opposite.treasure.repositories.NotificationRepository;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
 import com.github.onotoliy.opposite.treasure.services.notifications.NotificationExecutor;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-
 import org.jooq.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -148,9 +147,9 @@ implements INotificationService {
     public void debts() {
         repository.discharge(NotificationType.DEBTS);
 
-        final String title = "Долги на " + Dates.toShortFormat(Dates.now());
+        final String title = "Долги на " + Dates.toShortFormat(Instant.now());
         final Cashbox cb = this.cashbox.get();
-        final Timestamp now = Dates.now();
+        final Instant now = Instant.now();
 
         for (User user : users.getAll()) {
             List<Event> debts = getDebts(now, user);
@@ -172,10 +171,10 @@ implements INotificationService {
         repository.discharge(NotificationType.STATISTIC);
 
         final Cashbox cb = this.cashbox.get();
-        final Timestamp now = Dates.now();
+        final Instant now = Instant.now();
 
         notify(
-            "Итого долгов на " + Dates.toShortFormat(Dates.now()),
+            "Итого долгов на " + Dates.toShortFormat(Instant.now()),
             isHTML -> new DebtNotificationConvector(isHTML)
                 .toNotification(
                     users.getAll(),
@@ -192,9 +191,9 @@ implements INotificationService {
 
         final DepositSearchParameter parameter =
             new DepositSearchParameter(0, Integer.MAX_VALUE);
-        final Set<String> members = users.getAll()
+        final Set<UUID> members = users.getAll()
                                          .stream()
-                                         .map(User::getUuid)
+                                         .map(User::uuid)
                                          .collect(Collectors.toSet());
 
         notify(
@@ -202,7 +201,7 @@ implements INotificationService {
             isHTML ->
                 new DepositNotificationConvector(members, isHTML)
                     .toNotification(
-                        deposit.getAll(parameter).getContext(),
+                        deposit.getAll(parameter).context(),
                         cashbox.get()
                     ),
             NotificationType.DEPOSITS);
@@ -220,12 +219,12 @@ implements INotificationService {
      * @param user Пользваотель.
      * @return Списко долгов пользователя.
      */
-    private List<Event> getDebts(final Timestamp now, final User user) {
+    private List<Event> getDebts(final Instant now, final User user) {
         return debt
             .getDebts(GUIDs.parse(user))
-            .getContext()
+            .context()
             .stream()
-            .filter(dto -> now.compareTo(Dates.parse(dto.getDeadline())) >= 0)
+            .filter(dto -> now.compareTo(dto.deadline()) >= 0)
             .collect(Collectors.toList());
     }
 
@@ -238,14 +237,14 @@ implements INotificationService {
         executors
             .stream()
             .filter(executor ->
-                executor.getExecutor().equals(notification.getExecutor())
+                executor.getExecutor().equals(notification.executor())
             )
             .findFirst()
             .ifPresentOrElse(
                 executor -> notify(executor, notification),
                 () -> LOGGER.info(
                     "Executor not found. Delivery type {}",
-                    notification.getExecutor()
+                    notification.executor()
                 )
             );
     }
@@ -264,7 +263,7 @@ implements INotificationService {
             );
 
             executor.notify(
-                notification.getName(), notification.getMessage(), Map.of()
+                notification.name(), notification.message(), Map.of()
             );
 
             repository.delivered(GUIDs.parse(notification));
@@ -272,8 +271,8 @@ implements INotificationService {
             LOGGER.error(
                 "Executor {}. Title {}. Message {}.",
                 executor.getExecutor(),
-                notification.getName(),
-                notification.getMessage()
+                notification.name(),
+                notification.message()
             );
             LOGGER.error(e.getMessage(), e);
         }
@@ -308,13 +307,13 @@ implements INotificationService {
                         final NotificationType notificationType) {
         for (NotificationExecutor executor : executors) {
             Notification notification = new Notification(
-                GUIDs.random().toString(),
+                GUIDs.random(),
                 title,
                 message.apply(executor.isHTML()),
                 notificationType,
                 executor.getExecutor(),
                 null,
-                Dates.format(Dates.now()),
+                Dates.now(),
                 null,
                 null
             );

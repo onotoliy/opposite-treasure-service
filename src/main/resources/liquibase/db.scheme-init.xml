@@ -23,10 +23,10 @@
       <column name="name" type="varchar(255)" remarks="Название"/>
       <column name="contribution" type="numeric" remarks="Взнос с одного человека"/>
       <column name="total" type="numeric" remarks="Общая сумма"/>
-      <column name="deadline" type="datetime" remarks="Конечный срок сдачи"/>
+      <column name="deadline" type="timestamptz" remarks="Конечный срок сдачи"/>
       <column name="author" type="uuid" remarks="Автор"/>
-      <column name="creation_date" type="datetime" remarks="Дата создания записи"/>
-      <column name="deletion_date" type="datetime" remarks="Дата удаления записи"/>
+      <column name="creation_date" type="timestamptz" remarks="Дата создания записи"/>
+      <column name="deletion_date" type="timestamptz" remarks="Дата удаления записи"/>
     </createTable>
   </changeSet>
 
@@ -45,21 +45,21 @@
       </column>
       <column name="type" type="varchar(255)" remarks="Тип"/>
       <column name="author" type="uuid" remarks="Автор"/>
-      <column name="creation_date" type="datetime" remarks="Дата создания записи"/>
-      <column name="deletion_date" type="datetime" remarks="Дата удаления записи"/>
+      <column name="creation_date" type="timestamptz" remarks="Дата создания записи"/>
+      <column name="deletion_date" type="timestamptz" remarks="Дата удаления записи"/>
     </createTable>
   </changeSet>
 
   <changeSet id="2019-07-07-2-treasure-init" author="onotoliy">
     <createTable tableName="treasure_cashbox" remarks="Касса">
-      <column name="last_update_date" type="datetime" remarks="Дата последненго изменения"/>
+      <column name="last_update_date" type="timestamptz" remarks="Дата последненго изменения"/>
       <column name="deposit" type="number" remarks="Сумма в кассе"/>
     </createTable>
   </changeSet>
 
   <changeSet id="2019-07-07-3-treasure-init" author="onotoliy">
     <insert tableName="treasure_cashbox">
-      <column name="last_update_date" type="datetime" value="now()"/>
+      <column name="last_update_date" type="timestamptz" value="now()"/>
       <column name="deposit" type="number" valueNumeric="0"/>
     </insert>
   </changeSet>
@@ -84,7 +84,7 @@
       </column>
       <column name="author" type="uuid" remarks="Автор"/>
       <column name="level" type="varchar(255)" remarks="Уровень логирования"/>
-      <column name="creation_date" type="datetime" remarks="Дата создания записи"/>
+      <column name="creation_date" type="timestamptz" remarks="Дата создания записи"/>
       <column name="message" type="varchar(255)" remarks="Сообщение"/>
       <column name="bean_name" type="varchar(255)" remarks="Название класса"/>
       <column name="stack_trace" type="varchar(255)" remarks="Stack Trace"/>
@@ -93,7 +93,7 @@
 
   <changeSet id="2020-12-02-1-treasure-init" author="onotoliy">
     <addColumn tableName="treasure_transaction">
-      <column name="transaction_date" type="datetime" remarks="Дата совершения транзации"/>
+      <column name="transaction_date" type="timestamptz" remarks="Дата совершения транзации"/>
     </addColumn>
 
     <createTable tableName="treasure_version" remarks="Версия таблицы">
@@ -126,10 +126,10 @@
       <column name="notification_type" type="varchar" remarks="Тип уведомления"/>
       <column name="executor" type="varchar" remarks="Тип доставщика"/>
       <column name="object_uuid" type="uuid" remarks="Уникальный идентификатор объекта"/>
-      <column name="delivery_date" type="datetime" remarks="Дата доставки"/>
+      <column name="delivery_date" type="timestamptz" remarks="Дата доставки"/>
       <column name="author" type="uuid" remarks="Автор"/>
-      <column name="creation_date" type="datetime" remarks="Дата создания записи"/>
-      <column name="deletion_date" type="datetime" remarks="Дата удаления записи"/>
+      <column name="creation_date" type="timestamptz" remarks="Дата создания записи"/>
+      <column name="deletion_date" type="timestamptz" remarks="Дата удаления записи"/>
     </createTable>
   </changeSet>
 

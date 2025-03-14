@@ -1,7 +1,7 @@
 package com.github.onotoliy.opposite.treasure.services.transactions;
 
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.TransactionType;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.repositories.CashboxRepository;
 import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
 import com.github.onotoliy.opposite.treasure.repositories.DepositRepository;
@@ -58,14 +58,14 @@ extends AbstractTransactionExecutor {
     public void create(final Configuration configuration,
                        final Transaction dto,
                        final BigDecimal money) {
-        if (Objects.nonEmpty(dto.getEvent())) {
+        if (Objects.nonEmpty(dto.event())) {
             debt.contribution(configuration,
-                              GUIDs.parse(dto.getPerson()),
-                              GUIDs.parse(dto.getEvent()));
+                              GUIDs.parse(dto.person()),
+                              GUIDs.parse(dto.event()));
         } else {
             deposit.contribution(
                 configuration,
-                GUIDs.parse(dto.getPerson()),
+                GUIDs.parse(dto.person()),
                 money
             );
         }
@@ -76,14 +76,14 @@ extends AbstractTransactionExecutor {
     public void delete(final Configuration configuration,
                        final Transaction dto,
                        final BigDecimal money) {
-        if (Objects.nonEmpty(dto.getEvent())) {
+        if (Objects.nonEmpty(dto.event())) {
             debt.cost(configuration,
-                      GUIDs.parse(dto.getPerson()),
-                      GUIDs.parse(dto.getEvent()));
+                      GUIDs.parse(dto.person()),
+                      GUIDs.parse(dto.event()));
         } else {
             deposit.cost(
                 configuration,
-                GUIDs.parse(dto.getPerson()),
+                GUIDs.parse(dto.person()),
                 money
             );
         }

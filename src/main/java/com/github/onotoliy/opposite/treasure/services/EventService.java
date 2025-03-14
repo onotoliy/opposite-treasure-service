@@ -80,7 +80,7 @@ implements IEventService {
 
         publisher.notify(configuration, repository.get(GUIDs.parse(dto)));
 
-        if (isEmpty(dto.contribution()) && isEmpty(dtototal())) {
+        if (isEmpty(dto.contribution()) && isEmpty(dto.total())) {
             return;
         }
 

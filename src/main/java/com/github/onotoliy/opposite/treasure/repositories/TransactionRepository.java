@@ -10,7 +10,6 @@ import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureTransac
 import com.github.onotoliy.opposite.treasure.repositories.core.AbstractModifierRepository;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import com.github.onotoliy.opposite.treasure.utils.Strings;
 import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -99,7 +98,7 @@ extends AbstractModifierRepository<
                     .set(table.TRANSACTION_DATE,dto.transactionDate())
                     .set(table.USER_GUID, GUIDs.parse(dto.person()))
                     .set(table.EVENT_GUID, GUIDs.parse(dto.event()))
-                    .set(table.TYPE, Strings.parse(dto.type().name()));
+                    .set(table.TYPE, dto.type().name());
     }
 
     @Override
@@ -111,7 +110,7 @@ extends AbstractModifierRepository<
                     .set(table.TRANSACTION_DATE, dto.transactionDate())
                     .set(table.USER_GUID, GUIDs.parse(dto.person()))
                     .set(table.EVENT_GUID, GUIDs.parse(dto.event()))
-                    .set(table.TYPE, Strings.parse(dto.type().name()));
+                    .set(table.TYPE, dto.type().name());
     }
 
     @Override
@@ -128,9 +127,9 @@ extends AbstractModifierRepository<
 
         return new Transaction(
                 record.getValue(uuid),
-            Strings.format(record, name),
+                record.getValue(name),
                 record.getValue(table.CASH),
-            TransactionType.valueOf(Strings.format(record, table.TYPE)),
+            TransactionType.valueOf(record.getValue(table.TYPE)),
             person,
             EventRepository.toOption(record),
                 record.getValue(table.TRANSACTION_DATE),

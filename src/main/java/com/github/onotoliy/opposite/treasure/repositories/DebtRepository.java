@@ -12,6 +12,7 @@ import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -161,7 +162,7 @@ public class DebtRepository {
     private void setVersion(
         final Configuration configuration
     ) {
-        BigDecimal version = BigDecimal.valueOf(Dates.now().getTime());
+        BigDecimal version = BigDecimal.valueOf(Instant.now().toEpochMilli());
 
         DSL.using(configuration)
            .update(TREASURE_VERSION)

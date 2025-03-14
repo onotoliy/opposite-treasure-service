@@ -1,9 +1,9 @@
 package com.github.onotoliy.opposite.treasure.services.transactions;
 
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.bpp.log.Log;
 
+import com.github.onotoliy.opposite.treasure.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import org.jooq.Configuration;
 
 /**

@@ -8,7 +8,6 @@ import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -110,7 +109,7 @@ implements ModifierRepository<E, P> {
             final UUID uuid) {
         return DSL.using(configuration)
                   .update(table)
-                  .set(deletionDate, Dates.now())
+                  .set(deletionDate, Instant.now())
                   .where(this.uuid.eq(uuid));
     }
 

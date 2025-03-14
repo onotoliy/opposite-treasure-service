@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.services.transactions;
 
-import com.github.onotoliy.opposite.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
 
@@ -57,7 +57,7 @@ implements TransactionExecutor {
      * @return Сумма транзакции.
      */
     private BigDecimal money(final Transaction dto) {
-        BigDecimal money = Numbers.parse(dto.getCash());
+        BigDecimal money = dto.cash();
 
         if (money == null) {
             throw new ModificationException("Денежные средсва не заполнены");

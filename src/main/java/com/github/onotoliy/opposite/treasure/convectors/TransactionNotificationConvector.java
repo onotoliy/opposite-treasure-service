@@ -23,17 +23,17 @@ extends AbstractNotificationConvector<Transaction> {
 
     @Override
     protected void append(final Transaction dto) {
-        append("Тип", dto.type().label());
+        append("Тип", dto.type().getLabel());
         append("Название", dto.name());
         append("Сумма", dto.cash());
         append("Дата транзации", Dates.toShortFormat(dto.transactionDate()));
 
         if (Objects.nonEmpty(dto.event())) {
-            append("Событие", dto.event().pame());
+            append("Событие", dto.event().name());
         }
 
         if (Objects.nonEmpty(dto.person())) {
-            append("Член клуба", dto.person().getName());
+            append("Член клуба", dto.person().name());
         }
     }
 

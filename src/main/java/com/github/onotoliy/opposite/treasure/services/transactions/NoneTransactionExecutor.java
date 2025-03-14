@@ -1,7 +1,7 @@
 package com.github.onotoliy.opposite.treasure.services.transactions;
 
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.TransactionType;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 
 import java.math.BigDecimal;

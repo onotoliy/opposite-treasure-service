@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.web;
 
-import com.github.onotoliy.opposite.data.Cashbox;
+import com.github.onotoliy.opposite.treasure.data.Cashbox;
 import com.github.onotoliy.opposite.treasure.services.ICashboxService;
 
 import org.springframework.beans.factory.annotation.Autowired;

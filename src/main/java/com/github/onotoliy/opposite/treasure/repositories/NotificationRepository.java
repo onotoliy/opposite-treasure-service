@@ -15,6 +15,7 @@ import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,7 +64,7 @@ extends AbstractModifierRepository<
      */
     public void delivered(final UUID uuid) {
         dsl.update(TREASURE_NOTIFICATION)
-           .set(TREASURE_NOTIFICATION.DELIVERY_DATE, Dates.now())
+           .set(TREASURE_NOTIFICATION.DELIVERY_DATE, Instant.now())
            .where(TREASURE_NOTIFICATION.GUID.eq(uuid))
            .execute();
     }
@@ -75,8 +76,8 @@ extends AbstractModifierRepository<
      */
     public void discharge(final NotificationType type) {
         dsl.update(TREASURE_NOTIFICATION)
-           .set(TREASURE_NOTIFICATION.DELETION_DATE, Dates.now())
-           .set(TREASURE_NOTIFICATION.DELIVERY_DATE, Dates.now())
+           .set(TREASURE_NOTIFICATION.DELETION_DATE, Instant.now())
+           .set(TREASURE_NOTIFICATION.DELIVERY_DATE, Instant.now())
            .where(
                    TREASURE_NOTIFICATION.DELETION_DATE.isNull(),
                    TREASURE_NOTIFICATION.DELIVERY_DATE.isNull(),
@@ -118,11 +119,11 @@ extends AbstractModifierRepository<
         final Configuration configuration,
         final Notification dto) {
         return super.insertQuery(configuration, dto)
-                    .set(table.MESSAGE, Strings.parse(dto.message()))
-                    .set(table.EXECUTOR, Strings.parse(dto.executor()))
+                    .set(table.MESSAGE, dto.message())
+                    .set(table.EXECUTOR, dto.executor())
                     .set(
                         table.NOTIFICATION_TYPE,
-                        Strings.parse(dto.notificationType().name())
+                        dto.notificationType().name()
                     )
                     .set(
                         table.DELIVERY_DATE,
@@ -135,16 +136,10 @@ extends AbstractModifierRepository<
         final Configuration configuration,
         final Notification dto) {
         return super.updateQuery(configuration, dto)
-                    .set(table.MESSAGE, Strings.parse(dto.message()))
-                    .set(table.EXECUTOR, Strings.parse(dto.executor()))
-                    .set(
-                        table.NOTIFICATION_TYPE,
-                        Strings.parse(dto.notificationType().name())
-                    )
-                    .set(
-                        table.DELIVERY_DATE,
-                            dto.deliveryDate()
-                    );
+                    .set(table.MESSAGE, dto.message())
+                    .set(table.EXECUTOR, dto.executor())
+                    .set(table.NOTIFICATION_TYPE, dto.notificationType().name())
+                    .set(table.DELIVERY_DATE, dto.deliveryDate());
     }
 
     @Override
@@ -168,12 +163,12 @@ extends AbstractModifierRepository<
 
         return new Notification(
                 record.getValue( TREASURE_NOTIFICATION.GUID),
-            Strings.format(record, TREASURE_NOTIFICATION.NAME),
-            Strings.format(record, TREASURE_NOTIFICATION.MESSAGE),
+                record.getValue( TREASURE_NOTIFICATION.NAME),
+                record.getValue( TREASURE_NOTIFICATION.MESSAGE),
             NotificationType.valueOf(
-                Strings.format(record, TREASURE_NOTIFICATION.NOTIFICATION_TYPE)
+                    record.getValue(TREASURE_NOTIFICATION.NOTIFICATION_TYPE)
             ),
-            Strings.format(record, TREASURE_NOTIFICATION.EXECUTOR),
+                record.getValue(TREASURE_NOTIFICATION.EXECUTOR),
                 record.getValue(TREASURE_NOTIFICATION.DELIVERY_DATE),
             record.getValue(TREASURE_NOTIFICATION.CREATION_DATE),
             author,

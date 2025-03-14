@@ -1,8 +1,8 @@
 package com.github.onotoliy.opposite.treasure.web;
 
-import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.User;
-import com.github.onotoliy.opposite.data.core.ExceptionDevice;
+import com.github.onotoliy.opposite.treasure.data.Option;
+import com.github.onotoliy.opposite.treasure.data.User;
+import com.github.onotoliy.opposite.treasure.data.core.ExceptionDevice;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.IExceptionService;
 import com.github.onotoliy.opposite.treasure.services.INotificationService;
@@ -95,7 +95,7 @@ public class UserResource {
     public List<Option> getAll() {
         return user.getAll()
                    .stream()
-                   .map(e -> new Option(e.getUuid(), e.getName()))
+                   .map(e -> new Option(e.uuid(), e.name()))
                    .collect(Collectors.toList());
     }
 

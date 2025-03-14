@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.web;
 
-import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.Delivery;
 import com.github.onotoliy.opposite.treasure.dto.Notification;
 import com.github.onotoliy.opposite.treasure.dto.NotificationSearchParameter;

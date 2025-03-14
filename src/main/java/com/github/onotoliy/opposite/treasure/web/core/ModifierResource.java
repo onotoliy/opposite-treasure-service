@@ -1,10 +1,9 @@
 package com.github.onotoliy.opposite.treasure.web.core;
 
-import com.github.onotoliy.opposite.data.SyncResponse;
-import com.github.onotoliy.opposite.data.core.HasAuthor;
-import com.github.onotoliy.opposite.data.core.HasCreationDate;
-import com.github.onotoliy.opposite.data.core.HasName;
-import com.github.onotoliy.opposite.data.core.HasUUID;
+import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
+import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
+import com.github.onotoliy.opposite.treasure.data.core.HasName;
+import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,14 +47,5 @@ extends ReaderResource<E> {
      */
     @DeleteMapping(value = "/{uuid}")
     void delete(@PathVariable("uuid") UUID uuid);
-
-    /**
-     * Синхронизация объекта.
-     *
-     * @param dto Объект.
-     * @return Измененный объект.
-     */
-    @PutMapping(value = "/sync")
-    SyncResponse sync(@RequestBody E dto);
 
 }

@@ -3,12 +3,13 @@ package com.github.onotoliy.opposite.treasure.data;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record Deposit(
         UUID uuid,
         String name,
-        String deposit
+        BigDecimal deposit
 ) implements HasUUID, HasName {
 
     // Переопределение метода toString()

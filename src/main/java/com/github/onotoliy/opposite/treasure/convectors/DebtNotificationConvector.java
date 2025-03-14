@@ -83,7 +83,7 @@ extends AbstractNotificationConvector<Debt> {
             return String.format(
                 "%s (%s)",
                 event.contribution(),
-                DATE_FORMAT.format(Dates.parse(event.deadline()))
+                DATE_FORMAT.format(event.deadline())
             );
         } else {
             return String
@@ -143,8 +143,7 @@ extends AbstractNotificationConvector<Debt> {
     private BigDecimal toTotal(final List<Event> events) {
         return events
             .stream()
-            .map(Event::getContribution)
-            .map(Numbers::parse)
+            .map(Event::contribution)
             .filter(Objects::nonNull)
             .reduce(BigDecimal::add)
             .orElse(BigDecimal.ZERO);

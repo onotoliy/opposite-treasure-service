@@ -1,8 +1,8 @@
 package com.github.onotoliy.opposite.treasure.web;
 
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.TransactionType;
-import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.TransactionType;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.services.ITransactionService;
 import com.github.onotoliy.opposite.treasure.web.core.AbstractModifierResource;
@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequestMapping(value = "/transaction")
 public class TransactionResource
 extends AbstractModifierResource<
-    Transaction,
+        Transaction,
     TransactionSearchParameter,
     ITransactionService> {
 

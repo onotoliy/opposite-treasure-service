@@ -1,7 +1,7 @@
 package com.github.onotoliy.opposite.treasure.services.transactions;
 
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.TransactionType;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
 import com.github.onotoliy.opposite.treasure.repositories.DepositRepository;
@@ -50,7 +50,7 @@ extends AbstractTransactionExecutor {
     public void create(final Configuration configuration,
                        final Transaction dto,
                        final BigDecimal money) {
-        UUID person = GUIDs.parse(dto.getPerson());
+        UUID person = GUIDs.parse(dto.person());
         BigDecimal value = deposit.money(person);
 
         if (value == null || value.compareTo(money) < 0) {
@@ -61,7 +61,7 @@ extends AbstractTransactionExecutor {
         this.deposit.cost(configuration, person, money);
         this.debt.contribution(configuration,
                                person,
-                               GUIDs.parse(dto.getEvent()));
+                               GUIDs.parse(dto.event()));
     }
 
     @Override
@@ -70,11 +70,11 @@ extends AbstractTransactionExecutor {
                        final BigDecimal money) {
 
         this.deposit.contribution(configuration,
-                                  GUIDs.parse(dto.getPerson()),
+                                  GUIDs.parse(dto.person()),
                                   money);
         this.debt.cost(configuration,
-                       GUIDs.parse(dto.getPerson()),
-                       GUIDs.parse(dto.getEvent()));
+                       GUIDs.parse(dto.person()),
+                       GUIDs.parse(dto.event()));
     }
 
     @Override

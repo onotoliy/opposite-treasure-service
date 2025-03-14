@@ -1,7 +1,7 @@
 package com.github.onotoliy.opposite.treasure.services.transactions;
 
-import com.github.onotoliy.opposite.data.Transaction;
-import com.github.onotoliy.opposite.data.TransactionType;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
+import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.repositories.DepositRepository;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 
@@ -40,7 +40,7 @@ extends AbstractTransactionExecutor {
                        final Transaction dto,
                        final BigDecimal money) {
         deposit.contribution(configuration,
-                             GUIDs.parse(dto.getPerson()),
+                             GUIDs.parse(dto.person()),
                              money);
     }
 
@@ -48,7 +48,7 @@ extends AbstractTransactionExecutor {
     public void delete(final Configuration configuration,
                        final Transaction dto,
                        final BigDecimal money) {
-        deposit.cost(configuration, GUIDs.parse(dto.getPerson()), money);
+        deposit.cost(configuration, GUIDs.parse(dto.person()), money);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.github.onotoliy.opposite.treasure.web;
 
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.Option;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
 import com.github.onotoliy.opposite.treasure.services.IEventService;
 import com.github.onotoliy.opposite.treasure.web.core.AbstractModifierResource;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/event")
 public class EventResource
 extends AbstractModifierResource<
-    Event,
+        Event,
     EventSearchParameter,
     IEventService> {
 

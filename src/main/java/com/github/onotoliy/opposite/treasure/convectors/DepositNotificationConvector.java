@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Класс описывающий логику преобразования депозитов в текстовое уведомление.
@@ -24,7 +25,7 @@ extends AbstractNotificationConvector<List<Deposit>> {
     /**
      * Действующие члены клуба.
      */
-    private final Set<String> members;
+    private final Set<UUID> members;
 
     /**
      * Конструктор.
@@ -32,7 +33,7 @@ extends AbstractNotificationConvector<List<Deposit>> {
      * @param members Действующие члены клуба.
      * @param html Использовать HTML верстку.
      */
-    public DepositNotificationConvector(final Set<String> members,
+    public DepositNotificationConvector(final Set<UUID> members,
                                         final boolean html) {
         super(html);
 
@@ -54,22 +55,22 @@ extends AbstractNotificationConvector<List<Deposit>> {
         newLine();
 
         for (Deposit deposit: dto) {
-            if (!members.contains(deposit.getUuid())) {
+            if (!members.contains(deposit.uuid())) {
                 continue;
             }
 
-            if (Numbers.isEmpty(deposit.getDeposit())) {
+            if (Numbers.isEmpty(deposit.deposit())) {
                 continue;
             }
 
-            BigDecimal money = Numbers.parse(deposit.getDeposit());
+            BigDecimal money = deposit.deposit();
 
             if (Objects.isNull(money)) {
                 continue;
             }
 
             if (THOUSAND.compareTo(money) > 0) {
-                append(deposit.getName(), deposit.getDeposit());
+                append(deposit.name(), deposit.deposit());
             }
         }
 

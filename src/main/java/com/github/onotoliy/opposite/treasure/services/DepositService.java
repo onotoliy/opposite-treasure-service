@@ -53,23 +53,4 @@ public class DepositService {
         return repository.getAll(parameter);
     }
 
-    /**
-     * Получение версии сущности.
-     *
-     * @return Версия сущности.
-     */
-    public Option version() {
-        return repository.version();
-    }
-
-    /**
-     * Данные, которые необходимо синхронизировать.
-     *
-     * @param offset Количество записей которое необходимо пропустить.
-     * @param numberOfRows Размер страницы.
-     * @return Данные, которые необходимо синхронизировать.
-     */
-    public Page<Deposit> sync(final int offset, final int numberOfRows) {
-        return repository.sync(offset, numberOfRows);
-    }
 }

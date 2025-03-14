@@ -95,29 +95,6 @@ public final class Numbers {
         return df.format(value.setScale(2, RoundingMode.HALF_DOWN));
     }
 
-    /**
-     * Чтение из {@link Record} значения колонки в формате {@link BigDecimal}
-     * и преобразование его в {@link String}.
-     *
-     * @param record Запись.
-     * @param field Колонка.
-     * @return Значение в формате {@link java.lang.String}.
-     */
-    public static String format(final Record record,
-                                final Field<BigDecimal> field) {
-        return format(record.getValue(field, BigDecimal.class));
-    }
-
-    /**
-     * Проверка двух объектов на неравенство.
-     *
-     * @param x X
-     * @param y Y
-     * @return Результат проверки.
-     */
-    public static boolean nonEqually(final String x, final String y) {
-        return nonEqually(parse(x), parse(y));
-    }
 
     /**
      * Проверка двух объектов на неравенство.

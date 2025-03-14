@@ -1,10 +1,9 @@
 package com.github.onotoliy.opposite.treasure.web.core;
 
-import com.github.onotoliy.opposite.data.SyncResponse;
-import com.github.onotoliy.opposite.data.core.HasAuthor;
-import com.github.onotoliy.opposite.data.core.HasCreationDate;
-import com.github.onotoliy.opposite.data.core.HasName;
-import com.github.onotoliy.opposite.data.core.HasUUID;
+import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
+import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
+import com.github.onotoliy.opposite.treasure.data.core.HasName;
+import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
 import com.github.onotoliy.opposite.treasure.services.core.ModifierService;
 
@@ -49,8 +48,4 @@ implements ModifierResource<E> {
         service.delete(uuid);
     }
 
-    @Override
-    public SyncResponse sync(final E dto) {
-        return service.sync(dto);
-    }
 }

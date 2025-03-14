@@ -136,7 +136,7 @@ implements ReaderRepository<E, P> {
     public List<Option> getAll() {
         return findQuery().where(deletionDate.isNull())
                           .fetch(record ->
-                              new Option(record.getValue(uuid), Strings.format(record, name)));
+                              new Option(record.getValue(uuid), record.getValue(name)));
     }
 
     @Override

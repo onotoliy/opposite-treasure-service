@@ -22,17 +22,7 @@ public final class GUIDs {
 
     }
 
-    /**
-     * Чтение из {@link Record} значения колонки в формате {@link UUID} и
-     * преобразование его в {@link String}.
-     *
-     * @param record Запись.
-     * @param field Колонка.
-     * @return Значение в формате {@link java.lang.String}.
-     */
-    public static String format(final Record record, final Field<UUID> field) {
-        return format(record.getValue(field, UUID.class));
-    }
+
 
     /**
      * Преобразование {@link UUID} в {@link String}.
@@ -52,7 +42,7 @@ public final class GUIDs {
      * @return Значение в формате {@link UUID}.
      */
     public static UUID parse(final HasUUID value) {
-        return value == null ? null : parse(value.uuid());
+        return value == null ? null : value.uuid();
     }
 
     /**
@@ -103,7 +93,7 @@ public final class GUIDs {
      * @return Результат проверки.
      */
     public static boolean isEmpty(final HasUUID value) {
-        return value == null || Strings.isEmpty(value.getUuid());
+        return value == null || GUIDs.isEmpty(value.uuid());
     }
 
     /**

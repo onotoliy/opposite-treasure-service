@@ -1,10 +1,8 @@
 package com.github.onotoliy.opposite.treasure.services;
 
-import com.github.onotoliy.opposite.data.Debt;
-import com.github.onotoliy.opposite.data.Deposit;
-import com.github.onotoliy.opposite.data.Event;
-import com.github.onotoliy.opposite.data.Option;
-import com.github.onotoliy.opposite.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.Deposit;
+import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
 
 import java.util.UUID;
@@ -63,25 +61,4 @@ public class DebtService {
         return repository.getDebtors(event);
     }
 
-    /**
-     * Получение версии сущности.
-     *
-     * @return Версия сущности.
-     */
-    public Option version() {
-        return repository.version();
-    }
-
-    /**
-     * Данные, которые необходимо синхронизировать.
-     *
-     * @param offset Количество записей которое необходимо пропустить.
-     * @param numberOfRows Размер страницы.
-     * @return Данные, которые необходимо синхронизировать.
-     */
-    public Page<Debt> sync(final int offset, final int numberOfRows) {
-        LOGGER.info("Sync offset {} numberOfRows {}", offset, numberOfRows);
-
-        return repository.sync(offset, numberOfRows);
-    }
 }
