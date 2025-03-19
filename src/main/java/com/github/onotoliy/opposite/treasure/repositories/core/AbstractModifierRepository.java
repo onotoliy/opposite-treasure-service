@@ -10,6 +10,7 @@ import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import java.math.BigDecimal;

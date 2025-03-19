@@ -67,15 +67,18 @@ public class FirebaseNotificationExecutor implements NotificationExecutor {
         this.icon = icon;
         this.off = off;
 
-        GoogleCredentials credentials =
-            GoogleCredentials.fromStream(new FileInputStream(path));
-        FirebaseOptions options = FirebaseOptions
-            .builder()
-            .setCredentials(credentials)
-            .build();
+        try {
+            GoogleCredentials credentials =
+                    GoogleCredentials.fromStream(new FileInputStream(path));
+            FirebaseOptions options = FirebaseOptions
+                    .builder()
+                    .setCredentials(credentials)
+                    .build();
 
-        if (FirebaseApp.getApps().isEmpty()) {
-            FirebaseApp.initializeApp(options);
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options);
+            }
+        } catch (IOException e) {
         }
     }
 

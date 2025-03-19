@@ -39,7 +39,7 @@ public class TelegramConfiguration {
             new TelegramBotsApi(DefaultBotSession.class)
                 .registerBot(bot);
         } catch (Exception exception) {
-            exception.printStackTrace();
+
         }
     }
 

@@ -6,31 +6,15 @@ import com.github.onotoliy.opposite.treasure.dto.Contact;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.representations.idm.RoleRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
+//import org.keycloak.KeycloakPrincipal;
+//import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
+import java.util.*;
 
 /**
  * Сервис чтения данных о пользвателях из Keycloak.
@@ -128,20 +112,20 @@ public class KeycloakRPC {
      * @return Уникальный идентификатор пользователя.
      */
     public UUID getAuthenticationUUID() {
-        return GUIDs.parse(getKeycloakPrincipal().getName());
+        return UUID.randomUUID();
     }
 
-    /**
-     * Получение текущего пользователя в формате {@link KeycloakPrincipal} из
-     * контекста.
-     *
-     * @return Пользователь в формате {@link KeycloakPrincipal}
-     */
-    public KeycloakPrincipal getKeycloakPrincipal() {
-        return (KeycloakPrincipal) SecurityContextHolder.getContext()
-                                                        .getAuthentication()
-                                                        .getPrincipal();
-    }
+//    /**
+//     * Получение текущего пользователя в формате {@link KeycloakPrincipal} из
+//     * контекста.
+//     *
+//     * @return Пользователь в формате {@link KeycloakPrincipal}
+//     */
+//    public KeycloakPrincipal getKeycloakPrincipal() {
+//        return (KeycloakPrincipal) SecurityContextHolder.getContext()
+//                                                        .getAuthentication()
+//                                                        .getPrincipal();
+//    }
 
     /**
      * Получение текущего пользователя.
@@ -158,10 +142,7 @@ public class KeycloakRPC {
      * @return Роли.
      */
     public Set<String> getCurrentUserRoles() {
-        return getKeycloakPrincipal().getKeycloakSecurityContext()
-                                     .getToken()
-                                     .getRealmAccess()
-                                     .getRoles();
+        return Collections.emptySet();
     }
 
     /**
@@ -182,27 +163,7 @@ public class KeycloakRPC {
      * @return Пользователь.
      */
     public Optional<Option> findOption(final UUID uuid) {
-        try {
-            Option user = cache.get(uuid);
-
-            if (Objects.nonEmpty(user)) {
-                return Optional.of(user);
-            }
-
-            Optional<Option> optional = Optional
-                .of(keycloak().realm(realm)
-                              .users()
-                              .get(GUIDs.format(uuid))
-                              .toRepresentation())
-                .map(this::toDTO)
-                .map(e -> new Option(e.uuid(), e.name()));
-
-            cache.put(uuid, optional.get());
-
-            return optional;
-        } catch (Exception e) {
-            return Optional.of(emptyDTO(uuid));
-        }
+        return Optional.of(emptyDTO(uuid));
     }
 
     /**
@@ -224,36 +185,7 @@ public class KeycloakRPC {
      * @return Пользователи
      */
     public List<User> getAll() {
-        if (users.isEmpty()) {
-            final Set<UserRepresentation> representations = keycloak()
-                .realm(realm)
-                .roles()
-                .get(role)
-                .getRoleUserMembers();
-
-            for (UserRepresentation representation: representations) {
-                Map<String, List<String>> attributes =
-                    representation.getAttributes() == null
-                        ? Collections.emptyMap()
-                        : representation.getAttributes();
-                List<String> values = attributes
-                    .getOrDefault("telegram", Collections.emptyList());
-
-                if (!values.isEmpty()) {
-                    telegram.put(values.get(0), toDTO(representation));
-                }
-            }
-
-            users.addAll(
-                representations
-                    .stream()
-                    .map(this::toDTO)
-                    .sorted(Comparator.comparing(User::name))
-                    .collect(Collectors.toList())
-            );
-        }
-
-        return users;
+        return Collections.emptyList();
     }
 
     /**
@@ -263,12 +195,7 @@ public class KeycloakRPC {
      * @return Контактная информация пользователя.
      */
     public Contact getContact(final String uuid) {
-        return Optional.of(keycloak().realm(realm)
-                                     .users()
-                                     .get(uuid)
-                                     .toRepresentation())
-                       .map(this::toContactDTO)
-                       .orElse(emptyContactDTO(uuid));
+        return null;
     }
 
     /**
@@ -278,35 +205,10 @@ public class KeycloakRPC {
      * @return Список ролей.
      */
     private Set<String> getAllRoles(final String uuid) {
-        return keycloak().realm(realm)
-                         .users()
-                         .get(uuid)
-                         .roles()
-                         .getAll()
-                         .getRealmMappings()
-                         .stream()
-                         .map(RoleRepresentation::getName)
-                         .collect(Collectors.toSet());
+        return Collections.emptySet();
     }
 
-    /**
-     * Подключение к Keycloak.
-     *
-     * @return WEB сервис Keycloak-а.
-     */
-    private Keycloak keycloak() {
-        return KeycloakBuilder.builder()
-                              .serverUrl(url)
-                              .realm(realm)
-                              .username(username)
-                              .password(password)
-                              .clientId(client)
-                              .resteasyClient(new ResteasyClientBuilder()
-                                                  .connectionPoolSize(POOL_SIZE)
-                                                  .readTimeout(TIMEOUT, SECONDS)
-                                                  .build())
-                              .build();
-    }
+
 
     /**
      * Получение пустого (удаленного) пользователя.
@@ -337,45 +239,45 @@ public class KeycloakRPC {
      * @param user Пользователь.
      * @return Пользователь.
      */
-    private User toDTO(final UserRepresentation user) {
-        return new User(
-            UUID.fromString(user.getId()),
-            toName(user.getFirstName(), user.getLastName(), user.getUsername()),
-            user.getUsername(),
-            Strings.isEmpty(user.getEmail()) ? "" : user.getEmail(),
-            toFirstAttribute("phone", user.getAttributes(), ""),
-            Boolean.parseBoolean(toFirstAttribute(
-                "notifyByPhone", user.getAttributes(), "false")),
-            Boolean.parseBoolean(toFirstAttribute(
-                "notifyByEmail", user.getAttributes(), "true")),
-            getAllRoles(user.getId())
-        );
-    }
-
-    /**
-     * Преобразование контактной информации пользователя из
-     * {@link UserRepresentation} в {@link Contact}.
-     *
-     * @param user Пользователь.
-     * @return Контактная информация пользователя.
-     */
-    private Contact toContactDTO(final UserRepresentation user) {
-        return new Contact(
-            user.getId(),
-            user.getEmail(),
-            Boolean.parseBoolean(toFirstAttribute(
-                "notifyByEmail", user.getAttributes(), "true")),
-            toFirstAttribute("phone", user.getAttributes(), ""),
-            Boolean.parseBoolean(toFirstAttribute(
-                "notifyByPhone", user.getAttributes(), "false")),
-            toFirstAttribute("telegram", user.getAttributes(), ""),
-            Boolean.parseBoolean(toFirstAttribute(
-                "notifyByTelegram", user.getAttributes(), "false")),
-            toFirstAttribute("firebase", user.getAttributes(), ""),
-            Boolean.parseBoolean(toFirstAttribute(
-                "notifyByFirebase", user.getAttributes(), "false"))
-        );
-    }
+//    private User toDTO(final UserRepresentation user) {
+//        return new User(
+//            UUID.fromString(user.getId()),
+//            toName(user.getFirstName(), user.getLastName(), user.getUsername()),
+//            user.getUsername(),
+//            Strings.isEmpty(user.getEmail()) ? "" : user.getEmail(),
+//            toFirstAttribute("phone", user.getAttributes(), ""),
+//            Boolean.parseBoolean(toFirstAttribute(
+//                "notifyByPhone", user.getAttributes(), "false")),
+//            Boolean.parseBoolean(toFirstAttribute(
+//                "notifyByEmail", user.getAttributes(), "true")),
+//            getAllRoles(user.getId())
+//        );
+//    }
+//
+//    /**
+//     * Преобразование контактной информации пользователя из
+//     * {@link UserRepresentation} в {@link Contact}.
+//     *
+//     * @param user Пользователь.
+//     * @return Контактная информация пользователя.
+//     */
+//    private Contact toContactDTO(final UserRepresentation user) {
+//        return new Contact(
+//            user.getId(),
+//            user.getEmail(),
+//            Boolean.parseBoolean(toFirstAttribute(
+//                "notifyByEmail", user.getAttributes(), "true")),
+//            toFirstAttribute("phone", user.getAttributes(), ""),
+//            Boolean.parseBoolean(toFirstAttribute(
+//                "notifyByPhone", user.getAttributes(), "false")),
+//            toFirstAttribute("telegram", user.getAttributes(), ""),
+//            Boolean.parseBoolean(toFirstAttribute(
+//                "notifyByTelegram", user.getAttributes(), "false")),
+//            toFirstAttribute("firebase", user.getAttributes(), ""),
+//            Boolean.parseBoolean(toFirstAttribute(
+//                "notifyByFirebase", user.getAttributes(), "false"))
+//        );
+//    }
 
     /**
      * Получение первого атрибута из списка.

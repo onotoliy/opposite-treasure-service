@@ -2,10 +2,10 @@ version: '2'
 
 services:
   treasure-db:
-    image: "postgres:10.4"
+    image: "postgres:14"
     restart: always
     ports:
-      - "127.0.0.1:9432:5432"
+      - "127.0.0.1:5432:5432"
     container_name: "treasure-db"
     environment:
       POSTGRES_USER: "treasure"

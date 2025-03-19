@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.keycloak.KeycloakPrincipal;
+//import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.context.SecurityContext;
+//import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Обработчик запросов логгирования.
@@ -75,56 +75,56 @@ public class LogInvocationHandler implements InvocationHandler {
                          final Method method,
                          final Object[] args
     ) throws Throwable {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context == null
-            ? null : context.getAuthentication();
-        Object object = authentication == null
-            ? null : authentication.getPrincipal();
-        UUID author = UUID.fromString("00000000-0000-0000-0000-000000000001");
-
-        if (Objects.nonEmpty(object)) {
-            if (object instanceof KeycloakPrincipal) {
-                author = GUIDs.parse(((KeycloakPrincipal) object).getName());
-            }
-        }
-
-        Log annotation = getLogAnnotation(obc, method);
-
-        if (annotation == null && Objects.nonEmpty(obc.getInterfaces())) {
-            for (Class<?> i : obc.getInterfaces()) {
-                annotation = getLogAnnotation(i, method);
-
-                if (Objects.nonEmpty(annotation)) {
-                    break;
-                }
-            }
-        }
-
-        if (annotation == null) {
-            annotation = obc.getAnnotation(Log.class);
-        }
-
-        if (annotation == null) {
-            return method.invoke(bean, args);
-        }
-
-        String arguments = Objects.nonEmpty(args)
-            ? Arrays.stream(args)
-                    .map(Object::toString)
-                    .collect(Collectors.joining(", "))
-            : "empty or null";
-
-        String message = String.format(
-            "Author: %s. Service: %s. Method: %s. Arguments: %s.",
-            author, obc.getCanonicalName(), method.getName(), arguments
-        );
-
+//        SecurityContext context = SecurityContextHolder.getContext();
+//        Authentication authentication = context == null
+//            ? null : context.getAuthentication();
+//        Object object = authentication == null
+//            ? null : authentication.getPrincipal();
+//        UUID author = UUID.fromString("00000000-0000-0000-0000-000000000001");
+//
+//        if (Objects.nonEmpty(object)) {
+//            if (object instanceof KeycloakPrincipal) {
+//                author = GUIDs.parse(((KeycloakPrincipal) object).getName());
+//            }
+//        }
+//
+//        Log annotation = getLogAnnotation(obc, method);
+//
+//        if (annotation == null && Objects.nonEmpty(obc.getInterfaces())) {
+//            for (Class<?> i : obc.getInterfaces()) {
+//                annotation = getLogAnnotation(i, method);
+//
+//                if (Objects.nonEmpty(annotation)) {
+//                    break;
+//                }
+//            }
+//        }
+//
+//        if (annotation == null) {
+//            annotation = obc.getAnnotation(Log.class);
+//        }
+//
+//        if (annotation == null) {
+//            return method.invoke(bean, args);
+//        }
+//
+//        String arguments = Objects.nonEmpty(args)
+//            ? Arrays.stream(args)
+//                    .map(Object::toString)
+//                    .collect(Collectors.joining(", "))
+//            : "empty or null";
+//
+//        String message = String.format(
+//            "Author: %s. Service: %s. Method: %s. Arguments: %s.",
+//            author, obc.getCanonicalName(), method.getName(), arguments
+//        );
+//
         try {
-            log(annotation.level(), author, annotation.db(), message);
+//            log(annotation.level(), author, annotation.db(), message);
 
             return method.invoke(bean, args);
         } catch (Exception exception) {
-            dbLogger.error(author, obc, message, exception);
+//            dbLogger.error(author, obc, message, exception);
 
             throw exception;
         }

@@ -8,3 +8,4 @@
 /src/main/resources/firebase-config.json
 /http-client.env.json
 /http-client.http
+/target/

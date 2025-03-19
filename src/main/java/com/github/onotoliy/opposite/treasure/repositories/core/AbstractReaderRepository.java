@@ -13,6 +13,7 @@ import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 import org.jooq.*;
+import org.jooq.Record;
 
 import java.time.Instant;
 import java.util.*;
