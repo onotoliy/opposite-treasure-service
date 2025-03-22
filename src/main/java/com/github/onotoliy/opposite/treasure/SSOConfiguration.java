@@ -54,11 +54,8 @@ public class SSOConfiguration {
                     .requestMatchers("/swagger-ui.html").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
                     .requestMatchers("/user/register/exception").permitAll()
-                    .requestMatchers(HttpMethod.POST).hasAnyRole(modification)
-                    .requestMatchers(HttpMethod.PUT).hasAnyRole(modification)
-                    .requestMatchers(HttpMethod.DELETE).hasAnyRole(modification)
-                    .requestMatchers(HttpMethod.GET).hasAnyRole(reading);
-        });
+                    .requestMatchers(HttpMethod.GET).hasRole("member");
+        }).oauth2Login(Customizer.withDefaults());
         return http.build();
     }
 }
