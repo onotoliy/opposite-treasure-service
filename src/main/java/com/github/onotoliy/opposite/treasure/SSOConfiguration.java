@@ -55,7 +55,7 @@ public class SSOConfiguration {
                     .requestMatchers("/v3/api-docs/**").permitAll()
                     .requestMatchers("/user/register/exception").permitAll()
                     .requestMatchers(HttpMethod.GET).hasRole("member");
-        }).oauth2Login(Customizer.withDefaults());
+        });
         return http.build();
     }
 }

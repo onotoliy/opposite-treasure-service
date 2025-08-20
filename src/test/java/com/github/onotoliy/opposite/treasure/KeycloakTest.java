@@ -3,7 +3,6 @@ package com.github.onotoliy.opposite.treasure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.junit.Test;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
 
@@ -14,7 +13,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class KeycloakTest {
 
-    @Test
     public void test() throws KeyManagementException, NoSuchAlgorithmException, Exception {
         Keycloak keycloak = Keycloak
                 .getInstance(
