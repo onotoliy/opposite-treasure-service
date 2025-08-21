@@ -3,7 +3,7 @@ package com.github.onotoliy.opposite.treasure.web;
 import com.github.onotoliy.opposite.treasure.data.Event;
 import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
-import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.EventSearchParameter;
 import com.github.onotoliy.opposite.treasure.services.IEventService;
 import com.github.onotoliy.opposite.treasure.web.core.AbstractModifierResource;
 

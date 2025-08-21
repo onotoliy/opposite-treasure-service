@@ -1,11 +1,11 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.treasure.data.Deposit;
+import com.github.onotoliy.opposite.treasure.data.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.page.Meta;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.page.Paging;
-import com.github.onotoliy.opposite.treasure.dto.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;

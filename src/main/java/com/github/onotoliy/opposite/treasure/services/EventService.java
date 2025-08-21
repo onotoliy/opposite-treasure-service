@@ -3,8 +3,8 @@ package com.github.onotoliy.opposite.treasure.services;
 import com.github.onotoliy.opposite.treasure.data.Event;
 import com.github.onotoliy.opposite.treasure.data.Transaction;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
-import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
-import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.EventSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
 import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
@@ -33,11 +33,6 @@ extends AbstractModifierService<Event, EventSearchParameter, EventRepository>
 implements IEventService {
 
     /**
-     * Сервис уведомлений.
-     */
-    private final INotificationService publisher;
-
-    /**
      * Репозиторий транзакций.
      */
     private final TransactionRepository transaction;
@@ -57,19 +52,16 @@ implements IEventService {
      *
      * @param repository Репозиторий событий.
      * @param transaction Репозиторий транзакций.
-     * @param publisher Сервис уведомлений.
      * @param debt Репозиторий долгов.
      * @param user Сервис пользователей.
      */
     @Autowired
     public EventService(final EventRepository repository,
                         final TransactionRepository transaction,
-                        final INotificationService publisher,
                         final DebtRepository debt,
                         final KeycloakRPC user) {
         super(repository);
         this.transaction = transaction;
-        this.publisher = publisher;
         this.debt = debt;
         this.user = user;
     }
@@ -77,8 +69,6 @@ implements IEventService {
     @Override
     protected void create(final Configuration configuration, final Event dto) {
         repository.create(configuration, dto);
-
-        publisher.notify(configuration, repository.get(GUIDs.parse(dto)));
 
         if (isEmpty(dto.contribution()) && isEmpty(dto.total())) {
             return;
@@ -103,7 +93,6 @@ implements IEventService {
         }
 
         repository.update(configuration, dto);
-        publisher.notify(configuration, repository.get(GUIDs.parse(dto)));
     }
 
     @Override

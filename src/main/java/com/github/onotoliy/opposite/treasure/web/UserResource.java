@@ -5,7 +5,6 @@ import com.github.onotoliy.opposite.treasure.data.User;
 import com.github.onotoliy.opposite.treasure.data.core.ExceptionDevice;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.IExceptionService;
-import com.github.onotoliy.opposite.treasure.services.INotificationService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,23 +42,15 @@ public class UserResource {
     private final IExceptionService exception;
 
     /**
-     * Сервис уведомлений.
-     */
-    private final INotificationService publisher;
-
-    /**
      * Конструктор.
      *
      * @param user Сервис чтения пользователей системы.
-     * @param publisher Сервис уведомлений.
      * @param exception Сервис ошибок устройств.
      */
     @Autowired
     public UserResource(final KeycloakRPC user,
-                        final INotificationService publisher,
                         final IExceptionService exception) {
         this.user = user;
-        this.publisher = publisher;
         this.exception = exception;
     }
 
@@ -105,20 +96,6 @@ public class UserResource {
     @GetMapping(value = "/list/full")
     public List<User> getFullDTOAll() {
         return user.getAll();
-    }
-
-    /**
-     * Отправка отчета о долгах.
-     */
-    @PostMapping(value = "/notification")
-    public void notification() {
-        LOGGER.info("Request to send notifications received.");
-
-        publisher.debts();
-        publisher.statistic();
-        publisher.deposit();
-
-        publisher.publish();
     }
 
     /**

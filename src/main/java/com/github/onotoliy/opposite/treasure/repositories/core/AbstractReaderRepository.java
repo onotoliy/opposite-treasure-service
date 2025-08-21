@@ -8,7 +8,7 @@ import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.data.page.Meta;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.page.Paging;
-import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
+import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.utils.Strings;

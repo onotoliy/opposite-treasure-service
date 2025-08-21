@@ -1,4 +1,4 @@
-package com.github.onotoliy.opposite.treasure.dto;
+package com.github.onotoliy.opposite.treasure.data;
 
 /**
  * Поисковые параметры для депозита.

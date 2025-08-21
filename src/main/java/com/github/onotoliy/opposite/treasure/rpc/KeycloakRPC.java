@@ -2,16 +2,9 @@ package com.github.onotoliy.opposite.treasure.rpc;
 
 import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.User;
-import com.github.onotoliy.opposite.treasure.dto.Contact;
-import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import com.github.onotoliy.opposite.treasure.utils.Objects;
-import com.github.onotoliy.opposite.treasure.utils.Strings;
 import org.jetbrains.annotations.NotNull;
-//import org.keycloak.KeycloakPrincipal;
-//import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -115,18 +108,6 @@ public class KeycloakRPC {
         return UUID.randomUUID();
     }
 
-//    /**
-//     * Получение текущего пользователя в формате {@link KeycloakPrincipal} из
-//     * контекста.
-//     *
-//     * @return Пользователь в формате {@link KeycloakPrincipal}
-//     */
-//    public KeycloakPrincipal getKeycloakPrincipal() {
-//        return (KeycloakPrincipal) SecurityContextHolder.getContext()
-//                                                        .getAuthentication()
-//                                                        .getPrincipal();
-//    }
-
     /**
      * Получение текущего пользователя.
      *
@@ -167,19 +148,6 @@ public class KeycloakRPC {
     }
 
     /**
-     * Получение Username-ов в телеграмме.
-     *
-     * @return Username-ы в телеграмме.
-     */
-    public Set<String> getTelegramUsernames() {
-        if (users.isEmpty()) {
-            getAll();
-        }
-
-        return telegram.keySet();
-    }
-
-    /**
      * Получение всех пользователей зарегистрированных в системе.
      *
      * @return Пользователи
@@ -187,28 +155,6 @@ public class KeycloakRPC {
     public List<User> getAll() {
         return Collections.emptyList();
     }
-
-    /**
-     * Получение контактной информации пользователя.
-     *
-     * @param uuid Уникальный идентификатор пользователя.
-     * @return Контактная информация пользователя.
-     */
-    public Contact getContact(final String uuid) {
-        return null;
-    }
-
-    /**
-     * Получение всех ролей пользователя.
-     *
-     * @param uuid Уникальный идентификатор.
-     * @return Список ролей.
-     */
-    private Set<String> getAllRoles(final String uuid) {
-        return Collections.emptySet();
-    }
-
-
 
     /**
      * Получение пустого (удаленного) пользователя.
@@ -220,110 +166,4 @@ public class KeycloakRPC {
         return new Option(uuid, "Удаленный пользователь");
     }
 
-    /**
-     * Получение пустой (удаленной) контактной информации пользователя.
-     *
-     * @param uuid Уникальный идентификатор пользователя.
-     * @return Контактная информация пользователя.
-     */
-    private Contact emptyContactDTO(final String uuid) {
-        return new Contact(
-            uuid, null, false, null, false, null, false, null, false
-        );
-    }
-
-    /**
-     * Преобразование пользователя из {@link UserRepresentation} в
-     * {@link User}.
-     *
-     * @param user Пользователь.
-     * @return Пользователь.
-     */
-//    private User toDTO(final UserRepresentation user) {
-//        return new User(
-//            UUID.fromString(user.getId()),
-//            toName(user.getFirstName(), user.getLastName(), user.getUsername()),
-//            user.getUsername(),
-//            Strings.isEmpty(user.getEmail()) ? "" : user.getEmail(),
-//            toFirstAttribute("phone", user.getAttributes(), ""),
-//            Boolean.parseBoolean(toFirstAttribute(
-//                "notifyByPhone", user.getAttributes(), "false")),
-//            Boolean.parseBoolean(toFirstAttribute(
-//                "notifyByEmail", user.getAttributes(), "true")),
-//            getAllRoles(user.getId())
-//        );
-//    }
-//
-//    /**
-//     * Преобразование контактной информации пользователя из
-//     * {@link UserRepresentation} в {@link Contact}.
-//     *
-//     * @param user Пользователь.
-//     * @return Контактная информация пользователя.
-//     */
-//    private Contact toContactDTO(final UserRepresentation user) {
-//        return new Contact(
-//            user.getId(),
-//            user.getEmail(),
-//            Boolean.parseBoolean(toFirstAttribute(
-//                "notifyByEmail", user.getAttributes(), "true")),
-//            toFirstAttribute("phone", user.getAttributes(), ""),
-//            Boolean.parseBoolean(toFirstAttribute(
-//                "notifyByPhone", user.getAttributes(), "false")),
-//            toFirstAttribute("telegram", user.getAttributes(), ""),
-//            Boolean.parseBoolean(toFirstAttribute(
-//                "notifyByTelegram", user.getAttributes(), "false")),
-//            toFirstAttribute("firebase", user.getAttributes(), ""),
-//            Boolean.parseBoolean(toFirstAttribute(
-//                "notifyByFirebase", user.getAttributes(), "false"))
-//        );
-//    }
-
-    /**
-     * Получение первого атрибута из списка.
-     *
-     * @param key          Ключ атрибута.
-     * @param attributes   Список атрибутов.
-     * @param defaultValue Значение по умолчанию.
-     * @return Значение атрибута или если его нет значение по умолчанию.
-     */
-    private String toFirstAttribute(final String key,
-                                    final Map<String, List<String>> attributes,
-                                    final String defaultValue) {
-        if (Objects.isEmpty(attributes)) {
-            return defaultValue;
-        }
-
-        List<String> list = attributes.get(key);
-
-        if (Objects.isEmpty(list)) {
-            return defaultValue;
-        }
-
-        String value = list.get(0);
-
-        return Strings.isEmpty(value) ? defaultValue : value;
-    }
-
-    /**
-     * Получение имени пользователя.
-     *
-     * @param firstName Имя.
-     * @param lastName  Фамилия.
-     * @param username  Логин.
-     * @return Имя пользователя.
-     */
-    private String toName(final String firstName,
-                          final String lastName,
-                          final String username) {
-        if (Strings.nonEmpty(firstName) && Strings.nonEmpty(lastName)) {
-            return firstName + " " + lastName;
-        }
-
-        if (Strings.nonEmpty(firstName) || Strings.nonEmpty(lastName)) {
-            return Strings.nonEmpty(firstName) ? firstName : lastName;
-        }
-
-        return username;
-    }
 }

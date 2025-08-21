@@ -2,7 +2,7 @@ package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.treasure.data.Event;
 import com.github.onotoliy.opposite.treasure.data.Option;
-import com.github.onotoliy.opposite.treasure.dto.EventSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.EventSearchParameter;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureEventRecord;
 import com.github.onotoliy.opposite.treasure.repositories.core.AbstractModifierRepository;

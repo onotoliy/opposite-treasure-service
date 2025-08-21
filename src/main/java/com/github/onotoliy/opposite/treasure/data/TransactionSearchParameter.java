@@ -1,6 +1,5 @@
-package com.github.onotoliy.opposite.treasure.dto;
+package com.github.onotoliy.opposite.treasure.data;
 
-import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;

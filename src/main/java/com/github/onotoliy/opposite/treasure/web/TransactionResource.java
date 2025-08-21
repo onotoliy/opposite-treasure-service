@@ -3,7 +3,7 @@ package com.github.onotoliy.opposite.treasure.web;
 import com.github.onotoliy.opposite.treasure.data.Transaction;
 import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
-import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.services.ITransactionService;
 import com.github.onotoliy.opposite.treasure.web.core.AbstractModifierResource;
 import org.springframework.beans.factory.annotation.Autowired;

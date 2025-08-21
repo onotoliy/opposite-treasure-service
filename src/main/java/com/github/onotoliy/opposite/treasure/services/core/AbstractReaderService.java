@@ -6,7 +6,7 @@ import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
-import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
+import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 import com.github.onotoliy.opposite.treasure.repositories.core.ReaderRepository;
 
 import java.util.List;

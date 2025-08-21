@@ -4,7 +4,7 @@ import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
 import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
-import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
+import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;

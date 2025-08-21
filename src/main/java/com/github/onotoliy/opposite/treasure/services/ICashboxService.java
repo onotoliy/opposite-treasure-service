@@ -1,6 +1,5 @@
 package com.github.onotoliy.opposite.treasure.services;
 
-import com.github.onotoliy.opposite.treasure.bpp.log.Log;
 import com.github.onotoliy.opposite.treasure.data.Cashbox;
 
 /**
@@ -15,6 +14,5 @@ public interface ICashboxService {
      *
      * @return Данные о кассе.
      */
-    @Log(db = true)
     Cashbox get();
 }

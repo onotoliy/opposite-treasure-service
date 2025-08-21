@@ -3,7 +3,7 @@ package com.github.onotoliy.opposite.treasure.services;
 import com.github.onotoliy.opposite.treasure.data.Event;
 import com.github.onotoliy.opposite.treasure.data.Transaction;
 import com.github.onotoliy.opposite.treasure.data.TransactionType;
-import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
 import com.github.onotoliy.opposite.treasure.repositories.TransactionRepository;
@@ -43,11 +43,6 @@ implements ITransactionService {
     private final EventRepository event;
 
     /**
-     * Сервис уведомлений.
-     */
-    private final INotificationService publisher;
-
-    /**
      * Сервисы описывающие бизнес логику тразакций.
      */
     private final Map<TransactionType, TransactionExecutor> executors;
@@ -57,17 +52,14 @@ implements ITransactionService {
      *
      * @param repository Репозиторий транзакций.
      * @param event Репозиторий событий.
-     * @param publisher Сервис уведомлений.
      * @param executors Список сервисов описывающие бизнес логику тразакций.
      */
     @Autowired
     public TransactionService(final TransactionRepository repository,
                               final EventRepository event,
-                              final INotificationService publisher,
                               final List<TransactionExecutor> executors) {
         super(repository);
         this.event = event;
-        this.publisher = publisher;
         this.executors = executors
             .stream()
             .collect(Collectors.toMap(TransactionExecutor::type,
@@ -82,7 +74,6 @@ implements ITransactionService {
         execute(dto, executor -> executor.create(configuration, dto));
 
         repository.create(configuration, dto);
-        publisher.notify(configuration, repository.get(GUIDs.parse(dto)));
     }
 
     @Override
@@ -109,7 +100,6 @@ implements ITransactionService {
         validation(dto);
 
         repository.update(configuration, dto);
-        publisher.notify(configuration, repository.get(GUIDs.parse(dto)));
     }
 
     @Override

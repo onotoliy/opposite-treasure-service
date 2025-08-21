@@ -1,11 +1,10 @@
 package com.github.onotoliy.opposite.treasure.services.core;
 
-import com.github.onotoliy.opposite.treasure.bpp.log.Log;
 import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
 import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
-import com.github.onotoliy.opposite.treasure.dto.SearchParameter;
+import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 
 import java.util.UUID;
 
@@ -27,7 +26,6 @@ extends ReaderService<E, P> {
      * @param dto Объект.
      * @return Объект.
      */
-    @Log(db = true)
     E create(E dto);
 
     /**
@@ -36,7 +34,6 @@ extends ReaderService<E, P> {
      * @param dto Объект.
      * @return Объект.
      */
-    @Log(db = true)
     E update(E dto);
 
     /**
@@ -44,7 +41,6 @@ extends ReaderService<E, P> {
      *
      * @param uuid Уникальный идентификатор.
      */
-    @Log(db = true)
     void delete(UUID uuid);
 
 }

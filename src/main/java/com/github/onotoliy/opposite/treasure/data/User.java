@@ -12,10 +12,7 @@ public record User(
         String login,
         String email,
         String phone,
-        boolean notifyByPhone,
-        boolean notifyByEmail,
         Set<String> roles
 ) implements HasUUID, HasName {
-
 
 }

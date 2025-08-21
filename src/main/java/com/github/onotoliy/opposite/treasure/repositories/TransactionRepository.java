@@ -3,7 +3,7 @@ package com.github.onotoliy.opposite.treasure.repositories;
 import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.Transaction;
 import com.github.onotoliy.opposite.treasure.data.TransactionType;
-import com.github.onotoliy.opposite.treasure.dto.TransactionSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.jooq.Tables;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureTransactionRecord;

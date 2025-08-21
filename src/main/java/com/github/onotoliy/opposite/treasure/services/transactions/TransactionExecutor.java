@@ -1,7 +1,5 @@
 package com.github.onotoliy.opposite.treasure.services.transactions;
 
-import com.github.onotoliy.opposite.treasure.bpp.log.Log;
-
 import com.github.onotoliy.opposite.treasure.data.Transaction;
 import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import org.jooq.Configuration;
@@ -19,7 +17,6 @@ public interface TransactionExecutor {
      * @param configuration Настройки транзакции.
      * @param dto Объект.
      */
-    @Log(db = true)
     void create(Configuration configuration, Transaction dto);
 
     /**
@@ -28,7 +25,6 @@ public interface TransactionExecutor {
      * @param configuration Настройки транзакции.
      * @param dto Объект.
      */
-    @Log(db = true)
     void delete(Configuration configuration, Transaction dto);
 
     /**
