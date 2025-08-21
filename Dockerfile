@@ -7,10 +7,10 @@ ARG VERSION
 WORKDIR /app
 
 # Copy the Maven build artifact (JAR file) from the local machine
-COPY target/opposite-treasure-$VERSION.jar opposite-treasure-$VERSION.jar
+COPY target/opposite-treasure-$VERSION.jar opposite-treasure.jar
 
 # Expose the port the app runs on
 EXPOSE 8080
 
 # Run the jar file
-ENTRYPOINT ["java", "-jar", "/app/opposite-treasure-$VERSION.jar"]
+ENTRYPOINT ["java", "-jar", "/app/opposite-treasure.jar"]
