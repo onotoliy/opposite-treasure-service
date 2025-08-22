@@ -1,12 +1,9 @@
 package com.github.onotoliy.opposite.treasure.utils;
 
 
-import java.util.UUID;
-
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
-import org.jetbrains.annotations.NotNull;
-import org.jooq.Field;
-import org.jooq.Record;
+
+import java.util.UUID;
 
 /**
  * Утилитарный класс работы с уникальными идентификаторами.
@@ -22,15 +19,12 @@ public final class GUIDs {
 
     }
 
-
-
     /**
      * Преобразование {@link UUID} в {@link String}.
      *
      * @param value Значение в формате {@link UUID}.
      * @return Значение в формате {@link String}.
      */
-    @NotNull
     public static String format(final UUID value) {
         return value == null ? "" : value.toString();
     }
@@ -50,7 +44,6 @@ public final class GUIDs {
      *
      * @return Случайный уникальный идентификатор.
      */
-    @NotNull
     public static UUID random() {
         return UUID.randomUUID();
     }
@@ -61,8 +54,7 @@ public final class GUIDs {
      * @param value Значение в формате {@link String}.
      * @return Значение в формате {@link UUID}.
      */
-    @NotNull
-    public static UUID parse(@NotNull final String value) {
+    public static UUID parse(final String value) {
         return UUID.fromString(value);
     }
 

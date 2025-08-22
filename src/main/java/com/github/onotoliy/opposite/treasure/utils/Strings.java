@@ -1,11 +1,5 @@
 package com.github.onotoliy.opposite.treasure.utils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jooq.Field;
-import org.jooq.Record;
-
-import java.util.Random;
-
 /**
  * Утилитарный класс работы со строками.
  *

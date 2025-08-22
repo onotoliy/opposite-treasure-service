@@ -1,14 +1,7 @@
 package com.github.onotoliy.opposite.treasure.utils;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
-
-import org.jetbrains.annotations.NotNull;
-import org.jooq.Field;
-import org.jooq.Record;
 
 /**
  * Утилитарный класс работы с датами.

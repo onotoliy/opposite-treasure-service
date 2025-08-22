@@ -4,9 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
-import org.jetbrains.annotations.NotNull;
-import org.jooq.Field;
-import org.jooq.Record;
 
 /**
  * Утилитарный класс работы с числами и деньгами.
@@ -81,7 +78,6 @@ public final class Numbers {
      * @param value Значение в формате {@link BigDecimal}.
      * @return Значение в формате {@link String}.
      */
-    @NotNull
     public static String format(final BigDecimal value) {
         if (isEmpty(value)) {
             return "0.0";
