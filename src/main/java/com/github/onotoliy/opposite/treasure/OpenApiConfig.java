@@ -19,20 +19,8 @@ public class OpenApiConfig {
     @Bean
     public OperationCustomizer customOperationId() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
-//            final Annotation[] annotations = handlerMethod.getMethod().getAnnotations();
             final String clazz = handlerMethod.getBeanType().getSimpleName();
             final String path = handlerMethod.getMethod().getName();
-
-//            final StringBuilder sb = new StringBuilder(getMethod(annotations));
-//            final String[] parts = path
-//                    .replaceAll("[{}]", "").replaceAll("^/", "").split("/");
-//
-//            for (String part : parts) {
-//                if (!part.isBlank()) {
-//                    sb.append(part.substring(0, 1).toUpperCase()).append(part.substring(1));
-//                }
-//            }
-//            sb.append(clazz);
 
             operation.setOperationId(path + clazz);
 

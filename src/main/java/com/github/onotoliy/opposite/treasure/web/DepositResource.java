@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,13 +47,8 @@ public class DepositResource {
      * @param uuid Пользователь.
      * @return Депозит.
      */
-    @GetMapping(value = "/{uuid}")
-    @Operation(
-            summary = "Получение депозита пользователя",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-            }
-    )
+    @GetMapping(value = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Получение депозита пользователя")
     public Deposit get(@PathVariable("uuid") final UUID uuid) {
         return service.get(uuid);
     }
@@ -64,13 +60,8 @@ public class DepositResource {
      * @param numberOfRows Размер страницы.
      * @return События.
      */
-    @GetMapping
-    @Operation(
-            summary = "Поиск депозитов",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-            }
-    )
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Поиск депозитов")
     public Page<Deposit> getAll(
             @RequestParam(value = "offset",
                           required = false,

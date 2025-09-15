@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,13 +50,8 @@ public class DebtResource {
      * @param person Пользователь
      * @return Список событий по которым пользователь не рассчитался.
      */
-    @GetMapping("/person/{person}")
-    @Operation(
-            summary = "Получение списка событий по которым пользователь не рассчитался",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-            }
-    )
+    @GetMapping(value = "/person/{person}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Получение списка событий по которым пользователь не рассчитался")
     public Page<Event> getDebts(@PathVariable("person") final UUID person) {
         return service.getDebts(person);
     }
@@ -66,13 +62,8 @@ public class DebtResource {
      * @param event Событие.
      * @return Список должников.
      */
-    @GetMapping("/event/{event}")
-    @Operation(
-            summary = "Получение списка должников",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-            }
-    )
+    @GetMapping(value = "/event/{event}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Получение списка должников")
     public Page<Deposit> getDebtors(@PathVariable("event") final UUID event) {
         return service.getDebtors(event);
     }
