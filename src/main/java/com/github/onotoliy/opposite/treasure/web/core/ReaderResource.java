@@ -8,6 +8,7 @@ import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -29,13 +30,8 @@ public interface ReaderResource<
      * @param uuid Уникальный идентификатор объекта.
      * @return Объект.
      */
-    @GetMapping(value = "/{uuid}")
-    @Operation(
-            summary = "Получение объекта",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-            }
-    )
+    @GetMapping(value = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Получение объекта")
     E get(@PathVariable("uuid") UUID uuid);
 
 }
