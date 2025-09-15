@@ -11,6 +11,7 @@ import io.swagger.v3.oas.models.Operation;
 
 import java.lang.annotation.Annotation;
 import java.util.Locale;
+import java.util.Optional;
 
 @Configuration
 public class OpenApiConfig {
@@ -18,29 +19,23 @@ public class OpenApiConfig {
     @Bean
     public OperationCustomizer customOperationId() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
-            String httpMethod = handlerMethod.getMethod().getName();
+            final Annotation[] annotations = handlerMethod.getMethod().getAnnotations();
+            final String clazz = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
+            final String path = Optional.ofNullable(getPath(annotations)).orElse(handlerMethod.getMethod().getName());
 
-            System.out.println("Method " + httpMethod);
+            final StringBuilder sb = new StringBuilder(getMethod(annotations));
+            final String[] parts = path
+                    .replaceAll("[{}]", "").replaceAll("^/", "").split("/");
 
-            String path = getPath(handlerMethod.getMethod().getAnnotations());
-
-            System.out.println("Path " + path);
-
-            if (path == null) {
-                path = handlerMethod.getMethod().getName();
-            }
-
-            String cleaned = path.replaceAll("[{}]", "").replaceAll("^/", "");
-            String[] parts = cleaned.split("/");
-
-            StringBuilder sb = new StringBuilder(httpMethod);
             for (String part : parts) {
                 if (!part.isBlank()) {
                     sb.append(part.substring(0, 1).toUpperCase()).append(part.substring(1));
                 }
             }
+            sb.append(clazz);
 
             operation.setOperationId(sb.toString());
+
             return operation;
         };
     }
@@ -52,6 +47,16 @@ public class OpenApiConfig {
             if (ann instanceof PutMapping m && m.value().length > 0) return m.value()[0];
             if (ann instanceof DeleteMapping m && m.value().length > 0) return m.value()[0];
             if (ann instanceof RequestMapping m && m.value().length > 0) return m.value()[0];
+        }
+        return null;
+    }
+
+    private String getMethod(Annotation[] annotations) {
+        for (Annotation ann : annotations) {
+            if (ann instanceof GetMapping) return "get";
+            if (ann instanceof PostMapping) return "post";
+            if (ann instanceof PutMapping) return "put";
+            if (ann instanceof DeleteMapping) return "delete";
         }
         return null;
     }
