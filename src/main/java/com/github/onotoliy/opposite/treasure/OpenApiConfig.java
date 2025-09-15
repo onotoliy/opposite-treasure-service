@@ -58,7 +58,7 @@ public class OpenApiConfig {
             if (ann instanceof PutMapping) return "put";
             if (ann instanceof DeleteMapping) return "delete";
         }
-        return null;
+        return "method";
     }
 }
 
