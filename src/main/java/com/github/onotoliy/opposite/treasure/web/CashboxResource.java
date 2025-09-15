@@ -3,6 +3,10 @@ package com.github.onotoliy.opposite.treasure.web;
 import com.github.onotoliy.opposite.treasure.data.Cashbox;
 import com.github.onotoliy.opposite.treasure.services.ICashboxService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +42,12 @@ public class CashboxResource {
      * @return Данные о кассе.
      */
     @GetMapping
+    @Operation(
+            summary = "Получение информации о кассе",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public Cashbox get() {
         return service.get();
     }

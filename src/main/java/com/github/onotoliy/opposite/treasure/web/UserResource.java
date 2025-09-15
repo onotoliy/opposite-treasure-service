@@ -6,6 +6,9 @@ import com.github.onotoliy.opposite.treasure.data.core.ExceptionDevice;
 import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.IExceptionService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +64,12 @@ public class UserResource {
      */
     @GetMapping(value = "/current")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Получение объекта",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public Option getCurrentUser() {
         return user.getCurrentUser();
     }
@@ -71,6 +80,12 @@ public class UserResource {
      * @return Роли.
      */
     @GetMapping(value = "/current/roles")
+    @Operation(
+            summary = "Получение объекта",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public Set<String> getCurrentUserRoles() {
         return user.getCurrentUserRoles();
     }
@@ -81,6 +96,12 @@ public class UserResource {
      * @return Пользователи.
      */
     @GetMapping(value = "/list")
+    @Operation(
+            summary = "Получение объекта",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public List<Option> getAll() {
         return user.getAll()
                    .stream()
@@ -94,6 +115,12 @@ public class UserResource {
      * @return Пользователи.
      */
     @GetMapping(value = "/list/full")
+    @Operation(
+            summary = "Получение объекта",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public List<User> getFullDTOAll() {
         return user.getAll();
     }
@@ -104,6 +131,12 @@ public class UserResource {
      * @param exception Описание ошибки устройства.
      */
     @PostMapping(value = "/register/exception")
+    @Operation(
+            summary = "Получение объекта",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public void registration(@RequestBody final ExceptionDevice exception) {
         this.exception.registration(exception);
     }

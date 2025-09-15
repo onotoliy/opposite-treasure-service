@@ -4,6 +4,9 @@ import com.github.onotoliy.opposite.treasure.data.Deposit;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.services.DepositService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +47,12 @@ public class DepositResource {
      * @return Депозит.
      */
     @GetMapping(value = "/{uuid}")
+    @Operation(
+            summary = "Получение депозита пользователя",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public Deposit get(@PathVariable("uuid") final UUID uuid) {
         return service.get(uuid);
     }
@@ -56,6 +65,12 @@ public class DepositResource {
      * @return События.
      */
     @GetMapping
+    @Operation(
+            summary = "Поиск депозитов",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public Page<Deposit> getAll(
             @RequestParam(value = "offset",
                           required = false,

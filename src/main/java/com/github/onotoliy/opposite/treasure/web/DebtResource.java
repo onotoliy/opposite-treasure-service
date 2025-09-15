@@ -1,5 +1,6 @@
 package com.github.onotoliy.opposite.treasure.web;
 
+import com.github.onotoliy.opposite.treasure.data.Cashbox;
 import com.github.onotoliy.opposite.treasure.data.Deposit;
 import com.github.onotoliy.opposite.treasure.data.Event;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
@@ -7,6 +8,10 @@ import com.github.onotoliy.opposite.treasure.services.DebtService;
 
 import java.util.UUID;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +50,12 @@ public class DebtResource {
      * @return Список событий по которым пользователь не рассчитался.
      */
     @GetMapping("/person/{person}")
+    @Operation(
+            summary = "Получение списка событий по которым пользователь не рассчитался",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public Page<Event> getDebts(@PathVariable("person") final UUID person) {
         return service.getDebts(person);
     }
@@ -56,6 +67,12 @@ public class DebtResource {
      * @return Список должников.
      */
     @GetMapping("/event/{event}")
+    @Operation(
+            summary = "Получение списка должников",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public Page<Deposit> getDebtors(@PathVariable("event") final UUID event) {
         return service.getDebtors(event);
     }

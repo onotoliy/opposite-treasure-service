@@ -9,6 +9,9 @@ import com.github.onotoliy.opposite.treasure.web.core.AbstractModifierResource;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,16 +42,6 @@ extends AbstractModifierResource<
     }
 
     /**
-     * Получение списка всех событий.
-     *
-     * @return События.
-     */
-    @GetMapping(value = "/list")
-    public List<Option> getAll() {
-        return service.getAll();
-    }
-
-    /**
      * Поиск событий.
      *
      * @param name Название.
@@ -57,6 +50,12 @@ extends AbstractModifierResource<
      * @return События.
      */
     @GetMapping
+    @Operation(
+            summary = "Поиск событий",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public Page<Event> getAll(
             @RequestParam(value = "name", required = false)
             final String name,

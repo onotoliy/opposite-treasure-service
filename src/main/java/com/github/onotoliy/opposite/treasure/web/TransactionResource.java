@@ -6,6 +6,9 @@ import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.TransactionSearchParameter;
 import com.github.onotoliy.opposite.treasure.services.ITransactionService;
 import com.github.onotoliy.opposite.treasure.web.core.AbstractModifierResource;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +52,12 @@ extends AbstractModifierResource<
      * @return Транзакции.
      */
     @GetMapping
+    @Operation(
+            summary = "Получение объекта",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+            }
+    )
     public Page<Transaction> getAll(
             @RequestParam(value = "name", required = false)
             final String name,
