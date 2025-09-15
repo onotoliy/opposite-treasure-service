@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,14 +63,9 @@ public class UserResource {
      *
      * @return Текущий пльзователь.
      */
-    @GetMapping(value = "/current")
+    @GetMapping(value = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(
-            summary = "Получение объекта",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-            }
-    )
+    @Operation(summary = "Получение объекта")
     public Option getCurrentUser() {
         return user.getCurrentUser();
     }
@@ -79,13 +75,8 @@ public class UserResource {
      *
      * @return Роли.
      */
-    @GetMapping(value = "/current/roles")
-    @Operation(
-            summary = "Получение объекта",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-            }
-    )
+    @GetMapping(value = "/current/roles", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Получение объекта")
     public Set<String> getCurrentUserRoles() {
         return user.getCurrentUserRoles();
     }
@@ -95,13 +86,8 @@ public class UserResource {
      *
      * @return Пользователи.
      */
-    @GetMapping(value = "/list")
-    @Operation(
-            summary = "Получение объекта",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-            }
-    )
+    @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Получение объекта")
     public List<Option> getAll() {
         return user.getAll()
                    .stream()
@@ -114,13 +100,8 @@ public class UserResource {
      *
      * @return Пользователи.
      */
-    @GetMapping(value = "/list/full")
-    @Operation(
-            summary = "Получение объекта",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-            }
-    )
+    @GetMapping(value = "/list/full", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Получение объекта")
     public List<User> getFullDTOAll() {
         return user.getAll();
     }
@@ -130,13 +111,8 @@ public class UserResource {
      *
      * @param exception Описание ошибки устройства.
      */
-    @PostMapping(value = "/register/exception")
-    @Operation(
-            summary = "Получение объекта",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-            }
-    )
+    @PostMapping(value = "/register/exception", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Получение объекта")
     public void registration(@RequestBody final ExceptionDevice exception) {
         this.exception.registration(exception);
     }
