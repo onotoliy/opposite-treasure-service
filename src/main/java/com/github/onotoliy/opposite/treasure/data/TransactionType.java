@@ -1,19 +1,35 @@
 package com.github.onotoliy.opposite.treasure.data;
 
+/**
+ * Тип транзакции.
+ *
+ * @author Anatoliy Pokhresnyi
+ */
 public enum TransactionType {
 
-    NONE("Не выбрано"),
-    COST("Расход"),
-    CONTRIBUTION("Взнос"),
-    WRITE_OFF("Списание с депозита"),
-    PAID("Платеж"),
-    EARNED("Заработано");
+    /**
+     * Не выбрано.
+     */
+    NONE,
+    /**
+     * Расход.
+     */
+    COST,
+    /**
+     * Взнос.
+     */
+    CONTRIBUTION,
+    /**
+     * Списание с депозита.
+     */
+    WRITE_OFF,
+    /**
+     * Платеж.
+     */
+    PAID,
+    /**
+     * Заработано.
+     */
+    EARNED
 
-    TransactionType(String name) {
-
-    }
-
-    public String getLabel() {
-        return "";
-    }
 }

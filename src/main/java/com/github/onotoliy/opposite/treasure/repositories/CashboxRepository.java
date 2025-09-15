@@ -1,8 +1,6 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.treasure.data.Cashbox;
-import com.github.onotoliy.opposite.treasure.utils.Dates;
-import com.github.onotoliy.opposite.treasure.utils.Numbers;
 
 import java.math.BigDecimal;
 import java.time.Instant;

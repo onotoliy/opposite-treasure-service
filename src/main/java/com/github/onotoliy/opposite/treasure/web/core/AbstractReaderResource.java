@@ -5,6 +5,7 @@ import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.data.SearchParameter;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.services.core.ReaderService;
 
 import java.util.UUID;
@@ -20,8 +21,7 @@ import java.util.UUID;
 public abstract class AbstractReaderResource<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor,
     P extends SearchParameter,
-    S extends ReaderService<E, P>>
-implements ReaderResource<E> {
+    S extends ReaderService<E, P>> implements ReaderResource<E, P> {
 
     /**
      * Сервис чтения записей.
@@ -40,6 +40,11 @@ implements ReaderResource<E> {
     @Override
     public E get(final UUID uuid) {
         return service.get(uuid);
+    }
+
+    @Override
+    public Page<E> getAll(final P parameter) {
+        return service.getAll(parameter);
     }
 
 }

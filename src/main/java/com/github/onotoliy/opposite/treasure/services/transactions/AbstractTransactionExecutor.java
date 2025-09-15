@@ -2,10 +2,7 @@ package com.github.onotoliy.opposite.treasure.services.transactions;
 
 import com.github.onotoliy.opposite.treasure.data.Transaction;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
-import com.github.onotoliy.opposite.treasure.utils.Numbers;
-
 import java.math.BigDecimal;
-
 import org.jooq.Configuration;
 
 /**
@@ -27,6 +24,12 @@ implements TransactionExecutor {
                                    Transaction dto,
                                    BigDecimal money);
 
+    @Override
+    public final void create(final Configuration configuration,
+                             final Transaction dto) {
+        create(configuration, dto, money(dto));
+    }
+
     /**
      * Описание бизнес логики удаления транзакции.
      *
@@ -37,12 +40,6 @@ implements TransactionExecutor {
     protected abstract void delete(Configuration configuration,
                                    Transaction dto,
                                    BigDecimal money);
-
-    @Override
-    public final void create(final Configuration configuration,
-                             final Transaction dto) {
-        create(configuration, dto, money(dto));
-    }
 
     @Override
     public final void delete(final Configuration configuration,

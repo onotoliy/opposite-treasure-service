@@ -1,12 +1,13 @@
 package com.github.onotoliy.opposite.treasure.web.core;
 
+import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
 import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Parameter;
+import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,17 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.UUID;
-
 /**
  * Интерфейс базового WEB сервиса управления данными.
  *
  * @param <E> Объект.
+ * @param <P> Поисковые параметры объекта.
  * @author Anatoliy Pokhresnyi
  */
 public interface ModifierResource<
-    E extends HasUUID & HasName & HasCreationDate & HasAuthor>
-extends ReaderResource<E> {
+    E extends HasUUID & HasName & HasCreationDate & HasAuthor,
+    P extends SearchParameter> extends ReaderResource<E, P> {
 
     /**
      * Создание объекта.
@@ -34,7 +34,7 @@ extends ReaderResource<E> {
      */
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Создание объекта")
-    E create(@RequestBody E dto);
+    E create(@Parameter(description = "Объекта") @RequestBody E dto);
 
     /**
      * Изменение объекта.
@@ -44,7 +44,7 @@ extends ReaderResource<E> {
      */
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Изменение объекта")
-    E update(@RequestBody E dto);
+    E update(@Parameter(description = "Объекта") @RequestBody E dto);
 
     /**
      * Удаление объекта.
@@ -53,6 +53,12 @@ extends ReaderResource<E> {
      */
     @DeleteMapping(value = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Удаление объекта")
-    void delete(@PathVariable("uuid") UUID uuid);
+    void delete(
+        @Parameter(
+            description = "Уникальный идентификатор объекта",
+            example = "550e8400-e29b-41d4-a716-446655440000"
+        )
+        @PathVariable("uuid") UUID uuid
+    );
 
 }

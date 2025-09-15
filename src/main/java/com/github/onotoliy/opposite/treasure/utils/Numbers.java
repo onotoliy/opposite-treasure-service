@@ -1,8 +1,6 @@
 package com.github.onotoliy.opposite.treasure.utils;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 
 
 /**
@@ -20,26 +18,6 @@ public final class Numbers {
     }
 
     /**
-     * Проверка содержит ли объект какое-либо значение.
-     *
-     * @param value Объект.
-     * @return Результат проверки.
-     */
-    public static boolean nonEmpty(final BigDecimal value) {
-        return !isEmpty(value);
-    }
-
-    /**
-     * Проверка содержит ли объект какое-либо значение.
-     *
-     * @param value Объект.
-     * @return Результат проверки.
-     */
-    public static boolean nonEmpty(final String value) {
-        return Strings.nonEmpty(value) && nonEmpty(parse(value));
-    }
-
-    /**
      * Проверяет объект на пустоту.
      *
      * @param value Объект
@@ -48,49 +26,6 @@ public final class Numbers {
     public static boolean isEmpty(final BigDecimal value) {
         return value == null || BigDecimal.ZERO.equals(value);
     }
-
-    /**
-     * Проверяет объект на пустоту.
-     *
-     * @param value Объект
-     * @return Результат проверки.
-     */
-    public static boolean isEmpty(final String value) {
-        return value.equals("0")
-            || value.equals("0.0")
-            || Strings.isEmpty(value)
-            || isEmpty(parse(value));
-    }
-
-    /**
-     * Преобразование {@link String} в {@link BigDecimal}.
-     *
-     * @param value Значение в формате {@link String}.
-     * @return Значение в формате {@link BigDecimal}.
-     */
-    public static BigDecimal parse(final String value) {
-        return Strings.isEmpty(value) ? null : new BigDecimal(value);
-    }
-
-    /**
-     * Преобразование {@link BigDecimal} в {@link String}.
-     *
-     * @param value Значение в формате {@link BigDecimal}.
-     * @return Значение в формате {@link String}.
-     */
-    public static String format(final BigDecimal value) {
-        if (isEmpty(value)) {
-            return "0.0";
-        }
-
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(2);
-        df.setMinimumFractionDigits(0);
-        df.setGroupingUsed(false);
-
-        return df.format(value.setScale(2, RoundingMode.HALF_DOWN));
-    }
-
 
     /**
      * Проверка двух объектов на неравенство.

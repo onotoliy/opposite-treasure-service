@@ -1,21 +1,19 @@
 package com.github.onotoliy.opposite.treasure.services;
 
+import com.github.onotoliy.opposite.treasure.data.Deposit;
 import com.github.onotoliy.opposite.treasure.data.Event;
-import com.github.onotoliy.opposite.treasure.data.Transaction;
-import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.EventSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.Transaction;
 import com.github.onotoliy.opposite.treasure.data.TransactionSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
 import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
 import com.github.onotoliy.opposite.treasure.repositories.TransactionRepository;
-import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
 import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
-
 import java.util.UUID;
-
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +43,7 @@ implements IEventService {
     /**
      * Сервис чтения пользователей.
      */
-    private final KeycloakRPC user;
+    private final KeycloakService user;
 
     /**
      * Конструктор.
@@ -59,7 +57,7 @@ implements IEventService {
     public EventService(final EventRepository repository,
                         final TransactionRepository transaction,
                         final DebtRepository debt,
-                        final KeycloakRPC user) {
+                        final KeycloakService user) {
         super(repository);
         this.transaction = transaction;
         this.debt = debt;
@@ -70,12 +68,12 @@ implements IEventService {
     protected void create(final Configuration configuration, final Event dto) {
         repository.create(configuration, dto);
 
-        if (isEmpty(dto.contribution()) && isEmpty(dto.total())) {
+        if (isEmpty(dto.contribution())) {
             return;
         }
 
-        user.getAll().forEach(e ->
-            debt.cost(configuration, GUIDs.parse(e), GUIDs.parse(dto)));
+        //user.getAll().forEach(e ->
+        //    debt.cost(configuration, GUIDs.parse(e), GUIDs.parse(dto)));
     }
 
     @Override
@@ -86,10 +84,6 @@ implements IEventService {
                                previous.contribution())) {
             throw new ModificationException(
                 "Нельзя менять сумму взноса с одного человека");
-        }
-
-        if (Numbers.nonEqually(dto.total(), previous.total())) {
-            throw new ModificationException("Нельзя менять общую сумму");
         }
 
         repository.update(configuration, dto);
@@ -108,5 +102,14 @@ implements IEventService {
         debt.contribution(configuration, uuid);
 
         repository.delete(configuration, uuid);
+    }
+
+    @Override
+    public Page<Deposit> getDebtors(
+        final UUID uuid,
+        final int offset,
+        final int numberOfRows
+    ) {
+        return null;
     }
 }

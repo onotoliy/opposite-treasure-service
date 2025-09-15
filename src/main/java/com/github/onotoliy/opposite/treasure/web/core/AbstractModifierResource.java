@@ -1,15 +1,11 @@
 package com.github.onotoliy.opposite.treasure.web.core;
 
+import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
 import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
-import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 import com.github.onotoliy.opposite.treasure.services.core.ModifierService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import java.util.UUID;
 
 /**
@@ -25,7 +21,7 @@ public abstract class AbstractModifierResource<
     P extends SearchParameter,
     S extends ModifierService<E, P>>
 extends AbstractReaderResource<E, P, S>
-implements ModifierResource<E> {
+implements ModifierResource<E, P> {
 
     /**
      * Конструктор.

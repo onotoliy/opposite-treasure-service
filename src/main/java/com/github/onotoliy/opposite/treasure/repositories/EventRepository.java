@@ -1,20 +1,14 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.treasure.data.Event;
-import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.EventSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureEvent;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureEventRecord;
 import com.github.onotoliy.opposite.treasure.repositories.core.AbstractModifierRepository;
-import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.utils.Dates;
-import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import com.github.onotoliy.opposite.treasure.utils.Numbers;
-import com.github.onotoliy.opposite.treasure.utils.Strings;
-
+import com.github.onotoliy.opposite.treasure.services.KeycloakService;
 import java.util.List;
 import java.util.UUID;
-
 import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
@@ -32,21 +26,21 @@ import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_EVENT;
  * @author Anatoliy Pokhresnyi
  */
 @Repository
-public class EventRepository
-extends AbstractModifierRepository<
-        Event,
+public class EventRepository extends AbstractModifierRepository<
+    Event,
     EventSearchParameter,
     TreasureEventRecord,
-    TreasureEvent> {
+    TreasureEvent
+> {
 
     /**
      * Конструктор.
      *
-     * @param dsl Контекст подключения к БД.
+     * @param dsl  Контекст подключения к БД.
      * @param user Сервис чтения пользователей.
      */
     @Autowired
-    public EventRepository(final DSLContext dsl, final KeycloakRPC user) {
+    public EventRepository(final DSLContext dsl, final KeycloakService user) {
         super(
             TREASURE_EVENT,
             TREASURE_EVENT.GUID,
@@ -55,7 +49,8 @@ extends AbstractModifierRepository<
             TREASURE_EVENT.CREATION_DATE,
             TREASURE_EVENT.DELETION_DATE,
             dsl,
-            user);
+            user
+        );
     }
 
     @Override
@@ -64,7 +59,7 @@ extends AbstractModifierRepository<
 
         if (parameter.hasName()) {
             conditions.add(TREASURE_EVENT.NAME.likeIgnoreCase(
-                    "%" + parameter.getName() + "%"));
+                "%" + parameter.name() + "%"));
         }
 
         return conditions;
@@ -72,21 +67,21 @@ extends AbstractModifierRepository<
 
     @Override
     public InsertSetMoreStep<TreasureEventRecord> insertQuery(
-            final Configuration configuration,
-            final Event dto) {
+        final Configuration configuration,
+        final Event dto
+    ) {
         return super.insertQuery(configuration, dto)
                     .set(table.CONTRIBUTION, dto.contribution())
-                    .set(table.TOTAL, dto.total())
                     .set(table.DEADLINE, dto.deadline());
     }
 
     @Override
     public UpdateSetMoreStep<TreasureEventRecord> updateQuery(
-            final Configuration configuration,
-            final Event dto) {
+        final Configuration configuration,
+        final Event dto
+    ) {
         return super.updateQuery(configuration, dto)
                     .set(table.CONTRIBUTION, dto.contribution())
-                    .set(table.TOTAL, dto.total())
                     .set(table.DEADLINE, dto.deadline());
     }
 
@@ -104,14 +99,13 @@ extends AbstractModifierRepository<
      */
     public static Event toDTO(final Record record, final Option author) {
         return new Event(
-                record.getValue(  TREASURE_EVENT.GUID),
-                record.getValue( TREASURE_EVENT.NAME),
-                record.getValue(  TREASURE_EVENT.CONTRIBUTION),
-                record.getValue( TREASURE_EVENT.TOTAL),
+            record.getValue(TREASURE_EVENT.GUID),
+            record.getValue(TREASURE_EVENT.NAME),
+            record.getValue(TREASURE_EVENT.CONTRIBUTION),
             record.getValue(TREASURE_EVENT.DEADLINE),
-                record.getValue( TREASURE_EVENT.CREATION_DATE),
+            record.getValue(TREASURE_EVENT.CREATION_DATE),
             author,
-                record.getValue(TREASURE_EVENT.DELETION_DATE)
+            record.getValue(TREASURE_EVENT.DELETION_DATE)
         );
     }
 

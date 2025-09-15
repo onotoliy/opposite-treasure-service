@@ -2,14 +2,10 @@ package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.treasure.data.Deposit;
 import com.github.onotoliy.opposite.treasure.data.Event;
-import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.page.Meta;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.page.Paging;
-import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.utils.Dates;
-import com.github.onotoliy.opposite.treasure.utils.Numbers;
-import com.github.onotoliy.opposite.treasure.utils.Strings;
+import com.github.onotoliy.opposite.treasure.services.KeycloakService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -43,7 +39,7 @@ public class DebtRepository {
     /**
      * Сервис чтения пользователей.
      */
-    private final KeycloakRPC user;
+    private final KeycloakService user;
 
     /**
      * Конструктор.
@@ -52,7 +48,7 @@ public class DebtRepository {
      * @param user Сервис чтения пользователей.
      */
     @Autowired
-    public DebtRepository(final DSLContext dsl, final KeycloakRPC user) {
+    public DebtRepository(final DSLContext dsl, final KeycloakService user) {
         this.dsl = dsl;
         this.user = user;
     }
@@ -72,7 +68,7 @@ public class DebtRepository {
             .where(TREASURE_DEBT.USER_UUID.eq(person))
             .orderBy(TREASURE_EVENT.DEADLINE.desc())
             .fetch(record -> EventRepository.toDTO(
-                record, user.find(record.getValue(TREASURE_EVENT.AUTHOR))));
+                record, null));
 
         return new Page<>(new Meta(list.size(),
                                    new Paging(0, list.size())),

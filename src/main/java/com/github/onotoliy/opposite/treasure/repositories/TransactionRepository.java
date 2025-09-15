@@ -2,23 +2,28 @@ package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.Transaction;
-import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.data.TransactionSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.jooq.Tables;
 import com.github.onotoliy.opposite.treasure.jooq.tables.TreasureTransaction;
 import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureTransactionRecord;
 import com.github.onotoliy.opposite.treasure.repositories.core.AbstractModifierRepository;
-import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
+import com.github.onotoliy.opposite.treasure.services.KeycloakService;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import org.jooq.*;
-import org.jooq.Record;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import org.jooq.Condition;
+import org.jooq.Configuration;
+import org.jooq.DSLContext;
+import org.jooq.InsertSetMoreStep;
+import org.jooq.OrderField;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
+import org.jooq.UpdateSetMoreStep;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_TRANSACTION;
 
@@ -30,7 +35,7 @@ import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_TRANSAC
 @Repository
 public class TransactionRepository
 extends AbstractModifierRepository<
-        Transaction,
+    Transaction,
     TransactionSearchParameter,
     TreasureTransactionRecord,
     TreasureTransaction> {
@@ -38,11 +43,14 @@ extends AbstractModifierRepository<
     /**
      * Конструктор.
      *
-     * @param dsl Контекст подключения к БД.
+     * @param dsl  Контекст подключения к БД.
      * @param user Сервис чтения пользователей.
      */
     @Autowired
-    public TransactionRepository(final DSLContext dsl, final KeycloakRPC user) {
+    public TransactionRepository(
+        final DSLContext dsl,
+        final KeycloakService user
+    ) {
         super(
             TREASURE_TRANSACTION,
             TREASURE_TRANSACTION.GUID,
@@ -51,7 +59,8 @@ extends AbstractModifierRepository<
             TREASURE_TRANSACTION.CREATION_DATE,
             TREASURE_TRANSACTION.DELETION_DATE,
             dsl,
-            user);
+            user
+        );
     }
 
     @Override
@@ -63,28 +72,29 @@ extends AbstractModifierRepository<
 
     @Override
     protected List<Condition> where(
-            final TransactionSearchParameter parameter) {
+        final TransactionSearchParameter parameter
+    ) {
         List<Condition> conditions = super.where(parameter);
 
         if (parameter.hasEvent()) {
             conditions.add(
-                TREASURE_TRANSACTION.EVENT_GUID.eq(parameter.getEvent()));
+                TREASURE_TRANSACTION.EVENT_GUID.eq(parameter.event()));
         }
 
         if (parameter.hasUser()) {
             conditions.add(
-                TREASURE_TRANSACTION.USER_GUID.eq(parameter.getUser()));
+                TREASURE_TRANSACTION.USER_GUID.eq(parameter.user()));
         }
 
         if (parameter.hasName()) {
             conditions.add(
                 TREASURE_TRANSACTION.NAME.likeIgnoreCase(
-                        "%" + parameter.getName() + "%"));
+                    "%" + parameter.name() + "%"));
         }
 
         if (parameter.hasType()) {
             conditions.add(
-                TREASURE_TRANSACTION.TYPE.eq(parameter.getType().name()));
+                TREASURE_TRANSACTION.TYPE.eq(parameter.type().name()));
         }
 
         return conditions;
@@ -92,11 +102,12 @@ extends AbstractModifierRepository<
 
     @Override
     public InsertSetMoreStep<TreasureTransactionRecord> insertQuery(
-            final Configuration configuration,
-            final Transaction dto) {
+        final Configuration configuration,
+        final Transaction dto
+    ) {
         return super.insertQuery(configuration, dto)
                     .set(table.CASH, dto.cash())
-                    .set(table.TRANSACTION_DATE,dto.transactionDate())
+                    .set(table.TRANSACTION_DATE, dto.transactionDate())
                     .set(table.USER_GUID, GUIDs.parse(dto.person()))
                     .set(table.EVENT_GUID, GUIDs.parse(dto.event()))
                     .set(table.TYPE, dto.type().name());
@@ -104,8 +115,9 @@ extends AbstractModifierRepository<
 
     @Override
     public UpdateSetMoreStep<TreasureTransactionRecord> updateQuery(
-            final Configuration configuration,
-            final Transaction dto) {
+        final Configuration configuration,
+        final Transaction dto
+    ) {
         return super.updateQuery(configuration, dto)
                     .set(table.CASH, dto.cash())
                     .set(table.TRANSACTION_DATE, dto.transactionDate())
@@ -127,14 +139,14 @@ extends AbstractModifierRepository<
             : formatUser(record, table.USER_GUID);
 
         return new Transaction(
-                record.getValue(uuid),
-                record.getValue(name),
-                record.getValue(table.CASH),
+            record.getValue(uuid),
+            record.getValue(name),
+            record.getValue(table.CASH),
             TransactionType.valueOf(record.getValue(table.TYPE)),
             person,
             EventRepository.toOption(record),
-                record.getValue(table.TRANSACTION_DATE),
-                record.getValue(table.TRANSACTION_DATE),
+            record.getValue(table.TRANSACTION_DATE),
+            record.getValue(table.TRANSACTION_DATE),
             formatUser(record, author),
             record.getValue(table.DELETION_DATE)
         );

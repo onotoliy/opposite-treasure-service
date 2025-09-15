@@ -40,15 +40,6 @@ public final class GUIDs {
     }
 
     /**
-     * Получение случайного уникального идентификатора.
-     *
-     * @return Случайный уникальный идентификатор.
-     */
-    public static UUID random() {
-        return UUID.randomUUID();
-    }
-
-    /**
      * Преобразование {@link String} в {@link UUID}.
      *
      * @param value Значение в формате {@link String}.
@@ -69,16 +60,6 @@ public final class GUIDs {
     }
 
     /**
-     * Проверка содержит ли объект какое-либо значение.
-     *
-     * @param value Объект.
-     * @return Результат проверки.
-     */
-    public static boolean nonEmpty(final UUID value) {
-        return !isEmpty(value);
-    }
-
-    /**
      * Проверяет объект на пустоту.
      *
      * @param value Объект
@@ -86,6 +67,16 @@ public final class GUIDs {
      */
     public static boolean isEmpty(final HasUUID value) {
         return value == null || GUIDs.isEmpty(value.uuid());
+    }
+
+    /**
+     * Проверка содержит ли объект какое-либо значение.
+     *
+     * @param value Объект.
+     * @return Результат проверки.
+     */
+    public static boolean nonEmpty(final UUID value) {
+        return !isEmpty(value);
     }
 
     /**

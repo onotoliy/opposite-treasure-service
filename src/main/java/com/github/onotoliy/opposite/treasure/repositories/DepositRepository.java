@@ -1,23 +1,14 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.treasure.data.Deposit;
-import com.github.onotoliy.opposite.treasure.data.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.data.Option;
-import com.github.onotoliy.opposite.treasure.data.page.Meta;
-import com.github.onotoliy.opposite.treasure.data.page.Page;
-import com.github.onotoliy.opposite.treasure.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
-import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.utils.Dates;
-import com.github.onotoliy.opposite.treasure.utils.Numbers;
-import com.github.onotoliy.opposite.treasure.utils.Strings;
-
+import com.github.onotoliy.opposite.treasure.services.KeycloakService;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -45,7 +36,7 @@ public class DepositRepository {
     /**
      * Сервис чтения пользователей.
      */
-    private final KeycloakRPC user;
+    private final KeycloakService user;
 
     /**
      * Конструктор.
@@ -54,24 +45,9 @@ public class DepositRepository {
      * @param user Сервис чтения пользователей.
      */
     @Autowired
-    public DepositRepository(final DSLContext dsl, final KeycloakRPC user) {
+    public DepositRepository(final DSLContext dsl, final KeycloakService user) {
         this.dsl = dsl;
         this.user = user;
-    }
-
-    /**
-     * Получение депозита.
-     *
-     * @param uuid Уникальный идентификатор.
-     * @return Депозит.
-     */
-    public Deposit get(final UUID uuid) {
-        return dsl.select()
-                  .from(TREASURE_DEPOSIT)
-                  .where(TREASURE_DEPOSIT.USER_UUID.eq(uuid))
-                  .fetchOptional(this::toDTO)
-                  .orElseThrow(() -> new NotFoundException(TREASURE_DEPOSIT,
-                                                           uuid));
     }
 
     /**
@@ -89,27 +65,6 @@ public class DepositRepository {
                                       BigDecimal.class))
                   .orElseThrow(() ->
                       new NotFoundException(TREASURE_DEPOSIT, uuid));
-    }
-
-
-
-    /**
-     * Поиск депозитов.
-     *
-     * @param parameter Поисковые параметры.
-     * @return Депозиты.
-     */
-    public Page<Deposit> getAll(final DepositSearchParameter parameter) {
-        return new Page<>(
-            new Meta(
-                dsl.selectCount()
-                   .from(TREASURE_DEPOSIT)
-                   .fetchOptional(0, int.class)
-                   .orElse(0),
-                new Paging(parameter.offset(), parameter.offset())),
-            dsl.select().from(TREASURE_DEPOSIT)
-               .limit(parameter.offset(), parameter.numberOfRows())
-               .fetch(this::toDTO));
     }
 
     /**
@@ -168,29 +123,19 @@ public class DepositRepository {
     /**
      * Преобзазование записи из БД в объект.
      *
-     * @param record Запись из БД.
-     * @return Объект.
-     */
-    private Deposit toDTO(final Record record) {
-        return toDTO(user, record);
-    }
-
-    /**
-     * Преобзазование записи из БД в объект.
-     *
      * @param user Сервис чтения пользователей.
      * @param record Запись из БД.
      * @return Объект.
      */
-    public static Deposit toDTO(final KeycloakRPC user, final Record record) {
+    public static Deposit toDTO(
+            final KeycloakService user,
+            final Record record
+    ) {
         Optional<Option> person = Optional
             .of(record.getValue(TREASURE_DEPOSIT.USER_UUID, UUID.class))
-            .flatMap(user::findOption);
+            .flatMap(null);
 
-        return new Deposit(
-            person.map(Option::uuid).orElse(null),
-            person.map(Option::name).orElse(null),
-                record.getValue(TREASURE_DEPOSIT.DEPOSIT));
+        return null;
     }
 
     /**

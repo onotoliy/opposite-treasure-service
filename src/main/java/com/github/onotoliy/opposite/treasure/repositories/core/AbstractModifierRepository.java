@@ -1,23 +1,29 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
+import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
 import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
-import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
-import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
+import com.github.onotoliy.opposite.treasure.services.KeycloakService;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.impl.DSL;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
+import org.jooq.Configuration;
+import org.jooq.DSLContext;
+import org.jooq.InsertSetMoreStep;
+import org.jooq.Query;
+import org.jooq.Record;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UpdateConditionStep;
+import org.jooq.UpdateSetMoreStep;
+import org.jooq.impl.DSL;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_VERSION;
 
@@ -55,10 +61,10 @@ implements ModifierRepository<E, P> {
             final TableField<R, UUID> uuid,
             final TableField<R, String> name,
             final TableField<R, UUID> author,
-            final  TableField<R, Instant> creationDate,
+            final TableField<R, Instant> creationDate,
             final TableField<R, Instant> deletionDate,
             final DSLContext dsl,
-            final KeycloakRPC user) {
+            final KeycloakService user) {
         super(table, uuid, name, author, creationDate, deletionDate, dsl, user);
     }
 
@@ -115,6 +121,17 @@ implements ModifierRepository<E, P> {
     }
 
     /**
+     * Получение delete from запроса из таблицы.
+     *
+     * @param uuid Уникальный идентификатор.
+     * @return Запрос.
+     */
+    protected UpdateConditionStep<R> deleteQuery(final UUID uuid) {
+        return dsl.transactionResult(
+            configuration -> deleteQuery(configuration, uuid));
+    }
+
+    /**
      * Получение insert into запроса из таблицы.
      *
      * @param configuration Настройка транзакции.
@@ -136,6 +153,17 @@ implements ModifierRepository<E, P> {
     }
 
     /**
+     * Получение insert into запроса из таблицы.
+     *
+     * @param dto Объект.
+     * @return Запрос.
+     */
+    protected InsertSetMoreStep<R> insertQuery(final E dto) {
+        return dsl.transactionResult(
+            configuration -> insertQuery(configuration, dto));
+    }
+
+    /**
      * Получение update запроса из таблицы.
      *
      * @param configuration Настройка транзакции.
@@ -153,28 +181,6 @@ implements ModifierRepository<E, P> {
                   .set(name, dto.name())
                   .set(creationDate, dto.creationDate())
                   .set(author, GUIDs.parse(dto.author()));
-    }
-
-    /**
-     * Получение delete from запроса из таблицы.
-     *
-     * @param uuid Уникальный идентификатор.
-     * @return Запрос.
-     */
-    protected UpdateConditionStep<R> deleteQuery(final UUID uuid) {
-        return dsl.transactionResult(
-            configuration -> deleteQuery(configuration, uuid));
-    }
-
-    /**
-     * Получение insert into запроса из таблицы.
-     *
-     * @param dto Объект.
-     * @return Запрос.
-     */
-    protected InsertSetMoreStep<R> insertQuery(final E dto) {
-        return dsl.transactionResult(
-            configuration -> insertQuery(configuration, dto));
     }
 
     /**

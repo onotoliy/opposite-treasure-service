@@ -1,6 +1,7 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
 import com.github.onotoliy.opposite.treasure.data.Option;
+import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
 import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
@@ -8,15 +9,22 @@ import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.data.page.Meta;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.page.Paging;
-import com.github.onotoliy.opposite.treasure.data.SearchParameter;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
-import com.github.onotoliy.opposite.treasure.rpc.KeycloakRPC;
-import com.github.onotoliy.opposite.treasure.utils.Strings;
-import org.jooq.*;
-import org.jooq.Record;
-
+import com.github.onotoliy.opposite.treasure.services.KeycloakService;
 import java.time.Instant;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.OrderField;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
+import org.jooq.Table;
+import org.jooq.TableField;
 
 /**
  * Базовый репозиторий чтения записей из БД.
@@ -32,7 +40,7 @@ public abstract class AbstractReaderRepository<
     P extends SearchParameter,
     R extends Record,
     T extends Table<R>>
-implements ReaderRepository<E, P> {
+    implements ReaderRepository<E, P> {
 
     /**
      * Таблица.
@@ -72,29 +80,30 @@ implements ReaderRepository<E, P> {
     /**
      * Сервис чтения пользователей.
      */
-    protected final KeycloakRPC user;
+    protected final KeycloakService user;
 
     /**
      * Конструктор.
      *
-     * @param table Таблица.
-     * @param uuid Уникальный идентификатор.
-     * @param name Название.
-     * @param author Автор.
+     * @param table        Таблица.
+     * @param uuid         Уникальный идентификатор.
+     * @param name         Название.
+     * @param author       Автор.
      * @param creationDate Дата создания.
      * @param deletionDate Дата удаления.
-     * @param dsl Контекст подключения к БД.
-     * @param user Сервис чтения пользователей.
+     * @param dsl          Контекст подключения к БД.
+     * @param user         Сервис чтения пользователей.
      */
     protected AbstractReaderRepository(
-            final T table,
-            final TableField<R, UUID> uuid,
-            final TableField<R, String> name,
-            final TableField<R, UUID> author,
-            final TableField<R, Instant> creationDate,
-            final TableField<R, Instant> deletionDate,
-            final DSLContext dsl,
-            final KeycloakRPC user) {
+        final T table,
+        final TableField<R, UUID> uuid,
+        final TableField<R, String> name,
+        final TableField<R, UUID> author,
+        final TableField<R, Instant> creationDate,
+        final TableField<R, Instant> deletionDate,
+        final DSLContext dsl,
+        final KeycloakService user
+    ) {
         this.table = table;
         this.uuid = uuid;
         this.name = name;
@@ -135,9 +144,11 @@ implements ReaderRepository<E, P> {
 
     @Override
     public List<Option> getAll() {
-        return findQuery().where(deletionDate.isNull())
-                          .fetch(record ->
-                              new Option(record.getValue(uuid), record.getValue(name)));
+        return findQuery()
+            .where(deletionDate.isNull())
+            .fetch(record ->
+                new Option(record.getValue(uuid), record.getValue(name))
+            );
     }
 
     @Override
@@ -149,12 +160,14 @@ implements ReaderRepository<E, P> {
                    .where(where(parameter))
                    .fetchOptional(0, int.class)
                    .orElse(0),
-                new Paging(parameter.offset(), parameter.numberOfRows())),
+                new Paging(parameter.offset(), parameter.numberOfRows())
+            ),
             findQuery().where(where(parameter))
                        .orderBy(orderBy())
                        .offset(parameter.offset())
                        .limit(parameter.numberOfRows())
-                       .fetch(this::toDTO));
+                       .fetch(this::toDTO)
+        );
     }
 
     /**
@@ -180,10 +193,10 @@ implements ReaderRepository<E, P> {
      * Преобразование пользователя из уникального идентификатора в объект.
      *
      * @param record Запись из БД.
-     * @param field Колонка содержащая уникальный идентификатор пользователя.
+     * @param field  Колонка содержащая уникальный идентификатор пользователя.
      * @return Пользователь.
      */
     protected Option formatUser(final Record record, final Field<UUID> field) {
-        return user.find(record.getValue(field, UUID.class));
+        return null;
     }
 }

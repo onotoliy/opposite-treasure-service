@@ -1,6 +1,5 @@
 package com.github.onotoliy.opposite.treasure.utils;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 
 /**
@@ -11,25 +10,6 @@ import java.time.Instant;
 public final class Dates {
 
     /**
-     * Короткий формат даты.
-     */
-    private static final SimpleDateFormat SHORT =
-        new SimpleDateFormat("dd.MM.yyyy");
-
-    /**
-     * Формат даты с timezone.
-     */
-    private static final SimpleDateFormat ISO_WITHOUT_TIMEZONE =
-        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-
-
-    /**
-     * Формат даты без timezone.
-     */
-    private static final SimpleDateFormat ISO_WITH_TIMEZONE =
-        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-
-    /**
      * Конструктор.
      */
     private Dates() {
@@ -37,33 +17,23 @@ public final class Dates {
     }
 
     /**
-     * Получает текущую дату.
+     * Преобразование строки в момент времени.
      *
-     * @return Текущая дата.
+     * @param value Строка.
+     * @return Момент всремени.
      */
-    public static Instant now() {
-        return Instant.now();
+    public static Instant toInstant(final String value) {
+        return Strings.isEmpty(value) ? null : Instant.parse(value);
+
     }
 
     /**
-     * Преобразование даты из ISO формата в которкий формат даты.
+     * Преобразование момента времени в строку.
      *
-     * @param value Дата.
-     * @return Дата в коротком формате.
+     * @param value Момент всремени
+     * @return Строка.
      */
-    public static String toShortFormat(final Instant value) {
-        return format(value, SHORT);
-    }
-
-    /**
-     * Преобразование даты в определенный формат даты.
-     *
-     * @param value Дата.
-     * @param format Фотмат даты.
-     * @return Дата в коротком формате.
-     */
-    public static String format(final Instant value,
-                                final SimpleDateFormat format) {
-        return format.format(value);
+    public static String toString(final Instant value) {
+        return value == null ? null : value.toString();
     }
 }
