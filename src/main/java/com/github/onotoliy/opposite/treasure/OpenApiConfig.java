@@ -18,8 +18,14 @@ public class OpenApiConfig {
     @Bean
     public OperationCustomizer customOperationId() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
-            String httpMethod = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
+            String httpMethod = handlerMethod.getMethod().getName();
+
+            System.out.println("Method " + httpMethod);
+
             String path = getPath(handlerMethod.getMethod().getAnnotations());
+
+            System.out.println("Path " + path);
+
             if (path == null) {
                 path = handlerMethod.getMethod().getName();
             }
