@@ -58,12 +58,6 @@ public class KeycloakService {
         return users.get(uuid.toString()).toRepresentation();
     }
 
-//    public Option getAsOption(final UUID uuid) {
-//        return Optional
-//            .ofNullable(users.get(uuid.toString()).toRepresentation())
-//            .map(user -> new Option(uuid, ));
-//    }
-
     /**
      * Получение количество пользователей.
      *

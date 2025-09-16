@@ -1,5 +1,6 @@
 package com.github.onotoliy.opposite.treasure.data;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -37,6 +38,7 @@ public record Deposit(
     @Schema(description = "Отчество", requiredMode = Schema.RequiredMode.REQUIRED)
     String patronymic,
     @Schema(type = "string", description = "Депозит", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     BigDecimal deposit,
     @Schema(description = "Аватар")
     String logo,
