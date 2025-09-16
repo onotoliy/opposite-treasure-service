@@ -14,9 +14,9 @@ import java.time.Instant;
  */
 @Schema(description = "Информация о кассе")
 public record Cashbox(
-    @Schema(type = "string", description = "Сумма в кассе")
+    @Schema(type = "string", description = "Сумма в кассе", requiredMode = Schema.RequiredMode.REQUIRED)
     BigDecimal deposit,
-    @Schema(description = "Дата последнего изменения")
+    @Schema(description = "Дата последнего изменения", requiredMode = Schema.RequiredMode.REQUIRED)
     Instant lastUpdateDate
 ) {
 

@@ -15,9 +15,9 @@ import java.util.UUID;
  */
 @Schema(description = "Короткая информация об объекте")
 public record Option(
-    @Schema(description = "Уникальный иденитификатор")
+    @Schema(description = "Уникальный иденитификатор", requiredMode = Schema.RequiredMode.REQUIRED)
     UUID uuid,
-    @Schema(description = "Название")
+    @Schema(description = "Название", requiredMode = Schema.RequiredMode.REQUIRED)
     String name
 ) implements HasUUID, HasName {
 

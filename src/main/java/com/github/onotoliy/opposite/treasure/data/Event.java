@@ -24,17 +24,17 @@ import java.util.UUID;
  */
 @Schema(description = "Событие")
 public record Event(
-    @Schema(description = "Уникальный иденитификатор")
+    @Schema(description = "Уникальный иденитификатор", requiredMode = Schema.RequiredMode.REQUIRED)
     UUID uuid,
-    @Schema(description = "Название")
+    @Schema(description = "Название", requiredMode = Schema.RequiredMode.REQUIRED)
     String name,
-    @Schema(type = "string", description = "Сумма взноса")
+    @Schema(type = "string", description = "Сумма взноса", requiredMode = Schema.RequiredMode.REQUIRED)
     BigDecimal contribution,
-    @Schema(description = "До какого числа сдать")
+    @Schema(description = "До какого числа сдать", requiredMode = Schema.RequiredMode.REQUIRED)
     Instant deadline,
-    @Schema(description = "Дата создания")
+    @Schema(description = "Дата создания", requiredMode = Schema.RequiredMode.REQUIRED)
     Instant creationDate,
-    @Schema(description = "Автор")
+    @Schema(description = "Автор", requiredMode = Schema.RequiredMode.REQUIRED)
     Option author,
     @Schema(description = "Дата удаления")
     Instant deletionDate

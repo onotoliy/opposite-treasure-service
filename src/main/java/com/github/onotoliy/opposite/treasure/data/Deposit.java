@@ -26,27 +26,27 @@ import java.util.UUID;
  */
 @Schema(description = "Депозит")
 public record Deposit(
-    @Schema(description = "Уникальный иденитификатор")
+    @Schema(description = "Уникальный иденитификатор", requiredMode = Schema.RequiredMode.REQUIRED)
     UUID uuid,
-    @Schema(description = "Имя пользователя")
+    @Schema(description = "Имя пользователя", requiredMode = Schema.RequiredMode.REQUIRED)
     String username,
-    @Schema(description = "Имя")
+    @Schema(description = "Имя", requiredMode = Schema.RequiredMode.REQUIRED)
     String firstName,
-    @Schema(description = "Фамилия")
+    @Schema(description = "Фамилия", requiredMode = Schema.RequiredMode.REQUIRED)
     String lastName,
-    @Schema(description = "Отчество")
+    @Schema(description = "Отчество", requiredMode = Schema.RequiredMode.REQUIRED)
     String patronymic,
-    @Schema(type = "string", description = "Депозит")
+    @Schema(type = "string", description = "Депозит", requiredMode = Schema.RequiredMode.REQUIRED)
     BigDecimal deposit,
     @Schema(description = "Аватар")
     String logo,
-    @Schema(description = "Адрес электронной почты")
+    @Schema(description = "Адрес электронной почты", requiredMode = Schema.RequiredMode.REQUIRED)
     String email,
-    @Schema(description = "День рождения")
+    @Schema(description = "День рождения", requiredMode = Schema.RequiredMode.REQUIRED)
     Instant birthday,
-    @Schema(description = "Дата вступления")
+    @Schema(description = "Дата вступления", requiredMode = Schema.RequiredMode.REQUIRED)
     Instant joiningDate,
-    @Schema(description = "Должность")
+    @Schema(description = "Должность", requiredMode = Schema.RequiredMode.REQUIRED)
     Position position
 ) implements HasUUID, HasName {
 

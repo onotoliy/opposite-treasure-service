@@ -27,23 +27,23 @@ import java.util.UUID;
  */
 @Schema(description = "Транзакция")
 public record Transaction(
-    @Schema(description = "Уникальный иденитификатор")
+    @Schema(description = "Уникальный иденитификатор", requiredMode = Schema.RequiredMode.REQUIRED)
     UUID uuid,
-    @Schema(description = "Название")
+    @Schema(description = "Название", requiredMode = Schema.RequiredMode.REQUIRED)
     String name,
-    @Schema(type = "string", description = "Сумма")
+    @Schema(type = "string", description = "Сумма", requiredMode = Schema.RequiredMode.REQUIRED)
     BigDecimal cash,
-    @Schema(description = "Тип")
+    @Schema(description = "Тип", requiredMode = Schema.RequiredMode.REQUIRED)
     TransactionType type,
     @Schema(description = "Пользователь")
     Option person,
     @Schema(description = "Событие")
     Option event,
-    @Schema(description = "Дата транзакии")
+    @Schema(description = "Дата транзакии", requiredMode = Schema.RequiredMode.REQUIRED)
     Instant transactionDate,
-    @Schema(description = "Дата создания")
+    @Schema(description = "Дата создания", requiredMode = Schema.RequiredMode.REQUIRED)
     Instant creationDate,
-    @Schema(description = "Автор")
+    @Schema(description = "Автор", requiredMode = Schema.RequiredMode.REQUIRED)
     Option author,
     @Schema(description = "Дата удаления")
     Instant deletionDate
