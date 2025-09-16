@@ -80,6 +80,19 @@ public class DepositRepository {
     }
 
     /**
+     * Создание нового депозита.
+     *
+     * @param configuration Настройки транзакции.
+     * @param guid Уникальный идентификатор.
+     */
+    public void newDeposit(final UUID guid) {
+        dsl.insertInto(TREASURE_DEPOSIT)
+           .set(TREASURE_DEPOSIT.USER_UUID, guid)
+           .set(TREASURE_DEPOSIT.DEPOSIT, BigDecimal.ZERO)
+           .execute();
+    }
+
+    /**
      * Произведение операции с депозитом кассы.
      *
      * @param configuration Настройки транзакции.

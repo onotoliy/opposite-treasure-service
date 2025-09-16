@@ -149,7 +149,11 @@ public class DepositService {
      * @return Депозит.
      */
     public Deposit create(final Deposit dto) {
-        return get(keycloak.create(dto));
+        final UUID uuid = keycloak.create(dto);
+
+        repository.newDeposit(uuid);
+
+        return get(uuid);
     }
 
     /**
