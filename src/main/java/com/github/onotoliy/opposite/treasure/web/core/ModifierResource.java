@@ -34,7 +34,7 @@ public interface ModifierResource<
      */
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Создание объекта")
-    E create(@Parameter(description = "Объекта") @RequestBody E dto);
+    E create(@RequestBody E dto);
 
     /**
      * Изменение объекта.
@@ -44,7 +44,7 @@ public interface ModifierResource<
      */
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Изменение объекта")
-    E update(@Parameter(description = "Объекта") @RequestBody E dto);
+    E update(@RequestBody E dto);
 
     /**
      * Удаление объекта.
