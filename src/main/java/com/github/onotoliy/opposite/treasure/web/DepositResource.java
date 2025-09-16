@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -129,7 +130,7 @@ public class DepositResource {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Создание депозита")
     public Deposit create(
-        @Parameter(description = "Депозит") final Deposit dto
+        @Parameter(description = "Депозит") @RequestBody final Deposit dto
     ) {
         return service.create(dto);
     }
@@ -143,7 +144,7 @@ public class DepositResource {
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Изменение депозита")
     public Deposit update(
-        @Parameter(description = "Депозит") final Deposit dto
+        @Parameter(description = "Депозит") @RequestBody final Deposit dto
     ) {
         return service.update(dto);
     }
