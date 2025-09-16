@@ -1,6 +1,6 @@
 package com.github.onotoliy.opposite.treasure.web.core;
 
-import com.github.onotoliy.opposite.treasure.data.SearchParameter;
+import com.github.onotoliy.opposite.treasure.data.core.SearchParameter;
 import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
 import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;

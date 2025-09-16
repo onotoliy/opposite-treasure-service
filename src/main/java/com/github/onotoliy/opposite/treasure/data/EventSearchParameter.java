@@ -1,5 +1,6 @@
 package com.github.onotoliy.opposite.treasure.data;
 
+import com.github.onotoliy.opposite.treasure.data.core.SearchParameter;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.web.bind.annotation.RequestParam;

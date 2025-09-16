@@ -1,4 +1,4 @@
-package com.github.onotoliy.opposite.treasure.data;
+package com.github.onotoliy.opposite.treasure.data.core;
 
 /**
  * Базовае поисковые параметры.

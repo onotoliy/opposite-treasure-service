@@ -1,5 +1,6 @@
 package com.github.onotoliy.opposite.treasure.data;
 
+import com.github.onotoliy.opposite.treasure.data.core.SearchParameter;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
