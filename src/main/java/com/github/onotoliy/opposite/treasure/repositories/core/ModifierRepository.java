@@ -1,26 +1,22 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
-import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
-import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
-import com.github.onotoliy.opposite.treasure.data.core.HasName;
-import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.data.core.SearchParameter;
-import org.jooq.Configuration;
-
 import java.util.UUID;
 import java.util.function.Consumer;
+import org.jooq.Configuration;
+import org.jooq.Record;
 
 /**
  * Интерфейс базового репозитория управления записями из БД.
  *
- * @param <E> Объект.
+ * @param <R> Объект.
  * @param <P> Поисковые параметры.
  * @author Anatoliy Pokhresnyi
  */
 public interface ModifierRepository<
-    E extends HasUUID & HasName & HasCreationDate & HasAuthor,
+    R extends Record,
     P extends SearchParameter>
-extends ReaderRepository<E, P> {
+extends ReaderRepository<P> {
 
     /**
      * Выполение запроса в транзакции.
@@ -32,27 +28,11 @@ extends ReaderRepository<E, P> {
     /**
      * Создание объекта.
      *
-     * @param dto Объект.
-     * @return Объект.
-     */
-    E create(E dto);
-
-    /**
-     * Создание объекта.
-     *
      * @param configuration Настройки транзакции.
      * @param dto Объект.
      * @return Объект.
      */
-    E create(Configuration configuration, E dto);
-
-    /**
-     * Изменение объекта.
-     *
-     * @param dto Объект.
-     * @return Объект.
-     */
-    E update(E dto);
+    R create(Configuration configuration, R dto);
 
     /**
      * Изменение объекта.
@@ -61,14 +41,7 @@ extends ReaderRepository<E, P> {
      * @param dto Объект.
      * @return Объект.
      */
-    E update(Configuration configuration, E dto);
-
-    /**
-     * Удаление объекта.
-     *
-     * @param uuid Уникальный идентификатор.
-     */
-    void delete(UUID uuid);
+    R update(Configuration configuration, R dto);
 
     /**
      * Удаление объекта.

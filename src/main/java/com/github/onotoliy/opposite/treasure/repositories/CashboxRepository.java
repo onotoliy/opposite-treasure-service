@@ -1,10 +1,8 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
 import com.github.onotoliy.opposite.treasure.data.Cashbox;
-
 import java.math.BigDecimal;
 import java.time.Instant;
-
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -14,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_CASHBOX;
-import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEPOSIT;
-import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_VERSION;
 
 /**
  * Репозиторий управления данными о кассе.
@@ -55,10 +51,12 @@ public class CashboxRepository {
      * @return Сумма денежных средств в кассе.
      */
     public BigDecimal money() {
-        return dsl.select()
-                  .from(TREASURE_CASHBOX)
-                  .fetchAny(record -> record.getValue(TREASURE_CASHBOX.DEPOSIT,
-                                                      BigDecimal.class));
+        return dsl
+            .select()
+            .from(TREASURE_CASHBOX)
+            .fetchAny(record ->
+                record.getValue(TREASURE_CASHBOX.DEPOSIT, BigDecimal.class)
+            );
     }
 
     /**
@@ -69,8 +67,10 @@ public class CashboxRepository {
      */
     public void cost(final Configuration configuration,
                      final BigDecimal money) {
-        setDeposit(configuration,
-                   TREASURE_CASHBOX.DEPOSIT.cast(BigDecimal.class).sub(money));
+        setDeposit(
+            configuration,
+            TREASURE_CASHBOX.DEPOSIT.cast(BigDecimal.class).sub(money)
+        );
     }
 
     /**
@@ -81,8 +81,10 @@ public class CashboxRepository {
      */
     public void contribution(final Configuration configuration,
                              final BigDecimal money) {
-        setDeposit(configuration,
-                   TREASURE_CASHBOX.DEPOSIT.cast(BigDecimal.class).add(money));
+        setDeposit(
+            configuration,
+            TREASURE_CASHBOX.DEPOSIT.cast(BigDecimal.class).add(money)
+        );
     }
 
     /**
@@ -93,8 +95,6 @@ public class CashboxRepository {
      */
     private void setDeposit(final Configuration configuration,
                             final Field<BigDecimal> deposit) {
-        setVersion(configuration);
-
         DSL.using(configuration)
            .update(TREASURE_CASHBOX)
            .set(TREASURE_CASHBOX.LAST_UPDATE_DATE, Instant.now())
@@ -112,22 +112,5 @@ public class CashboxRepository {
         return new Cashbox(
             record.getValue(TREASURE_CASHBOX.DEPOSIT),
                 record.getValue(TREASURE_CASHBOX.LAST_UPDATE_DATE));
-    }
-
-    /**
-     * Изменение версии справочника.
-     *
-     * @param configuration Настройка транзакции.
-     */
-    private void setVersion(
-        final Configuration configuration
-    ) {
-        BigDecimal version = BigDecimal.valueOf(Instant.now().toEpochMilli());
-
-        DSL.using(configuration)
-           .update(TREASURE_VERSION)
-           .set(TREASURE_VERSION.VERSION, version)
-           .where(TREASURE_VERSION.NAME.eq(TREASURE_DEPOSIT.getName()))
-           .execute();
     }
 }

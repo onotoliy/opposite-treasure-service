@@ -3,15 +3,18 @@ package com.github.onotoliy.opposite.treasure.services;
 import com.github.onotoliy.opposite.treasure.data.Deposit;
 import com.github.onotoliy.opposite.treasure.data.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.Position;
 import com.github.onotoliy.opposite.treasure.data.page.Meta;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.page.Paging;
+import com.github.onotoliy.opposite.treasure.repositories.DebtRepository;
 import com.github.onotoliy.opposite.treasure.repositories.DepositRepository;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -33,6 +36,11 @@ public class DepositService {
     private final DepositRepository repository;
 
     /**
+     * Репозиторий долгов.
+     */
+    private final DebtRepository debt;
+
+    /**
      * Сервис управдения пользвателями из Keycloak.
      */
     private final KeycloakService keycloak;
@@ -41,31 +49,62 @@ public class DepositService {
      * Конструктор.
      *
      * @param keycloak Сервис управдения пользвателями из Keycloak.
+     * @param debt Репозиторий управления долгами пользователя.
      * @param repository Репозиторий.
      */
     @Autowired
     public DepositService(
         final KeycloakService keycloak,
+        final DebtRepository debt,
         final DepositRepository repository
     ) {
         this.repository = repository;
         this.keycloak = keycloak;
+        this.debt = debt;
     }
 
     /**
      * Получение списка долгов пользователя.
      *
-     * @param uuid Уникальный идентификатор депозита.
+     * @param deposit Уникальный идентификатор депозита.
      * @param offset Количество записей которое необходимо пропустить.
      * @param numberOfRows Размер страницы.
      * @return Список долгов пользователя.
      */
     public Page<Event> getDebts(
-        final UUID uuid,
+        final UUID deposit,
         final int offset,
         final int numberOfRows
     ) {
-        return null;
+        int count = debt.countDebts(deposit);
+        List<Event> page = debt
+            .getDebts(deposit, offset, numberOfRows)
+            .stream()
+            .map(it ->
+                     EventService.toDTO(
+                         it,
+                         author -> Optional
+                             .ofNullable(author)
+                             .map(this::get)
+                             .map(athr -> new Option(athr.uuid(), athr.name()))
+                             .orElse(null)
+                     )
+            )
+            .collect(Collectors.toUnmodifiableList());
+
+        return new Page<>(
+            new Meta(count, new Paging(offset, numberOfRows)),
+            page
+        );
+    }
+
+    /**
+     * Получение депозита текущего пользователя.
+     *
+     * @return Депозита текущего пользователя
+     */
+    public Deposit me() {
+        return get(GUIDs.parse("b00c4f68-ed47-45d2-b96f-3d8cf768ea66"));
     }
 
     /**

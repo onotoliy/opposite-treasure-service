@@ -20,16 +20,6 @@ public final class GUIDs {
     }
 
     /**
-     * Преобразование {@link UUID} в {@link String}.
-     *
-     * @param value Значение в формате {@link UUID}.
-     * @return Значение в формате {@link String}.
-     */
-    public static String format(final UUID value) {
-        return value == null ? "" : value.toString();
-    }
-
-    /**
      * Преобразование {@link HasUUID} в {@link UUID}.
      *
      * @param value Значение в формате {@link HasUUID}.

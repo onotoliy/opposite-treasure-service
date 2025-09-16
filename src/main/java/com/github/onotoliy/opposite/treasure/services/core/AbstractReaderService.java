@@ -1,16 +1,18 @@
 package com.github.onotoliy.opposite.treasure.services.core;
 
-import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
 import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
-import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.core.SearchParameter;
+import com.github.onotoliy.opposite.treasure.data.page.Meta;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
+import com.github.onotoliy.opposite.treasure.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.repositories.core.ReaderRepository;
-
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import org.jooq.Record;
 
 /**
  * Базовый сервис чтения объектов.
@@ -23,7 +25,7 @@ import java.util.UUID;
 public abstract class AbstractReaderService<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor,
     P extends SearchParameter,
-    R extends ReaderRepository<E, P>>
+    R extends ReaderRepository<P>>
 implements ReaderService<E, P> {
 
     /**
@@ -40,19 +42,32 @@ implements ReaderService<E, P> {
         this.repository = repository;
     }
 
-    @Override
-    public E get(final UUID uuid) {
-        return repository.get(uuid);
-    }
+    /**
+     * Преобразование записи из БД {@link Record} в объект {@link E}.
+     *
+     * @param record Запись.
+     * @return Объект.
+     */
+    protected abstract E toDTO(Record record);
 
     @Override
-    public List<Option> getAll() {
-        return repository.getAll();
+    public E get(final UUID uuid) {
+        return toDTO(repository.get(uuid));
     }
 
     @Override
     public Page<E> getAll(final P parameter) {
-        return repository.getAll(parameter);
+        final List<E> list = repository
+            .getAll(parameter)
+            .stream()
+            .map(this::toDTO)
+            .collect(Collectors.toList());
+        final int count = repository.count(parameter);
+
+        return new Page<>(
+            new Meta(count, new Paging(parameter.offset(), parameter.numberOfRows())),
+            list
+        );
     }
 
 }

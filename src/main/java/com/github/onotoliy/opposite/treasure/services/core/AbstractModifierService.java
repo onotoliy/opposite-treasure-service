@@ -10,19 +10,22 @@ import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import org.jooq.Configuration;
 
 import java.util.UUID;
+import org.jooq.Record;
 
 /**
  * Базовый сервис управления объектами.
  *
  * @param <E> Объект.
+ * @param <Rec> Запись из БД.
  * @param <P> Поисковые параметры.
- * @param <R> Запись из БД
+ * @param <R> Репозиторий.
  * @author Anatoliy Pokhresnyi
  */
 public abstract class AbstractModifierService<
     E extends HasUUID & HasName & HasCreationDate & HasAuthor,
+    Rec extends Record,
     P extends SearchParameter,
-    R extends ModifierRepository<E, P>>
+    R extends ModifierRepository<Rec, P>>
 extends AbstractReaderService<E, P, R>
 implements ModifierService<E, P> {
 
@@ -34,6 +37,8 @@ implements ModifierService<E, P> {
     public AbstractModifierService(final R repository) {
         super(repository);
     }
+
+    protected abstract Rec toRecord(E dto);
 
     @Override
     public E create(final E dto) {
@@ -49,7 +54,7 @@ implements ModifierService<E, P> {
      * @param dto Объект.
      */
     protected void create(final Configuration configuration, final E dto) {
-        repository.create(configuration, dto);
+        repository.create(configuration, toRecord(dto));
     }
 
     @Override
@@ -66,7 +71,7 @@ implements ModifierService<E, P> {
      * @param dto Объект.
      */
     protected void update(final Configuration configuration, final E dto) {
-        repository.update(configuration, dto);
+        repository.update(configuration, toRecord(dto));
     }
 
     @Override

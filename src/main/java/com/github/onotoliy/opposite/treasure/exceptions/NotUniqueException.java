@@ -1,9 +1,6 @@
 package com.github.onotoliy.opposite.treasure.exceptions;
 
-import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-
 import java.util.UUID;
-
 import org.jooq.Named;
 
 /**
@@ -23,6 +20,6 @@ public class NotUniqueException extends RuntimeException {
 
         super(String.format(
             "Запись с уникальный идентификатором %s в таблице %s уже "
-            + "существует", table.getName(), GUIDs.format(uuid)));
+            + "существует", table.getName(), uuid));
     }
 }

@@ -5,7 +5,6 @@ import com.github.onotoliy.opposite.treasure.data.DepositSearchParameter;
 import com.github.onotoliy.opposite.treasure.data.Event;
 import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.services.DepositService;
-import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.util.UUID;
@@ -51,7 +50,7 @@ public class DepositResource {
     @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение депозита авторизованного пользователя")
     public Deposit get() {
-        return service.get(GUIDs.parse("b00c4f68-ed47-45d2-b96f-3d8cf768ea66"));
+        return service.me();
     }
 
     /**

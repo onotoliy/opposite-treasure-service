@@ -1,24 +1,17 @@
 package com.github.onotoliy.opposite.treasure.repositories;
 
-import com.github.onotoliy.opposite.treasure.data.Deposit;
-import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
-import com.github.onotoliy.opposite.treasure.services.KeycloakService;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_DEPOSIT;
-import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_VERSION;
 
 /**
  * Репозиторий управления депозитами.
@@ -34,20 +27,13 @@ public class DepositRepository {
     private final DSLContext dsl;
 
     /**
-     * Сервис чтения пользователей.
-     */
-    private final KeycloakService user;
-
-    /**
      * Конструктор.
      *
      * @param dsl Контекст подключения к БД.
-     * @param user Сервис чтения пользователей.
      */
     @Autowired
-    public DepositRepository(final DSLContext dsl, final KeycloakService user) {
+    public DepositRepository(final DSLContext dsl) {
         this.dsl = dsl;
-        this.user = user;
     }
 
     /**
@@ -109,8 +95,6 @@ public class DepositRepository {
                        .where(TREASURE_DEPOSIT.USER_UUID.eq(guid))
                        .execute();
 
-        setVersion(configuration);
-
         if (count > 1) {
             throw new NotUniqueException(TREASURE_DEPOSIT, guid);
         }
@@ -118,40 +102,5 @@ public class DepositRepository {
         if (count == 0) {
             throw new NotFoundException(TREASURE_DEPOSIT, guid);
         }
-    }
-
-    /**
-     * Преобзазование записи из БД в объект.
-     *
-     * @param user Сервис чтения пользователей.
-     * @param record Запись из БД.
-     * @return Объект.
-     */
-    public static Deposit toDTO(
-            final KeycloakService user,
-            final Record record
-    ) {
-        Optional<Option> person = Optional
-            .of(record.getValue(TREASURE_DEPOSIT.USER_UUID, UUID.class))
-            .flatMap(null);
-
-        return null;
-    }
-
-    /**
-     * Изменение версии справочника.
-     *
-     * @param configuration Настройка транзакции.
-     */
-    private void setVersion(
-        final Configuration configuration
-    ) {
-        BigDecimal version = BigDecimal.valueOf(Instant.now().toEpochMilli());
-
-        DSL.using(configuration)
-           .update(TREASURE_VERSION)
-           .set(TREASURE_VERSION.VERSION, version)
-           .where(TREASURE_VERSION.NAME.eq(TREASURE_DEPOSIT.getName()))
-           .execute();
     }
 }

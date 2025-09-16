@@ -1,17 +1,9 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
 import com.github.onotoliy.opposite.treasure.data.core.SearchParameter;
-import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
-import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
-import com.github.onotoliy.opposite.treasure.data.core.HasName;
-import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
 import com.github.onotoliy.opposite.treasure.exceptions.NotUniqueException;
-import com.github.onotoliy.opposite.treasure.services.KeycloakService;
-import com.github.onotoliy.opposite.treasure.utils.GUIDs;
-import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 import org.jooq.Configuration;
@@ -25,47 +17,38 @@ import org.jooq.UpdateConditionStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
-import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_VERSION;
-
 /**
  * Базовый репозиторий управления записями из БД.
  *
- * @param <E> Объект.
  * @param <P> Поисковые параметры.
  * @param <R> Запись из БД
  * @param <T> Таблица в БД
  * @author Anatoliy Pokhresnyi
  */
 public abstract class AbstractModifierRepository<
-    E extends HasUUID & HasName & HasCreationDate & HasAuthor,
     P extends SearchParameter,
     R extends Record,
     T extends Table<R>>
-extends AbstractReaderRepository<E, P, R, T>
-implements ModifierRepository<E, P> {
+extends AbstractReaderRepository<P, R, T>
+implements ModifierRepository<R, P> {
 
     /**
      * Конструктор.
      *
-     * @param table Таблица.
-     * @param uuid Уникальный идентификатор.
-     * @param name Название.
-     * @param author Автор.
+     * @param table        Таблица.
+     * @param uuid         Уникальный идентификатор.
      * @param creationDate Дата создания.
      * @param deletionDate Дата удаления.
-     * @param dsl Контекст подключения к БД.
-     * @param user Сервис чтения пользователей.
+     * @param dsl          Контекст подключения к БД.
      */
     protected AbstractModifierRepository(
-            final T table,
-            final TableField<R, UUID> uuid,
-            final TableField<R, String> name,
-            final TableField<R, UUID> author,
-            final TableField<R, Instant> creationDate,
-            final TableField<R, Instant> deletionDate,
-            final DSLContext dsl,
-            final KeycloakService user) {
-        super(table, uuid, name, author, creationDate, deletionDate, dsl, user);
+        final T table,
+        final TableField<R, UUID> uuid,
+        final TableField<R, Instant> creationDate,
+        final TableField<R, Instant> deletionDate,
+        final DSLContext dsl
+    ) {
+        super(table, uuid, creationDate, deletionDate, dsl);
     }
 
     @Override
@@ -74,29 +57,14 @@ implements ModifierRepository<E, P> {
     }
 
     @Override
-    public E create(final E dto) {
-        return execute(dto, insertQuery(dto));
-    }
-
-    @Override
-    public E create(final Configuration configuration, final E dto) {
+    public R create(final Configuration configuration, final R dto) {
         return execute(dto, insertQuery(configuration, dto));
     }
 
     @Override
-    public E update(final E dto) {
-        return execute(dto, updateQuery(dto).where(uuid.eq(GUIDs.parse(dto))));
-    }
-
-    @Override
-    public E update(final Configuration configuration, final E dto) {
+    public R update(final Configuration configuration, final R dto) {
         return execute(dto, updateQuery(configuration, dto).where(
-            uuid.eq(GUIDs.parse(dto))));
-    }
-
-    @Override
-    public void delete(final UUID uuid) {
-        execute(uuid, deleteQuery(uuid));
+            uuid.eq(dto.get(uuid))));
     }
 
     @Override
@@ -108,12 +76,13 @@ implements ModifierRepository<E, P> {
      * Получение delete from запроса из таблицы.
      *
      * @param configuration Настройка транзакции.
-     * @param uuid Уникальный идентификатор.
+     * @param uuid          Уникальный идентификатор.
      * @return Запрос.
      */
     protected UpdateConditionStep<R> deleteQuery(
-            final Configuration configuration,
-            final UUID uuid) {
+        final Configuration configuration,
+        final UUID uuid
+    ) {
         return DSL.using(configuration)
                   .update(table)
                   .set(deletionDate, Instant.now())
@@ -121,88 +90,46 @@ implements ModifierRepository<E, P> {
     }
 
     /**
-     * Получение delete from запроса из таблицы.
-     *
-     * @param uuid Уникальный идентификатор.
-     * @return Запрос.
-     */
-    protected UpdateConditionStep<R> deleteQuery(final UUID uuid) {
-        return dsl.transactionResult(
-            configuration -> deleteQuery(configuration, uuid));
-    }
-
-    /**
      * Получение insert into запроса из таблицы.
      *
      * @param configuration Настройка транзакции.
-     * @param dto Объект.
+     * @param dto           Объект.
      * @return Запрос.
      */
     protected InsertSetMoreStep<R> insertQuery(
         final Configuration configuration,
-        final E dto
+        final R dto
     ) {
-        setVersion(configuration, dto);
-
         return DSL.using(configuration)
                   .insertInto(table)
-                  .set(uuid, GUIDs.parse(dto))
-                  .set(name, dto.name())
-                  .set(creationDate, dto.creationDate())
-                  .set(author, GUIDs.parse(dto.author()));
-    }
-
-    /**
-     * Получение insert into запроса из таблицы.
-     *
-     * @param dto Объект.
-     * @return Запрос.
-     */
-    protected InsertSetMoreStep<R> insertQuery(final E dto) {
-        return dsl.transactionResult(
-            configuration -> insertQuery(configuration, dto));
+                  .set(dto);
     }
 
     /**
      * Получение update запроса из таблицы.
      *
      * @param configuration Настройка транзакции.
-     * @param dto Объект.
+     * @param dto           Объект.
      * @return Запрос.
      */
     protected UpdateSetMoreStep<R> updateQuery(
         final Configuration configuration,
-        final E dto
+        final R dto
     ) {
-        setVersion(configuration, dto);
-
         return DSL.using(configuration)
                   .update(table)
-                  .set(name, dto.name())
-                  .set(creationDate, dto.creationDate())
-                  .set(author, GUIDs.parse(dto.author()));
-    }
-
-    /**
-     * Получение update запроса из таблицы.
-     *
-     * @param dto Объект.
-     * @return Запрос.
-     */
-    protected UpdateSetMoreStep<R> updateQuery(final E dto) {
-        return dsl.transactionResult(
-            configuration -> updateQuery(configuration, dto));
+                  .set(dto);
     }
 
     /**
      * Исполнение запроса на обновление данных.
      *
-     * @param dto Объект.
+     * @param dto   Объект.
      * @param query Запрос.
      * @return Объект.
      */
-    private E execute(final E dto, final Query query) {
-        execute(GUIDs.parse(dto), query);
+    private R execute(final R dto, final Query query) {
+        execute(dto.get(uuid), query);
 
         return dto;
     }
@@ -210,7 +137,7 @@ implements ModifierRepository<E, P> {
     /**
      * Исполнение запроса на обновление данных.
      *
-     * @param uuid Уникальный идентификатор объекта.
+     * @param uuid  Уникальный идентификатор объекта.
      * @param query Запрос.
      */
     private void execute(final UUID uuid, final Query query) {
@@ -223,26 +150,5 @@ implements ModifierRepository<E, P> {
         if (count > 1) {
             throw new NotUniqueException(table, uuid);
         }
-    }
-
-    /**
-     * Изменение версии справочника.
-     *
-     * @param configuration Настройка транзакции.
-     * @param dto Объект.
-     */
-    protected void setVersion(
-        final Configuration configuration,
-        final E dto
-    ) {
-
-        BigDecimal version = BigDecimal.valueOf(
-            Objects.requireNonNull(dto.creationDate()).getEpochSecond());
-
-        DSL.using(configuration)
-           .update(TREASURE_VERSION)
-           .set(TREASURE_VERSION.VERSION, version)
-           .where(TREASURE_VERSION.NAME.eq(table.getName()))
-           .execute();
     }
 }

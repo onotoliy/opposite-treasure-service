@@ -1,27 +1,18 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
-import com.github.onotoliy.opposite.treasure.data.Option;
-import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
-import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
-import com.github.onotoliy.opposite.treasure.data.core.HasName;
-import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
-import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.core.SearchParameter;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.jooq.Record;
 
 /**
  * Базовый репозиторий чтения записей из БД.
  *
- * @param <E> Объект.
  * @param <P> Поисковые параметры.
  * @author Anatoliy Pokhresnyi
  */
-public interface ReaderRepository<
-    E extends HasUUID & HasName & HasCreationDate & HasAuthor,
-    P extends SearchParameter> {
+public interface ReaderRepository<P extends SearchParameter> {
 
     /**
      * Получение опционального объекта.
@@ -29,7 +20,7 @@ public interface ReaderRepository<
      * @param uuid Уникальный идентификатор.
      * @return Опциональный объект.
      */
-    Optional<E> getOptional(UUID uuid);
+    Optional<Record> getOptional(UUID uuid);
 
     /**
      * Получение объекта.
@@ -37,14 +28,7 @@ public interface ReaderRepository<
      * @param uuid Уникальный идентификатор.
      * @return Объект
      */
-    E get(UUID uuid);
-
-    /**
-     * Получение списка всех объектов.
-     *
-     * @return Объекты.
-     */
-    List<Option> getAll();
+    Record get(UUID uuid);
 
     /**
      * Поиск объектов.
@@ -52,5 +36,13 @@ public interface ReaderRepository<
      * @param parameter Поисковые параметры.
      * @return Объекты.
      */
-    Page<E> getAll(P parameter);
+    List<Record> getAll(P parameter);
+
+    /**
+     * Количество найденых объектов.
+     *
+     * @param parameter Поисковые параметры.
+     * @return Объекты.
+     */
+    int count(P parameter);
 }

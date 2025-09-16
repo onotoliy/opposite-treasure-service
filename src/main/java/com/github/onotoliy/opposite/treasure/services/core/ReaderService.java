@@ -1,14 +1,11 @@
 package com.github.onotoliy.opposite.treasure.services.core;
 
-import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
 import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasName;
 import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
-import com.github.onotoliy.opposite.treasure.data.page.Page;
 import com.github.onotoliy.opposite.treasure.data.core.SearchParameter;
-
-import java.util.List;
+import com.github.onotoliy.opposite.treasure.data.page.Page;
 import java.util.UUID;
 
 /**
@@ -29,13 +26,6 @@ public interface ReaderService<
      * @return Объект
      */
     E get(UUID uuid);
-
-    /**
-     * Получение списка всех объектов.
-     *
-     * @return Объекты.
-     */
-    List<Option> getAll();
 
     /**
      * Поиск объектов.

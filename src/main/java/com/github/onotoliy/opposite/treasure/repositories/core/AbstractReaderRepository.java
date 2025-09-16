@@ -1,16 +1,7 @@
 package com.github.onotoliy.opposite.treasure.repositories.core;
 
-import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.core.SearchParameter;
-import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
-import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
-import com.github.onotoliy.opposite.treasure.data.core.HasName;
-import com.github.onotoliy.opposite.treasure.data.core.HasUUID;
-import com.github.onotoliy.opposite.treasure.data.page.Meta;
-import com.github.onotoliy.opposite.treasure.data.page.Page;
-import com.github.onotoliy.opposite.treasure.data.page.Paging;
 import com.github.onotoliy.opposite.treasure.exceptions.NotFoundException;
-import com.github.onotoliy.opposite.treasure.services.KeycloakService;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,7 +10,6 @@ import java.util.Optional;
 import java.util.UUID;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
@@ -29,18 +19,16 @@ import org.jooq.TableField;
 /**
  * Базовый репозиторий чтения записей из БД.
  *
- * @param <E> Объект.
  * @param <P> Поисковые параметры.
  * @param <R> Запись из БД
  * @param <T> Таблица в БД
  * @author Anatoliy Pokhresnyi
  */
 public abstract class AbstractReaderRepository<
-    E extends HasUUID & HasName & HasCreationDate & HasAuthor,
     P extends SearchParameter,
     R extends Record,
     T extends Table<R>>
-    implements ReaderRepository<E, P> {
+implements ReaderRepository<P> {
 
     /**
      * Таблица.
@@ -51,16 +39,6 @@ public abstract class AbstractReaderRepository<
      * Уникальный идентификатор.
      */
     protected final TableField<R, UUID> uuid;
-
-    /**
-     * Название.
-     */
-    protected final TableField<R, String> name;
-
-    /**
-     * Автор.
-     */
-    protected final TableField<R, UUID> author;
 
     /**
      * Дата создания.
@@ -78,49 +56,27 @@ public abstract class AbstractReaderRepository<
     protected final DSLContext dsl;
 
     /**
-     * Сервис чтения пользователей.
-     */
-    protected final KeycloakService user;
-
-    /**
      * Конструктор.
      *
      * @param table        Таблица.
      * @param uuid         Уникальный идентификатор.
-     * @param name         Название.
-     * @param author       Автор.
      * @param creationDate Дата создания.
      * @param deletionDate Дата удаления.
      * @param dsl          Контекст подключения к БД.
-     * @param user         Сервис чтения пользователей.
      */
     protected AbstractReaderRepository(
         final T table,
         final TableField<R, UUID> uuid,
-        final TableField<R, String> name,
-        final TableField<R, UUID> author,
         final TableField<R, Instant> creationDate,
         final TableField<R, Instant> deletionDate,
-        final DSLContext dsl,
-        final KeycloakService user
+        final DSLContext dsl
     ) {
         this.table = table;
         this.uuid = uuid;
-        this.name = name;
-        this.author = author;
         this.creationDate = creationDate;
         this.deletionDate = deletionDate;
         this.dsl = dsl;
-        this.user = user;
     }
-
-    /**
-     * Преобзазование записи из БД в объект.
-     *
-     * @param record Запись из БД.
-     * @return Объект.
-     */
-    protected abstract E toDTO(Record record);
 
     /**
      * Получение select запроса из таблицы.
@@ -132,42 +88,32 @@ public abstract class AbstractReaderRepository<
     }
 
     @Override
-    public Optional<E> getOptional(final UUID uuid) {
-        return findQuery().where(this.uuid.eq(uuid)).fetchOptional(this::toDTO);
+    public Optional<Record> getOptional(final UUID uuid) {
+        return findQuery().where(this.uuid.eq(uuid)).fetchOptional();
     }
 
     @Override
-    public E get(final UUID uuid) {
+    public Record get(final UUID uuid) {
         return getOptional(uuid).orElseThrow(
             () -> new NotFoundException(table, uuid));
     }
 
     @Override
-    public List<Option> getAll() {
-        return findQuery()
-            .where(deletionDate.isNull())
-            .fetch(record ->
-                new Option(record.getValue(uuid), record.getValue(name))
-            );
-    }
-
-    @Override
-    public Page<E> getAll(final P parameter) {
-        return new Page<>(
-            new Meta(
-                dsl.selectCount()
-                   .from(table)
-                   .where(where(parameter))
-                   .fetchOptional(0, int.class)
-                   .orElse(0),
-                new Paging(parameter.offset(), parameter.numberOfRows())
-            ),
-            findQuery().where(where(parameter))
+    public List<Record> getAll(final P parameter) {
+        return findQuery().where(where(parameter))
                        .orderBy(orderBy())
                        .offset(parameter.offset())
                        .limit(parameter.numberOfRows())
-                       .fetch(this::toDTO)
-        );
+                       .fetch();
+    }
+
+    @Override
+    public int count(final P parameter) {
+        return dsl.selectCount()
+                   .from(table)
+                   .where(where(parameter))
+                   .fetchOptional(0, int.class)
+                   .orElse(0);
     }
 
     /**
@@ -187,16 +133,5 @@ public abstract class AbstractReaderRepository<
      */
     protected List<Condition> where(final P parameter) {
         return new LinkedList<>(Collections.singleton(deletionDate.isNull()));
-    }
-
-    /**
-     * Преобразование пользователя из уникального идентификатора в объект.
-     *
-     * @param record Запись из БД.
-     * @param field  Колонка содержащая уникальный идентификатор пользователя.
-     * @return Пользователь.
-     */
-    protected Option formatUser(final Record record, final Field<UUID> field) {
-        return null;
     }
 }

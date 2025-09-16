@@ -1,28 +1,32 @@
 package com.github.onotoliy.opposite.treasure.services;
 
 import com.github.onotoliy.opposite.treasure.data.Event;
+import com.github.onotoliy.opposite.treasure.data.Option;
 import com.github.onotoliy.opposite.treasure.data.Transaction;
-import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.data.TransactionSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.TransactionType;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
-import com.github.onotoliy.opposite.treasure.repositories.EventRepository;
+import com.github.onotoliy.opposite.treasure.jooq.tables.records.TreasureTransactionRecord;
 import com.github.onotoliy.opposite.treasure.repositories.TransactionRepository;
 import com.github.onotoliy.opposite.treasure.services.core.AbstractModifierService;
 import com.github.onotoliy.opposite.treasure.services.transactions.TransactionExecutor;
 import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Numbers;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
-
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import org.jooq.Configuration;
+import org.jooq.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_EVENT;
+import static com.github.onotoliy.opposite.treasure.jooq.Tables.TREASURE_TRANSACTION;
 
 /**
  * Сервис управления транзакциями.
@@ -32,7 +36,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class TransactionService
 extends AbstractModifierService<
-        Transaction,
+    Transaction,
+    TreasureTransactionRecord,
     TransactionSearchParameter,
     TransactionRepository>
 implements ITransactionService {
@@ -40,7 +45,12 @@ implements ITransactionService {
     /**
      * Репозиторий событий.
      */
-    private final EventRepository event;
+    private final EventService event;
+
+    /**
+     * Сервис чтения пользователей.
+     */
+    private final DepositService deposit;
 
     /**
      * Сервисы описывающие бизнес логику тразакций.
@@ -52,13 +62,17 @@ implements ITransactionService {
      *
      * @param repository Репозиторий транзакций.
      * @param event Репозиторий событий.
+     * @param deposit Сервис чтения депозитов.
      * @param executors Список сервисов описывающие бизнес логику тразакций.
      */
     @Autowired
     public TransactionService(final TransactionRepository repository,
-                              final EventRepository event,
+                              final EventService event,
+                              final DepositService deposit,
                               final List<TransactionExecutor> executors) {
         super(repository);
+
+        this.deposit = deposit;
         this.event = event;
         this.executors = executors
             .stream()
@@ -73,7 +87,7 @@ implements ITransactionService {
 
         execute(dto, executor -> executor.create(configuration, dto));
 
-        repository.create(configuration, dto);
+        super.create(configuration, dto);
     }
 
     @Override
@@ -99,7 +113,7 @@ implements ITransactionService {
 
         validation(dto);
 
-        repository.update(configuration, dto);
+        super.update(configuration, dto);
     }
 
     @Override
@@ -107,7 +121,7 @@ implements ITransactionService {
         execute(get(uuid),
                 executor -> executor.delete(configuration, get(uuid)));
 
-        repository.delete(configuration, uuid);
+        super.delete(configuration, uuid);
     }
 
     /**
@@ -156,4 +170,56 @@ implements ITransactionService {
 
         consumer.accept(executor);
     }
+
+    @Override
+    protected Transaction toDTO(final Record record) {
+        return new Transaction(
+            record.getValue(TREASURE_TRANSACTION.GUID),
+            record.getValue(TREASURE_TRANSACTION.NAME),
+            record.getValue(TREASURE_TRANSACTION.CASH),
+            TransactionType.valueOf(
+                record.getValue(TREASURE_TRANSACTION.TYPE)
+            ),
+            Optional
+                .ofNullable(record.getValue(TREASURE_TRANSACTION.USER_GUID))
+                .map(deposit::get)
+                .map(author -> new Option(author.uuid(), author.name()))
+                .orElse(null),
+            Optional
+                .ofNullable(record.getValue(TREASURE_TRANSACTION.EVENT_GUID))
+                .map(event ->
+                    new Option(event, record.getValue(TREASURE_EVENT.NAME))
+                )
+                .orElse(null),
+            record.getValue(TREASURE_TRANSACTION.TRANSACTION_DATE),
+            record.getValue(TREASURE_TRANSACTION.CREATION_DATE),
+            Optional
+                .ofNullable(record.getValue(TREASURE_TRANSACTION.AUTHOR))
+                .map(deposit::get)
+                .map(author -> new Option(author.uuid(), author.name()))
+                .orElse(null),
+            record.getValue(TREASURE_TRANSACTION.DELETION_DATE)
+        );
+    }
+    @Override
+    protected TreasureTransactionRecord toRecord(final Transaction dto) {
+        TreasureTransactionRecord record = new TreasureTransactionRecord();
+
+        record.setGuid(dto.uuid() == null ? UUID.randomUUID() : dto.uuid());
+        record.setEventGuid(
+            GUIDs.isEmpty(dto.event()) ? null : GUIDs.parse(dto.event())
+        );
+        record.setUserGuid(
+            GUIDs.isEmpty(dto.person()) ? null : GUIDs.parse(dto.person())
+        );
+        record.setName(dto.name());
+        record.setCash(dto.cash());
+        record.setType(dto.type().name());
+        record.setTransactionDate(dto.transactionDate());
+        record.setCreationDate(dto.creationDate());
+        record.setAuthor(deposit.me().uuid());
+
+        return record;
+    }
+
 }
