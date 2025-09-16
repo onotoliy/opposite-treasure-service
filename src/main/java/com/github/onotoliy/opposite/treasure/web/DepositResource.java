@@ -130,7 +130,7 @@ public class DepositResource {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Создание депозита")
     public Deposit create(
-        @Parameter(description = "Депозит") @RequestBody final Deposit dto
+        @ParameterObject @RequestBody final Deposit dto
     ) {
         return service.create(dto);
     }
@@ -144,7 +144,7 @@ public class DepositResource {
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Изменение депозита")
     public Deposit update(
-        @Parameter(description = "Депозит") @RequestBody final Deposit dto
+        @ParameterObject @RequestBody final Deposit dto
     ) {
         return service.update(dto);
     }
