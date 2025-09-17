@@ -16,7 +16,7 @@
       "description": "Роль по умолчанию."
     },
     {
-      "name": "treasure.keycloak.url",
+      "name": "treasure.keycloak.base-url",
       "type": "java.lang.String",
       "description": "URL к административной консоле Keycloak."
     },
@@ -26,7 +26,7 @@
       "description": "Название реалма в Keycloak."
     },
     {
-      "name": "treasure.keycloak.client",
+      "name": "treasure.keycloak.client-id",
       "type": "java.lang.String",
       "description": "Название клиента в Keycloak."
     },

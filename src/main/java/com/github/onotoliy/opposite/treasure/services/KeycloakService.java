@@ -61,11 +61,11 @@ public class KeycloakService {
      */
     @Autowired
     public KeycloakService(
-        @Value("${onotoliy.keycloak.base-url}") final String baseURL,
-        @Value("${onotoliy.keycloak.realm}") final String realm,
-        @Value("${onotoliy.keycloak.client-id}") final String clientID,
-        @Value("${onotoliy.keycloak.username}") final String username,
-        @Value("${onotoliy.keycloak.password}") final String password
+        @Value("${treasure.keycloak.base-url}") final String baseURL,
+        @Value("${treasure.keycloak.realm}") final String realm,
+        @Value("${treasure.keycloak.client-id}") final String clientID,
+        @Value("${treasure.keycloak.username}") final String username,
+        @Value("${treasure.keycloak.password}") final String password
     ) {
         final Keycloak keycloak = KeycloakBuilder
             .builder()

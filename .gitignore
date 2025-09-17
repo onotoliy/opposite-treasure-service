@@ -9,3 +9,4 @@
 /http-client.env.json
 /http-client.http
 /target/
+/src/main/resources/application-dev.properties
