@@ -218,6 +218,7 @@ public class KeycloakService {
         representation.setUsername(deposit.username());
         representation.setEmail(deposit.email());
         representation.setEmailVerified(true);
+        representation.setEnabled(true);
         representation.setFirstName(deposit.firstName());
         representation.setLastName(deposit.lastName());
         representation.setAttributes(attributes);
