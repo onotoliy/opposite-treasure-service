@@ -47,6 +47,11 @@ public class OpenApiConfig {
         };
     }
 
+    /**
+     * Получение Bean переопределения OpenApiCustomizer в openapi файле.
+     *
+     * @return Bean.
+     */
     @Bean
     public OpenApiCustomizer exceptionInformationSchemaCustomizer() {
         return openApi -> {
