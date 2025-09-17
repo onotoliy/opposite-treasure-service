@@ -1,5 +1,6 @@
 package com.github.onotoliy.opposite.treasure.data;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.onotoliy.opposite.treasure.data.core.HasAuthor;
 import com.github.onotoliy.opposite.treasure.data.core.HasCreationDate;
 import com.github.onotoliy.opposite.treasure.data.core.HasDeletionDate;
@@ -29,6 +30,7 @@ public record Event(
     @Schema(description = "Название", requiredMode = Schema.RequiredMode.REQUIRED)
     String name,
     @Schema(type = "string", description = "Сумма взноса", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     BigDecimal contribution,
     @Schema(description = "До какого числа сдать", requiredMode = Schema.RequiredMode.REQUIRED)
     Instant deadline,
