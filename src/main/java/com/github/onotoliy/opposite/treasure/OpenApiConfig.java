@@ -1,13 +1,17 @@
 package com.github.onotoliy.opposite.treasure;
 
+import com.github.onotoliy.opposite.treasure.data.core.ExceptionInformation;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +44,15 @@ public class OpenApiConfig {
             operation.setOperationId(path + clazz);
 
             return operation;
+        };
+    }
+
+    @Bean
+    public OpenApiCustomizer exceptionInformationSchemaCustomizer() {
+        return openApi -> {
+            Map<String, Schema> schemas =
+                ModelConverters.getInstance().read(ExceptionInformation.class);
+            openApi.getComponents().getSchemas().putAll(schemas);
         };
     }
 
