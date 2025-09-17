@@ -52,23 +52,30 @@ public class KeycloakService {
 
     /**
      * Конструктор.
+     *
+     * @param baseURL  URL до Keycloak.
+     * @param realm    Realm.
+     * @param clientID Client ID
+     * @param username Username системного пользователя.
+     * @param password Пароль системного пользователя.
      */
     @Autowired
     public KeycloakService(
         @Value("${onotoliy.keycloak.base-url}") final String baseURL,
-        @Value("${onotoliy.keycloak.realm}")final String realm,
-        @Value("${onotoliy.keycloak.client-id}")final String clientID,
-        @Value("${onotoliy.keycloak.username}")final String username,
-        @Value("${onotoliy.keycloak.password}")final String password
+        @Value("${onotoliy.keycloak.realm}") final String realm,
+        @Value("${onotoliy.keycloak.client-id}") final String clientID,
+        @Value("${onotoliy.keycloak.username}") final String username,
+        @Value("${onotoliy.keycloak.password}") final String password
     ) {
-        final Keycloak keycloak = KeycloakBuilder.builder()
-                                                 .serverUrl(baseURL)
-                                                 .realm(realm)
-                                                 .grantType(OAuth2Constants.PASSWORD)
-                                                 .clientId(clientID)
-                                                 .username(username)
-                                                 .password(password)
-                                                 .build();
+        final Keycloak keycloak = KeycloakBuilder
+            .builder()
+            .serverUrl(baseURL)
+            .realm(realm)
+            .grantType(OAuth2Constants.PASSWORD)
+            .clientId(clientID)
+            .username(username)
+            .password(password)
+            .build();
 
         users = keycloak.realm("treasure").users();
         roles = keycloak.realm("treasure").roles();
@@ -77,12 +84,14 @@ public class KeycloakService {
     /**
      * Получение пользователя по уникальному идентификатору.
      *
-     * @param uuid Уникальный идентификатор.
+     * @param uuid  Уникальный идентификатор.
      * @param money Фукция получения депозита пользователя.
      * @return Пользователь.
      */
-    public Deposit get(final UUID uuid,
-                                  final Function<UUID, BigDecimal> money) {
+    public Deposit get(
+        final UUID uuid,
+        final Function<UUID, BigDecimal> money
+    ) {
         return toDTO(users.get(uuid.toString()).toRepresentation(), money);
     }
 
@@ -105,7 +114,7 @@ public class KeycloakService {
      * Поиск пользователей.
      *
      * @param parameter Поисковые параметры.
-     * @param money Фукция получения депозита пользователя.
+     * @param money     Фукция получения депозита пользователя.
      * @return Пользователи.
      */
     public List<Deposit> getAll(
@@ -197,7 +206,7 @@ public class KeycloakService {
     /**
      * Установка должности пользователя.
      *
-     * @param uuid  Уникальный идентификатор пользователя.
+     * @param uuid     Уникальный идентификатор пользователя.
      * @param position Должность
      */
     public void setPosition(final UUID uuid, final Position position) {
@@ -278,11 +287,13 @@ public class KeycloakService {
      * Преобразование UserRepresentation в депозит.
      *
      * @param representation UserRepresentation.
-     * @param money Фукция получения депозита пользователя.
+     * @param money          Фукция получения депозита пользователя.
      * @return Депозит.
      */
-    private Deposit toDTO(final UserRepresentation representation,
-                          final Function<UUID, BigDecimal> money) {
+    private Deposit toDTO(
+        final UserRepresentation representation,
+        final Function<UUID, BigDecimal> money
+    ) {
         final UUID uuid = GUIDs.parse(representation.getId());
 
         return new Deposit(
