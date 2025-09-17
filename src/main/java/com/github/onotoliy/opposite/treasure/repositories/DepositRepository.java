@@ -85,10 +85,13 @@ public class DepositRepository {
      * @param guid Уникальный идентификатор.
      */
     public void newDeposit(final UUID guid) {
-        dsl.insertInto(TREASURE_DEPOSIT)
-           .set(TREASURE_DEPOSIT.USER_UUID, guid)
-           .set(TREASURE_DEPOSIT.DEPOSIT, BigDecimal.ZERO)
-           .execute();
+        dsl.transaction(configuration ->
+            DSL.using(configuration)
+               .insertInto(TREASURE_DEPOSIT)
+               .set(TREASURE_DEPOSIT.USER_UUID, guid)
+               .set(TREASURE_DEPOSIT.DEPOSIT, BigDecimal.ZERO)
+               .execute()
+        );
     }
 
     /**
