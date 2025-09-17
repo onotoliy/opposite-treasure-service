@@ -68,7 +68,23 @@ public class TreasureExceptionResolver {
             final NotUniqueException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                              .body(new ExceptionInformation(
-                                HTTPStatus.INTERNAL_SERVER_ERROR,
+                                HTTPStatus.CONFLICT,
                                 e.getMessage()));
+    }
+
+    /**
+     * Преобразовывает ошибку {@link Exception} в читаемых формат
+     * клиента {@link ExceptionInformation}.
+     *
+     * @param e Ошибка.
+     * @return Ошибка
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionInformation> resolve(
+        final Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                             .body(new ExceptionInformation(
+                                 HTTPStatus.INTERNAL_SERVER_ERROR,
+                                 e.getMessage()));
     }
 }
