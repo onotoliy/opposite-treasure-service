@@ -7,22 +7,25 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Депозит.
  *
- * @param uuid Уникальный иденитификатор.
- * @param username Имя пользователя.
- * @param firstName Имя.
- * @param lastName Фамилия.
- * @param patronymic Отчество.
- * @param deposit Депозит.
- * @param logo Аватар.
- * @param email Адрес электронной почты.
- * @param birthday День рождения.
+ * @param uuid        Уникальный иденитификатор.
+ * @param username    Имя пользователя.
+ * @param firstName   Имя.
+ * @param lastName    Фамилия.
+ * @param patronymic  Отчество.
+ * @param deposit     Депозит.
+ * @param logo        Аватар.
+ * @param email       Адрес электронной почты.
+ * @param birthday    День рождения.
  * @param joiningDate Дата вступления.
- * @param position Должность.
+ * @param position    Должность.
  * @author Anatoliy Pokhresnyi
  */
 @Schema(description = "Депозит")
@@ -54,6 +57,21 @@ public record Deposit(
 
     @Override
     public String name() {
-        return firstName + " " + patronymic + " " + lastName;
+        return List
+            .of(
+                Optional.ofNullable(patronymic)
+                        .orElse(""),
+                Optional.ofNullable(firstName)
+                        .filter(it -> !it.isBlank())
+                        .map(it -> it.substring(0, 1).toUpperCase() + ".")
+                        .orElse(""),
+                Optional.ofNullable(patronymic)
+                        .filter(it -> !it.isBlank())
+                        .map(it -> it.substring(0, 1).toUpperCase() + ".")
+                        .orElse("")
+            )
+            .stream()
+            .filter(it -> !it.isBlank())
+            .collect(Collectors.joining(" "));
     }
 }

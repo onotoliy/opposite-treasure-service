@@ -29,6 +29,7 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -53,14 +54,20 @@ public class KeycloakService {
      * Конструктор.
      */
     @Autowired
-    public KeycloakService() {
+    public KeycloakService(
+        @Value("${onotoliy.keycloak.base-url}") final String baseURL,
+        @Value("${onotoliy.keycloak.realm}")final String realm,
+        @Value("${onotoliy.keycloak.client-id}")final String clientID,
+        @Value("${onotoliy.keycloak.username}")final String username,
+        @Value("${onotoliy.keycloak.password}")final String password
+    ) {
         final Keycloak keycloak = KeycloakBuilder.builder()
-                                                 .serverUrl("https://91.201.41.66/auth")
-                                                 .realm("treasure")
+                                                 .serverUrl(baseURL)
+                                                 .realm(realm)
                                                  .grantType(OAuth2Constants.PASSWORD)
-                                                 .clientId("admin-cli")
-                                                 .username("rest-admin")
-                                                 .password("rest-admin-password")
+                                                 .clientId(clientID)
+                                                 .username(username)
+                                                 .password(password)
                                                  .build();
 
         users = keycloak.realm("treasure").users();
