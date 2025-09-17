@@ -6,7 +6,6 @@ import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
-import jakarta.ws.rs.DELETE;
 import java.util.Objects;
 import java.util.function.Consumer;
 import org.springdoc.core.customizers.OperationCustomizer;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.method.HandlerMethod;
 
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * Класс описывающий переопределение operationId в openapi файле.
@@ -60,22 +59,22 @@ public class OpenApiConfig {
                     )
                 )
             );
-        final Consumer<ApiResponses> _400 = responses -> {
+        final Consumer<ApiResponses> s400 = responses -> {
             responses.addApiResponse("400", new ApiResponse()
                 .description("Неверный запрос (Bad Request)")
                 .content(content));
         };
-        final Consumer<ApiResponses> _404 = responses -> {
+        final Consumer<ApiResponses> s404 = responses -> {
             responses.addApiResponse("404", new ApiResponse()
                 .description("Не найдено (Not Found)")
                 .content(content));
         };
-        final Consumer<ApiResponses> _500 = responses -> {
+        final Consumer<ApiResponses> s500 = responses -> {
             responses.addApiResponse("500", new ApiResponse()
                 .description("Ошибка сервера (Internal Server Error)")
                 .content(content));
         };
-        final Consumer<ApiResponses> _409 = responses -> {
+        final Consumer<ApiResponses> s409 = responses -> {
             responses.addApiResponse("409", new ApiResponse()
                 .description("Конфликт (Conflict)")
                 .content(content));
@@ -85,29 +84,29 @@ public class OpenApiConfig {
             ApiResponses responses = operation.getResponses();
 
             if (Objects.nonNull(handlerMethod.getMethodAnnotation(GetMapping.class))) {
-                _400.accept(responses);
-                _404.accept(responses);
-                _500.accept(responses);
+                s400.accept(responses);
+                s404.accept(responses);
+                s500.accept(responses);
             }
 
             if (Objects.nonNull(handlerMethod.getMethodAnnotation(PostMapping.class))) {
-                _409.accept(responses);
-                _400.accept(responses);
-                _404.accept(responses);
-                _500.accept(responses);
+                s409.accept(responses);
+                s400.accept(responses);
+                s404.accept(responses);
+                s500.accept(responses);
             }
 
             if (Objects.nonNull(handlerMethod.getMethodAnnotation(PutMapping.class))) {
-                _409.accept(responses);
-                _400.accept(responses);
-                _404.accept(responses);
-                _500.accept(responses);
+                s409.accept(responses);
+                s400.accept(responses);
+                s404.accept(responses);
+                s500.accept(responses);
             }
 
             if (Objects.nonNull(handlerMethod.getMethodAnnotation(DeleteMapping.class))) {
-                _400.accept(responses);
-                _404.accept(responses);
-                _500.accept(responses);
+                s400.accept(responses);
+                s404.accept(responses);
+                s500.accept(responses);
             }
 
             return operation;

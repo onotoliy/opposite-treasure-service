@@ -82,7 +82,6 @@ public class DepositRepository {
     /**
      * Создание нового депозита.
      *
-     * @param configuration Настройки транзакции.
      * @param guid Уникальный идентификатор.
      */
     public void newDeposit(final UUID guid) {
