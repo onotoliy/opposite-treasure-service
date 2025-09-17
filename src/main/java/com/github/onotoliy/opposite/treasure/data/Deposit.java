@@ -59,7 +59,7 @@ public record Deposit(
     public String name() {
         return List
             .of(
-                Optional.ofNullable(patronymic)
+                Optional.ofNullable(lastName)
                         .orElse(""),
                 Optional.ofNullable(firstName)
                         .filter(it -> !it.isBlank())
