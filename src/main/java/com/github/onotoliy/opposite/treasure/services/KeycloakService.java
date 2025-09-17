@@ -2,20 +2,31 @@ package com.github.onotoliy.opposite.treasure.services;
 
 import com.github.onotoliy.opposite.treasure.data.Deposit;
 import com.github.onotoliy.opposite.treasure.data.DepositSearchParameter;
+import com.github.onotoliy.opposite.treasure.data.Position;
 import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
+import com.github.onotoliy.opposite.treasure.utils.GUIDs;
 import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.admin.client.resource.RoleResource;
+import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,30 +45,38 @@ public class KeycloakService {
     private final UsersResource users;
 
     /**
+     * Сервис управления ролями в Keycloak.
+     */
+    private final RolesResource roles;
+
+    /**
      * Конструктор.
      */
     @Autowired
     public KeycloakService() {
         final Keycloak keycloak = KeycloakBuilder.builder()
-                .serverUrl("https://91.201.41.66/auth")
-                .realm("treasure")
-                .grantType(OAuth2Constants.PASSWORD)
-                .clientId("admin-cli")
-                .username("rest-admin")
-                .password("rest-admin-password")
-                .build();
+                                                 .serverUrl("https://91.201.41.66/auth")
+                                                 .realm("treasure")
+                                                 .grantType(OAuth2Constants.PASSWORD)
+                                                 .clientId("admin-cli")
+                                                 .username("rest-admin")
+                                                 .password("rest-admin-password")
+                                                 .build();
 
         users = keycloak.realm("treasure").users();
+        roles = keycloak.realm("treasure").roles();
     }
 
     /**
      * Получение пользователя по уникальному идентификатору.
      *
      * @param uuid Уникальный идентификатор.
+     * @param money Фукция получения депозита пользователя.
      * @return Пользователь.
      */
-    public UserRepresentation get(final UUID uuid) {
-        return users.get(uuid.toString()).toRepresentation();
+    public Deposit get(final UUID uuid,
+                                  final Function<UUID, BigDecimal> money) {
+        return toDTO(users.get(uuid.toString()).toRepresentation(), money);
     }
 
     /**
@@ -79,17 +98,23 @@ public class KeycloakService {
      * Поиск пользователей.
      *
      * @param parameter Поисковые параметры.
+     * @param money Фукция получения депозита пользователя.
      * @return Пользователи.
      */
-    public List<UserRepresentation> getAll(
-        final DepositSearchParameter parameter
+    public List<Deposit> getAll(
+        final DepositSearchParameter parameter,
+        final Function<UUID, BigDecimal> money
     ) {
-        return users.search(
-            parameter.q(),
-            parameter.enable(),
-            parameter.offset(),
-            parameter.numberOfRows()
-        );
+        return users
+            .search(
+                parameter.q(),
+                parameter.enable(),
+                parameter.offset(),
+                parameter.numberOfRows()
+            )
+            .stream()
+            .map(it -> toDTO(it, money))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -119,6 +144,8 @@ public class KeycloakService {
             username.substring(Math.max(username.length() - 4, 0))
         );
 
+        setPosition(GUIDs.parse(representation.getId()), deposit.position());
+
         return UUID.fromString(representation.getId());
     }
 
@@ -139,13 +166,15 @@ public class KeycloakService {
 
         users.get(deposit.uuid().toString()).update(representation);
 
+        setPosition(deposit.uuid(), deposit.position());
+
         return deposit.uuid();
     }
 
     /**
      * Создание временного пароля пользователя.
      *
-     * @param uuid Уникальный идентификатор пользователя.
+     * @param uuid     Уникальный идентификатор пользователя.
      * @param password Пароль.
      */
     public void setTemporaryPassword(final String uuid, final String password) {
@@ -156,6 +185,34 @@ public class KeycloakService {
         representation.setTemporary(true);
 
         users.get(uuid).resetPassword(representation);
+    }
+
+    /**
+     * Установка должности пользователя.
+     *
+     * @param uuid  Уникальный идентификатор пользователя.
+     * @param position Должность
+     */
+    public void setPosition(final UUID uuid, final Position position) {
+        users
+            .get(uuid.toString())
+            .roles()
+            .realmLevel()
+            .remove(Stream
+                        .of(Position.values())
+                        .map(Position::name)
+                        .map(String::toLowerCase)
+                        .map(roles::get)
+                        .map(RoleResource::toRepresentation)
+                        .collect(Collectors.toUnmodifiableList())
+            );
+
+
+        users
+            .get(uuid.toString())
+            .roles()
+            .realmLevel()
+            .add(Collections.singletonList(roles.get(position.name().toLowerCase()).toRepresentation()));
     }
 
     /**
@@ -176,8 +233,8 @@ public class KeycloakService {
      * Добавление атрибута пользователя.
      *
      * @param attributes Список атрибутов.
-     * @param key Ключ.
-     * @param value Значение.
+     * @param key        Ключ.
+     * @param value      Значение.
      */
     private void setSingleAttribute(
         final Map<String, List<String>> attributes,
@@ -195,8 +252,8 @@ public class KeycloakService {
      * Добавление атрибута пользователя.
      *
      * @param attributes Список атрибутов.
-     * @param key Ключ.
-     * @param value Значение.
+     * @param key        Ключ.
+     * @param value      Значение.
      */
     private void setSingleAttribute(
         final Map<String, List<String>> attributes,
@@ -208,6 +265,73 @@ public class KeycloakService {
         }
 
         attributes.put(key, List.of(Dates.toString(value)));
+    }
+
+    /**
+     * Преобразование UserRepresentation в депозит.
+     *
+     * @param representation UserRepresentation.
+     * @param money Фукция получения депозита пользователя.
+     * @return Депозит.
+     */
+    private Deposit toDTO(final UserRepresentation representation,
+                          final Function<UUID, BigDecimal> money) {
+        final UUID uuid = GUIDs.parse(representation.getId());
+
+        return new Deposit(
+            uuid,
+            representation.getUsername(),
+            representation.getFirstName(),
+            representation.getLastName(),
+            representation.firstAttribute("patronymic"),
+            money.apply(uuid),
+            representation.firstAttribute("logo"),
+            representation.getEmail(),
+            Dates.toInstant(representation.firstAttribute("birthday")),
+            Dates.toInstant(representation.firstAttribute("joiningDate")),
+            toPosition(users.get(representation.getId()).roles().realmLevel().listAll())
+        );
+    }
+
+    /**
+     * Преобразование роли в должность.
+     *
+     * @param roles Список ролей.
+     * @return Должность.
+     */
+    private Position toPosition(final List<RoleRepresentation> roles) {
+        if (roles == null || roles.isEmpty()) {
+            return Position.NONE;
+        }
+
+        Predicate<Position> predicate = position -> roles
+            .stream().anyMatch(e -> Strings.equals(e.getName(), position.name(), true));
+
+        if (predicate.test(Position.PRESIDENT)) {
+            return Position.PRESIDENT;
+        }
+
+        if (predicate.test(Position.VICE_PRESIDENT)) {
+            return Position.VICE_PRESIDENT;
+        }
+
+        if (predicate.test(Position.TREASURER)) {
+            return Position.TREASURER;
+        }
+
+        if (predicate.test(Position.SECRETARY)) {
+            return Position.SECRETARY;
+        }
+
+        if (predicate.test(Position.MEMBER)) {
+            return Position.MEMBER;
+        }
+
+        if (predicate.test(Position.FRIEND)) {
+            return Position.FRIEND;
+        }
+
+        return Position.NONE;
     }
 
     /**
@@ -236,6 +360,9 @@ public class KeycloakService {
         representation.setFirstName(deposit.firstName());
         representation.setLastName(deposit.lastName());
         representation.setAttributes(attributes);
+        representation.setRealmRoles(
+            Collections.singletonList(deposit.position().name().toLowerCase())
+        );
 
         return representation;
     }
