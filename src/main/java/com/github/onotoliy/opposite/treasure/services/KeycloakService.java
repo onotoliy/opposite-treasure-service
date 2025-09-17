@@ -213,7 +213,6 @@ public class KeycloakService {
     /**
      * Преобразование пользователя в UserRepresentation.
      *
-     * @param uuid Уникальный идентификатор пользователя.
      * @param deposit Пользователь.
      * @return UserRepresentation.
      */
