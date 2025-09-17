@@ -2,7 +2,9 @@ package com.github.onotoliy.opposite.treasure.services;
 
 import com.github.onotoliy.opposite.treasure.data.Deposit;
 import com.github.onotoliy.opposite.treasure.data.DepositSearchParameter;
+import com.github.onotoliy.opposite.treasure.exceptions.ModificationException;
 import com.github.onotoliy.opposite.treasure.utils.Dates;
+import com.github.onotoliy.opposite.treasure.utils.Objects;
 import com.github.onotoliy.opposite.treasure.utils.Strings;
 import java.time.Instant;
 import java.util.HashMap;
@@ -97,19 +99,27 @@ public class KeycloakService {
      * @return Пользователь.
      */
     public UUID create(final Deposit deposit) {
-        final UUID uuid = deposit.uuid() == null
-            ? UUID.randomUUID() : deposit.uuid();
-        final UserRepresentation representation =
-            toRepresentation(uuid, deposit);
+        users.create(toRepresentation(deposit));
 
-        users.create(representation);
+        final UserRepresentation representation = users
+            .list()
+            .stream()
+            .filter(it -> it.getUsername().equals(deposit.username()))
+            .findFirst()
+            .orElse(null);
+
+        if (representation == null) {
+            throw new ModificationException(
+                "Не удалось создать пользователя в системе");
+        }
 
         final String username = deposit.username();
         setTemporaryPassword(
-            uuid, username.substring(Math.max(username.length() - 4, 0))
+            representation.getId(),
+            username.substring(Math.max(username.length() - 4, 0))
         );
 
-        return uuid;
+        return UUID.fromString(representation.getId());
     }
 
     /**
@@ -119,13 +129,17 @@ public class KeycloakService {
      * @return Пользователь.
      */
     public UUID update(final Deposit deposit) {
-        final UUID uuid = deposit.uuid();
+        if (Objects.isEmpty(deposit.uuid())) {
+            throw new ModificationException(
+                "Не удалось изменить пользователя в системе");
+        }
+
         final UserRepresentation representation =
-            toRepresentation(uuid, deposit);
+            toRepresentation(deposit);
 
-        users.get(uuid.toString()).update(representation);
+        users.get(deposit.uuid().toString()).update(representation);
 
-        return uuid;
+        return deposit.uuid();
     }
 
     /**
@@ -134,14 +148,14 @@ public class KeycloakService {
      * @param uuid Уникальный идентификатор пользователя.
      * @param password Пароль.
      */
-    public void setTemporaryPassword(final UUID uuid, final String password) {
+    public void setTemporaryPassword(final String uuid, final String password) {
         final CredentialRepresentation representation =
             new CredentialRepresentation();
         representation.setType(OAuth2Constants.PASSWORD);
         representation.setValue(password);
         representation.setTemporary(true);
 
-        users.get(uuid.toString()).resetPassword(representation);
+        users.get(uuid).resetPassword(representation);
     }
 
     /**
@@ -204,7 +218,6 @@ public class KeycloakService {
      * @return UserRepresentation.
      */
     private UserRepresentation toRepresentation(
-        final UUID uuid,
         final Deposit deposit
     ) {
         final Map<String, List<String>> attributes = new HashMap<>();
@@ -214,7 +227,9 @@ public class KeycloakService {
         setSingleAttribute(attributes, "joiningDate", deposit.joiningDate());
 
         final UserRepresentation representation = new UserRepresentation();
-        representation.setId(uuid.toString());
+        if (Objects.nonEmpty(deposit.uuid())) {
+            representation.setId(deposit.uuid().toString());
+        }
         representation.setUsername(deposit.username());
         representation.setEmail(deposit.email());
         representation.setEmailVerified(true);
